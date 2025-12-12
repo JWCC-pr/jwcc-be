@@ -1,0 +1,51 @@
+from django.contrib.auth.hashers import make_password, check_password
+from django.db import models
+from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
+
+from app.common.models import BaseModel
+
+
+class UserSocialKindChoices(models.TextChoices):
+    KAKAO = "kakao", "카카오"
+    NAVER = "naver", "네이버"
+    FACEBOOK = "facebook", "페이스북"
+    GOOGLE = "google", "구글"
+    APPLE = "apple", "애플"
+
+
+class User(BaseModel):
+    username = models.CharField(verbose_name="유저네임", max_length=100, unique=True)
+    password = models.CharField(verbose_name="비밀번호", max_length=128)
+    social_kind = models.CharField(
+        verbose_name="소셜",
+        max_length=10,
+        choices=UserSocialKindChoices.choices,
+        null=True,
+        blank=True,
+        editable=False,
+    )
+
+    is_authenticated = True
+    is_active = True
+
+    class Meta:
+        db_table = "user"
+        verbose_name = "유저"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.username
+
+    @property
+    def access_token(self):
+        return AccessToken.for_user(self)
+
+    @property
+    def refresh_token(self):
+        return RefreshToken.for_user(self)
+
+    def set_password(self, password):
+        self.password = make_password(password)
+
+    def check_password(self, password):
+        return check_password(password, self.password)
