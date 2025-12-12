@@ -28,7 +28,7 @@ class User(BaseModel):
     )
 
     is_authenticated = True
-    is_active = models.BooleanField(verbose_name="가입승인 여부", default=False)
+    is_active = models.BooleanField(verbose_name="가입승인 여부", default=False, editable=False)
 
     class Meta:
         db_table = "user"

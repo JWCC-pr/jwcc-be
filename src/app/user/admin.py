@@ -60,3 +60,4 @@ class UserAdmin(admin.ModelAdmin):
     def approve_users(self, request, queryset):
         updated = queryset.update(is_active=True)
         self.message_user(request, f"{updated}명의 사용자가 승인되었습니다.")
+        # TODO: 이메일 발송
