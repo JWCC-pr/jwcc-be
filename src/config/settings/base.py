@@ -10,8 +10,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 
 load_dotenv(BASE_DIR / '.env')
 
-PROJECT_NAME = "#{PROJECT_NAME}"
-SITE_NAME = "#{PROJECT_NAME}"
+PROJECT_NAME = "jamwoncc"
+SITE_NAME = "jamwoncc"
 SITE_LOGO = "img/logo.png"  # app/staticfiles/static/img/logo.png 변경
 DOMAIN = "domain.com"
 
