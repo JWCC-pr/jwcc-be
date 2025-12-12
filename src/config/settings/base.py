@@ -44,6 +44,7 @@ LOCAL_APPS = [
     "app.board_hit.apps.BoardHitConfig",
     "app.board_comment.apps.BoardCommentConfig",
     "app.board_like.apps.BoardLikeConfig",
+    "app.banner.apps.BannerConfig",
 ]
 
 THIRD_PARTY_APPS = [

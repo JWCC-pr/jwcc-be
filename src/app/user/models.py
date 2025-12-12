@@ -6,16 +6,11 @@ from app.common.models import BaseModel
 
 
 class UserGradeChoices(models.IntegerChoices):
-    GRADE_01 = 1, "1등급"
-    GRADE_02 = 2, "2등급"
-    GRADE_03 = 3, "3등급"
-    GRADE_04 = 4, "4등급"
-    GRADE_05 = 5, "5등급"
-    GRADE_06 = 6, "6등급"
-    GRADE_07 = 7, "7등급"
-    GRADE_08 = 8, "8등급"
-    GRADE_09 = 9, "9등급"
-    GRADE_10 = 10, "10등급"
+    GRADE_01 = 1, "총관리자"
+    GRADE_02 = 2, "관리자"
+    GRADE_03 = 3, "사제 및 수도자"
+    GRADE_04 = 4, "단체장"
+    GRADE_05 = 5, "본당 신자"
 
 
 class User(BaseModel):
@@ -29,7 +24,7 @@ class User(BaseModel):
     detail_address = models.CharField(verbose_name="상세주소", max_length=200)
     birth = models.DateField(verbose_name="생년월일")
     grade = models.PositiveIntegerField(
-        verbose_name="등급", choices=UserGradeChoices.choices, default=UserGradeChoices.GRADE_10
+        verbose_name="등급", choices=UserGradeChoices.choices, default=UserGradeChoices.GRADE_05
     )
 
     is_authenticated = True
