@@ -3,7 +3,19 @@ from django.db import models
 from app.common.models import BaseModel
 
 
+class PassingNoticeCommentQuerySet(models.QuerySet):
+    def delete(self):
+        """QuerySet의 delete를 오버라이드하여 소프트 삭제 처리"""
+        return self.update(is_deleted=True, body="삭제된 댓글")
+
+
+class PassingNoticeCommentManager(models.Manager):
+    def get_queryset(self):
+        return PassingNoticeCommentQuerySet(self.model, using=self._db)
+
+
 class PassingNoticeComment(BaseModel):
+    objects = PassingNoticeCommentManager()
     passing_notice = models.ForeignKey(
         "passing_notice.PassingNotice", verbose_name="선종 안내 댓글", on_delete=models.CASCADE
     )

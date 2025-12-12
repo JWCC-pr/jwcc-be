@@ -1,3 +1,4 @@
+from django.db.models import BooleanField, Case, When
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
@@ -29,8 +30,18 @@ class PassingNoticeCommentViewSet(
     permission_classes = [PassingNoticeCommentPermission]
     pagination_class = CursorPagination
     filterset_class = PassingNoticeCommentFilter
+    ordering = "-created_at"
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("user")
+        queryset = queryset.annotate(
+            is_owned=Case(
+                When(user_id=self.request.user.id, then=True),
+                default=False,
+                output_field=BooleanField(),
+            ),
+        )
+        queryset = queryset.prefetch_related("user__department_set")
+        if not self.request.query_params.get("parent_id"):
+            queryset = queryset.filter(parent__isnull=True)
         return queryset

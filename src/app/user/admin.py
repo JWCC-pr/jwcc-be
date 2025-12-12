@@ -37,27 +37,26 @@ class UserAdmin(admin.ModelAdmin):
     form = UserAdminForm
     list_display = [
         "id",
-        "department",
         "email",
         "name",
         "baptismal_name",
         "birth",
         "grade",
-        "is_approved",
+        "is_active",
         "created_at",
     ]
-    list_filter = ["department", "grade", "is_approved"]
+    list_filter = ["department_set", "grade", "is_active"]
     search_fields = ["email", "name", "baptismal_name"]
     search_help_text = "이메일, 이름, 세레명으로 검색하세요."
-    autocomplete_fields = ["department"]
+    autocomplete_fields = ["department_set"]
     actions = ["approve_users"]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        queryset = queryset.select_related("department")
+        queryset = queryset.prefetch_related("department_set")
         return queryset
 
     @admin.action(description="선택된 유저 을/를 가입승인합니다.")
     def approve_users(self, request, queryset):
-        updated = queryset.update(is_approved=True)
+        updated = queryset.update(is_active=True)
         self.message_user(request, f"{updated}명의 사용자가 승인되었습니다.")

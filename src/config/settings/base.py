@@ -39,6 +39,11 @@ LOCAL_APPS = [
     "app.weekly_bulletin_request.apps.WeeklyBulletinRequestConfig",
     "app.passing_notice.apps.PassingNoticeConfig",
     "app.passing_notice_comment.apps.PassingNoticeCommentConfig",
+    "app.liturgy_flower.apps.LiturgyFlowerConfig",
+    "app.board.apps.BoardConfig",
+    "app.board_hit.apps.BoardHitConfig",
+    "app.board_comment.apps.BoardCommentConfig",
+    "app.board_like.apps.BoardLikeConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -217,19 +222,16 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "APPEND_COMPONENTS": {
         "securitySchemes": {
-            "Bearer": {
-                "type": "oauth2",
-                "flows": {
-                    "password": {
-                        "tokenUrl": "/v1/user/login/",
-                    },
-                },
+            "bearerToken": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "JWT",
             },
         },
     },
     "SECURITY": [
         {
-            "Bearer": [],
+            "bearerToken": [],
         }
     ],
     "PREPROCESSING_HOOKS": [
@@ -264,10 +266,38 @@ ALARMTALK_CLIENT_SECRET = "**"
 
 
 # CKEDITOR
-CKEDITOR_UPLOAD_PATH = "ckeditor/"
+CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_CONFIGS = {
     "default": {
-        "width": "100%",
+        "width": "1000px",
+        "toolbar": "Custom",
+        "toolbar_Custom": [
+            ["Undo", "Redo"],
+            ["Format"],
+            ["Bold", "Italic", "Underline"],
+            ["Image"],
+            ["Preview"],
+            ["Maximize"],
+            ["Source"],
+        ],
+        "format_tags": "p;h1;h2;h3;h4;h5",
+        "extraPlugins": "image2",
+        "removePlugins": "image",
+        "image2_captionedClass": "image-captioned",
+        "image2_altRequired": True,
+        "filebrowserImageBrowseUrl": False,
+        "filebrowserBrowseUrl": False,
+        "allowedContent": {
+            "h1": True,
+            "p": True,
+            "figure": {"classes": ["image-captioned"]},
+            "figcaption": True,
+            "span": True,
+            "img": {"attributes": ["src", "alt"]},
+            "strong": True,
+            "em": True,
+            "u": True,
+        },
     },
 }
 

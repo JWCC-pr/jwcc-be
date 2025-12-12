@@ -55,6 +55,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
             raise ValidationError(["인증정보가 일치하지 않습니다."])
         if not attrs["user"].check_password(attrs["password"]):
             raise ValidationError(["인증정보가 일치하지 않습니다."])
+        if not attrs["user"].is_active:
+            raise ValidationError(["가입승인이 되지 않았습니다."])
         return attrs
 
     def create(self, validated_data):
@@ -62,7 +64,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    department_id = serializers.IntegerField(label="분과ID")
+    department_ids = serializers.ListSerializer(label="분과 ID", child=serializers.IntegerField())
     email_verifier_token = serializers.CharField(label="이메일 검증 토큰", write_only=True)
     access_token = serializers.CharField(label="액세스토큰", read_only=True)
     refresh_token = serializers.CharField(label="리프레시토큰", read_only=True)
@@ -70,7 +72,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "department_id",
+            "department_ids",
             "email",
             "email_verifier_token",
             "password",
@@ -92,10 +94,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        department_ids = validated_data.pop("department_ids")
         password = validated_data.pop("password", None)
         user = User(**validated_data)
         user.set_password(password)
         user.save()
+        user.department_set.set(department_ids)
+
         return user
 
 
