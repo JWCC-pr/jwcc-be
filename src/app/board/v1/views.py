@@ -12,7 +12,7 @@ from app.board.v1.permissions import BoardPermission
 from app.board.v1.serializers import BoardSerializer
 from app.board_hit.models import BoardHit
 from app.board_like.models import BoardLike
-from app.common.pagination import CursorPagination, LimitOffsetPagination
+from app.common.pagination import LimitOffsetPagination
 
 
 def get_client_ip(request):
