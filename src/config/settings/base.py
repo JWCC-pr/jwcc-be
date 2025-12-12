@@ -32,6 +32,13 @@ LOCAL_APPS = [
     "app.presigned_url.apps.PreSignedUrlConfig",
     "app.department.apps.DepartmentConfig",
     "app.email_verifier.apps.EmailVerifierConfig",
+    "app.notice.apps.NoticeConfig",
+    "app.document.apps.DocumentConfig",
+    "app.event.apps.EventConfig",
+    "app.weekly_bulletin.apps.WeeklyBulletinConfig",
+    "app.weekly_bulletin_request.apps.WeeklyBulletinRequestConfig",
+    "app.passing_notice.apps.PassingNoticeConfig",
+    "app.passing_notice_comment.apps.PassingNoticeCommentConfig",
 ]
 
 THIRD_PARTY_APPS = [

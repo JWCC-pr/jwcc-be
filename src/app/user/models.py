@@ -5,6 +5,14 @@ from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from app.common.models import BaseModel
 
 
+class UserGradeChoices(models.IntegerChoices):
+    GRADE_1 = 1, "1등급"
+    GRADE_2 = 2, "2등급"
+    GRADE_3 = 3, "3등급"
+    GRADE_4 = 4, "4등급"
+    GRADE_5 = 5, "5등급"
+
+
 class User(BaseModel):
     department = models.ForeignKey("department.Department", verbose_name="분과", on_delete=models.CASCADE)
     email = models.EmailField(verbose_name="유저네임", unique=True)
@@ -15,7 +23,10 @@ class User(BaseModel):
     base_address = models.CharField(verbose_name="기본주소", max_length=200)
     detail_address = models.CharField(verbose_name="상세주소", max_length=200)
     birth = models.DateField(verbose_name="생년월일")
-    is_accepted = models.BooleanField(verbose_name="가입승인 여부", default=False)
+    grade = models.PositiveIntegerField(
+        verbose_name="등급", choices=UserGradeChoices.choices, default=UserGradeChoices.GRADE_5
+    )
+    is_approved = models.BooleanField(verbose_name="가입승인 여부", default=False)
 
     is_authenticated = True
     is_active = True
@@ -26,7 +37,7 @@ class User(BaseModel):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.email
+        return self.name
 
     @property
     def access_token(self):
