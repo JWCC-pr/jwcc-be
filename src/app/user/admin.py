@@ -15,7 +15,7 @@ class UserAdminForm(forms.ModelForm):
     class Meta:
         model = User
         fields = "__all__"
-        exclude = ['password']
+        exclude = ["password"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -35,6 +35,13 @@ class UserAdminForm(forms.ModelForm):
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     form = UserAdminForm
-    list_display = ["id", "username"]
-    search_fields = ["username"]
-    search_help_text = "유저네임으로 검색하세요."
+    list_display = ["id", "department", "email", "name", "baptismal_name", "is_accepted", "created_at"]
+    list_filter = ["department", "is_accepted"]
+    search_fields = ["email", "name", "baptismal_name"]
+    search_help_text = "이메일, 이름, 세레명으로 검색하세요."
+    autocomplete_fields = ["department"]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.select_related("department")
+        return queryset

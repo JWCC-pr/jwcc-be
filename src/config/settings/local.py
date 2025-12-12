@@ -2,6 +2,7 @@ import os
 
 import boto3
 import sentry_sdk
+from django.utils import timezone
 from sentry_sdk.integrations.django import DjangoIntegration
 
 from app.common.secrets import get_secret
@@ -78,8 +79,8 @@ STATIC_URL = "/_static/"
 
 # JWT
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=365),
+    "ACCESS_TOKEN_LIFETIME": timezone.timedelta(days=30),
+    "REFRESH_TOKEN_LIFETIME": timezone.timedelta(days=365),
     "ROTATE_REFRESH_TOKENS": True,
 }
 

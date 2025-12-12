@@ -12,7 +12,7 @@ class EmailLogStatus(models.TextChoices):
 
 
 class EmailLog(BaseModel):
-    to_set = models.JSONField(verbose_name="수신자", default=list)
+    email = models.EmailField(verbose_name="수신자")
     title = models.CharField(verbose_name="제목", max_length=128)
     content = models.TextField(verbose_name="내용")
     status = models.CharField(
@@ -29,7 +29,7 @@ class EmailLog(BaseModel):
         url = f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages"
         data = {
             "from": settings.MAILGUN_FROM_EMAIL,
-            "to": self.to_set,
+            "to": [self.email],
             "subject": self.title,
             "html": self.content,
         }

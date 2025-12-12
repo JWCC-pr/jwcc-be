@@ -1,29 +1,21 @@
-from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.hashers import check_password, make_password
 from django.db import models
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
 from app.common.models import BaseModel
 
 
-class UserSocialKindChoices(models.TextChoices):
-    KAKAO = "kakao", "카카오"
-    NAVER = "naver", "네이버"
-    FACEBOOK = "facebook", "페이스북"
-    GOOGLE = "google", "구글"
-    APPLE = "apple", "애플"
-
-
 class User(BaseModel):
-    username = models.CharField(verbose_name="유저네임", max_length=100, unique=True)
+    department = models.ForeignKey("department.Department", verbose_name="분과", on_delete=models.CASCADE)
+    email = models.EmailField(verbose_name="유저네임", unique=True)
     password = models.CharField(verbose_name="비밀번호", max_length=128)
-    social_kind = models.CharField(
-        verbose_name="소셜",
-        max_length=10,
-        choices=UserSocialKindChoices.choices,
-        null=True,
-        blank=True,
-        editable=False,
-    )
+    name = models.CharField(verbose_name="이름", max_length=20)
+    baptismal_name = models.CharField(verbose_name="세례명", max_length=40)
+    postcode = models.CharField(verbose_name="우편번호", max_length=6)
+    base_address = models.CharField(verbose_name="기본주소", max_length=200)
+    detail_address = models.CharField(verbose_name="상세주소", max_length=200)
+    birth = models.DateField(verbose_name="생년월일")
+    is_accepted = models.BooleanField(verbose_name="가입승인 여부", default=False)
 
     is_authenticated = True
     is_active = True
@@ -34,7 +26,7 @@ class User(BaseModel):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return self.username
+        return self.email
 
     @property
     def access_token(self):

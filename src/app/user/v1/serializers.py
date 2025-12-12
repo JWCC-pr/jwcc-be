@@ -1,10 +1,8 @@
-import jwt
 from django.conf import settings
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.template import loader
-from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import serializers
@@ -13,16 +11,24 @@ from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from app.email_log.models import EmailLog
-from app.user.models import UserSocialKindChoices, User
-from app.user.social_adapters import SocialAdapter
+from app.email_verifier.models import EmailVerifier
+from app.user.models import User
 from app.user.validators import validate_password
-from config.exception_handler import SocialUserNotFoundError
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = [
+            "id",
+            "email",
+            "name",
+            "baptismal_name",
+            "postcode",
+            "base_address",
+            "detail_address",
+            "birth",
+        ]
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
@@ -32,19 +38,19 @@ class UserLoginSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "username",
+            "email",
             "password",
             "access_token",
             "refresh_token",
         ]
         extra_kwargs = {
-            "username": {"write_only": True, "validators": []},
+            "email": {"write_only": True, "validators": []},
             "password": {"write_only": True},
         }
 
     def validate(self, attrs):
         try:
-            attrs["user"] = User.objects.get(username=attrs["username"])
+            attrs["user"] = User.objects.get(email=attrs["email"])
         except User.DoesNotExist:
             raise ValidationError(["인증정보가 일치하지 않습니다."])
         if not attrs["user"].check_password(attrs["password"]):
@@ -55,80 +61,34 @@ class UserLoginSerializer(serializers.ModelSerializer):
         return validated_data["user"]
 
 
-class UserSocialLoginSerializer(serializers.ModelSerializer):
-    code = serializers.CharField(write_only=True, required=False)
-    social_access_token = serializers.CharField(write_only=True, required=False)
-    state = serializers.ChoiceField(write_only=True, choices=UserSocialKindChoices.choices)
-
-    access_token = serializers.CharField(label="액세스토큰", read_only=True)
-    refresh_token = serializers.CharField(label="리프레시토큰", read_only=True)
-
-    class Meta:
-        model = User
-        fields = [
-            "social_kind",
-            "code",
-            "social_access_token",
-            "access_token",
-            "refresh_token",
-        ]
-
-    def validate(self, attrs):
-        social_user_id, payload = self.get_social_user_id(
-            attrs["code"],
-            attrs["social_access_token"],
-            attrs["social_kind"],
-        )
-        username = f"{social_user_id}@{attrs['social_kind']}"
-        try:
-            attrs["user"] = User.objects.get(username=username)
-        except User.DoesNotExist:
-            register_token = jwt.encode(
-                payload={
-                    "username": username,
-                    "expired_at": timezone.now().timestamp() + 10 * 60,
-                },
-                key=settings.SECRET_KEY,
-            )
-            raise SocialUserNotFoundError(register_token)
-
-        return attrs
-
-    def get_social_user_id(self, code, access_token, social_kind):
-        for adapter_class in SocialAdapter.__subclasses__():
-            if adapter_class.key == social_kind:
-                return adapter_class(
-                    code,
-                    access_token,
-                    self.context["request"].META["HTTP_ORIGIN"],
-                ).get_social_user_id()
-        raise ModuleNotFoundError(f"{social_kind.capitalize()}Adapter class")
-
-    def create(self, validated_data):
-        return validated_data["user"]
-
-
 class UserRegisterSerializer(serializers.ModelSerializer):
-    register_token = serializers.CharField(write_only=True, required=False, help_text="소셜 로그인 토큰")
-    password = serializers.CharField(write_only=True, required=False)
-    password_confirm = serializers.CharField(write_only=True, required=False)
-
+    department_id = serializers.IntegerField(label="분과ID")
+    email_verifier_token = serializers.CharField(label="이메일 검증 토큰", write_only=True)
     access_token = serializers.CharField(label="액세스토큰", read_only=True)
     refresh_token = serializers.CharField(label="리프레시토큰", read_only=True)
 
     class Meta:
         model = User
         fields = [
-            "register_token",
+            "department_id",
+            "email",
+            "email_verifier_token",
             "password",
-            "password_confirm",
+            "name",
+            "baptismal_name",
+            "postcode",
+            "base_address",
+            "detail_address",
+            "birth",
             "access_token",
             "refresh_token",
         ]
 
     def validate(self, attrs):
-        if User.objects.filter(username=attrs["username"]).exists():
-            raise ValidationError({"username": ["이미 사용중인 유저네임입니다."]})
+        if User.objects.filter(email=attrs["email"]).exists():
+            raise ValidationError({"email": ["이미 사용중인 이메일입니다."]})
+        if not EmailVerifier.objects.filter(email=attrs["email"], token=attrs.pop("email_verifier_token")).exists():
+            raise ValidationError({"email_verifier_token": ["이메일 검증에 실패했습니다."]})
         return attrs
 
     def create(self, validated_data):
@@ -174,13 +134,13 @@ class UserPasswordResetSerializer(serializers.Serializer):
     def create(self, validated_data):
         try:
             user = User.objects.get(**validated_data)
-            self.send_password_reset_email(user)
+            self._send_password_reset_email(user)
         except User.DoesNotExist:
             pass
 
         return validated_data
 
-    def send_password_reset_email(self, user):
+    def _send_password_reset_email(self, user):
         request = self.context["request"]
 
         subject = "비밀번호 초기화 인증 메일"
@@ -194,7 +154,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
         }
         content = loader.render_to_string("password_reset_email.html", context)
         email_log = EmailLog.objects.create(
-            to_set=[user.email],
+            email=user.email,
             title=subject,
             content=content,
         )
