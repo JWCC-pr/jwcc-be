@@ -40,11 +40,13 @@ LOCAL_APPS = [
     "app.passing_notice.apps.PassingNoticeConfig",
     "app.passing_notice_comment.apps.PassingNoticeCommentConfig",
     "app.liturgy_flower.apps.LiturgyFlowerConfig",
+    "app.liturgy_flower_image.apps.LiturgyFlowerImageConfig",
     "app.board.apps.BoardConfig",
     "app.board_hit.apps.BoardHitConfig",
     "app.board_comment.apps.BoardCommentConfig",
     "app.board_like.apps.BoardLikeConfig",
     "app.banner.apps.BannerConfig",
+    "app.pastoral_guidelines.apps.PastoralGuidelinesConfig",
 ]
 
 THIRD_PARTY_APPS = [
@@ -59,6 +61,7 @@ THIRD_PARTY_APPS = [
     "ckeditor_uploader",
     "safedelete",
     "ordered_model",
+    "import_export",
 ]
 
 DJANGO_APPS = [

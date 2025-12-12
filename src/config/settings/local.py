@@ -18,6 +18,8 @@ WEBSOCKET_URL = f"https://ws.dev.{DOMAIN}"
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 
+CSRF_TRUSTED_ORIGINS = ["https://tidy-cheaply-gobbler.ngrok-free.app"]
+
 # local database
 DATABASES = {
     "default": {

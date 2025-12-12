@@ -25,4 +25,5 @@ class LiturgyFlowerViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("image_set")
         return queryset

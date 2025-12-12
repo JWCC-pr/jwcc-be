@@ -1,7 +1,36 @@
 from django import forms
 from django.contrib import admin
+from import_export import fields, resources, widgets
+from import_export.admin import ExportActionModelAdmin
+from import_export.formats.base_formats import XLSX
 
 from app.user.models import User
+
+
+class UserResource(resources.ModelResource):
+    id = fields.Field(attribute="id", column_name="ID")
+    email = fields.Field(attribute="email", column_name="유저네임")
+    name = fields.Field(attribute="name", column_name="이름")
+    baptismal_name = fields.Field(attribute="baptismal_name", column_name="세례명")
+    birth = fields.Field(
+        attribute="birth",
+        column_name="생년월일",
+        widget=widgets.DateWidget(format="%Y-%m-%d"),
+    )
+    grade = fields.Field(attribute="grade", column_name="등급")
+    is_active = fields.Field(attribute="is_active", column_name="가입승인 여부")
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "email",
+            "name",
+            "baptismal_name",
+            "birth",
+            "grade",
+            "is_active",
+        )
 
 
 class UserAdminForm(forms.ModelForm):
@@ -33,8 +62,10 @@ class UserAdminForm(forms.ModelForm):
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(ExportActionModelAdmin):
+    resource_class = UserResource
     form = UserAdminForm
+    formats = [XLSX]
     list_display = [
         "id",
         "email",
