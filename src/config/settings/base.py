@@ -47,6 +47,7 @@ LOCAL_APPS = [
     "app.board_like.apps.BoardLikeConfig",
     "app.banner.apps.BannerConfig",
     "app.pastoral_guidelines.apps.PastoralGuidelinesConfig",
+    "app.schedule.apps.ScheduleConfig",
 ]
 
 THIRD_PARTY_APPS = [
