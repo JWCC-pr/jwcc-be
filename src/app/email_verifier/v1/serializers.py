@@ -1,6 +1,7 @@
 import hashlib
 import random
 
+from django.template import loader
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
@@ -41,10 +42,16 @@ class EmailVerifierCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def _send_code(self, attrs):
+        subject = "잠원동 성당 회원가입 인증메일"
+        context = {
+            "subject": subject,
+            "message": f'잠원동 성당 회원가입 인증코드 [{attrs["code"]}]',
+        }
+        content = loader.render_to_string("email_verification.html", context)
         email_log = EmailLog.objects.create(
             email=attrs["email"],
-            title="잠원동 성당 회원가입 인증메일",
-            content=f'잠원동 성당 회원가입 인증메일 [{attrs["code"]}]',
+            title=subject,
+            content=content,
         )
         email_log.send()
 

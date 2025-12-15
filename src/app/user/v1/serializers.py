@@ -157,7 +157,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
             "token": default_token_generator.make_token(user),
             "protocol": "https" if request.is_secure() else "http",
         }
-        content = loader.render_to_string("password_reset_email.html", context)
+        content = loader.render_to_string("password_reset.html", context)
         email_log = EmailLog.objects.create(
             email=user.email,
             title=subject,
