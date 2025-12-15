@@ -12,9 +12,6 @@ Parameters:
       - dev
       - prod
 
-Conditions:
-  IsProd: !Equals [!Ref ENV, 'prod']
-
 Resources:
   # VPC
   VPC:
@@ -99,99 +96,6 @@ Resources:
     Properties:
       SubnetId: !Ref PublicSubnet2
       RouteTableId: !Ref PublicRouteTable
-  EIP:
-    Type: AWS::EC2::EIP
-    Condition: IsProd
-    Properties:
-      Domain: vpc
-      Tags:
-        - Key: Name
-          Value: !Sub '${ProjectName}-${ENV}-eip'
-  NatGateway:
-    Type: AWS::EC2::NatGateway
-    Condition: IsProd
-    Properties:
-      AllocationId: !GetAtt EIP.AllocationId
-      SubnetId: !Ref PublicSubnet2
-      Tags:
-        - Key: Name
-          Value: !Sub '${ProjectName}-${ENV}-ngw'
-  PrivateRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: !Sub '${ProjectName}-${ENV}-private-routetable'
-  PrivateRoute:
-    Type: AWS::EC2::Route
-    Condition: IsProd
-    DependsOn: NatGateway
-    Properties:
-      RouteTableId: !Ref PrivateRouteTable
-      DestinationCidrBlock: '0.0.0.0/0'
-      NatGatewayId: !Ref NatGateway
-  PrivateSubnet1RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PrivateSubnet1
-      RouteTableId: !Ref PrivateRouteTable
-  PrivateSubnet2RouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref PrivateSubnet2
-      RouteTableId: !Ref PrivateRouteTable
-  BastionHostSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Condition: IsProd
-    Properties:
-      GroupDescription: !Sub '${ProjectName}-${ENV}-bastion-sg'
-      VpcId: !Ref VPC
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          FromPort: -1
-          ToPort: -1
-          CidrIp: 0.0.0.0/0
-  InstanceRole:
-    Type: AWS::IAM::Role
-    Condition: IsProd
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: '2012-10-17'
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: ec2.amazonaws.com
-            Action: sts:AssumeRole
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
-  InstanceProfile:
-    Type: AWS::IAM::InstanceProfile
-    Condition: IsProd
-    Properties:
-      Roles:
-        - !Ref InstanceRole
-  BastionHost:
-    Type: AWS::EC2::Instance
-    Condition: IsProd
-    Properties:
-      InstanceType: t3.micro
-      ImageId: ami-0ac9b8202b45eeb08
-      IamInstanceProfile: !Ref InstanceProfile
-      SubnetId: !Ref PrivateSubnet1
-      SecurityGroupIds:
-        - !Ref BastionHostSecurityGroup
-      UserData:
-        Fn::Base64: !Sub |
-          #!/bin/bash
-          sudo yum install -y at
-          sudo systemctl start atd
-          sudo systemctl enable atd
-          (crontab -l 2>/dev/null; echo "@reboot echo \"sudo shutdown -h now\" | at now + 2 hours") | crontab -
-          sudo shutdown -h now
-      Tags:
-        - Key: Name
-          Value: !Sub '${ProjectName}-${ENV}-bastion-host'
 
 
 Outputs:

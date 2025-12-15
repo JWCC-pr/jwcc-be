@@ -264,8 +264,8 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           Subnets:
-            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PrivateSubnet1' }, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' } ]
-            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PrivateSubnet2' }, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' } ]
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' }
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' }
           SecurityGroups: [!Ref SecurityGroup]
       LoadBalancers:
         - ContainerName: web
@@ -340,8 +340,8 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           Subnets:
-            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PrivateSubnet1' }, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' } ]
-            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PrivateSubnet2' }, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' } ]
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' }
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' }
           SecurityGroups: [ !Ref SecurityGroup ]
   ServiceScalingTargetCelery:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
