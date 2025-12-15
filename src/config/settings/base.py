@@ -63,7 +63,6 @@ THIRD_PARTY_APPS = [
     "ckeditor_uploader",
     "safedelete",
     "ordered_model",
-    "import_export",
 ]
 
 DJANGO_APPS = [
