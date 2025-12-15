@@ -85,6 +85,11 @@ SIMPLE_JWT = {
 }
 
 
+# EMAIL
+EMAIL_HOST_USER = SECRET["email_user"]
+EMAIL_HOST_PASSWORD = SECRET["email_password"]
+
+
 boto3_client = boto3.client("logs", region_name="ap-northeast-2")
 LOGGING = {
     "version": 1,

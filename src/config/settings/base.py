@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -347,3 +348,14 @@ APPLE_CLIENT_SECRET = """-----BEGIN PRIVATE KEY-----
 APPLE_KEY_ID = "**"
 APPLE_TEAM_ID = "**"
 APPLE_LOGIN_URL = "https://appleid.apple.com/auth/authorize?response_type=code&client_id={apple_client_id}&redirect_uri={SOCIAL_REDIRECT_URL}&state=apple"
+
+
+# AWS SES 세팅
+
+# Email 설정
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "email-smtp.ap-northeast-2.amazonaws.com"
+
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "잠원동 성당 <noreply@jwcc.or.kr>"

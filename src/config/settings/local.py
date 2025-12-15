@@ -10,7 +10,8 @@ from config.settings.base import *
 
 APP_ENV = "dev"
 DEBUG = True
-SECRET_KEY = "pj%2ze09(g)i^joilp-f8gvs)6ou_m036u3ejs^ky&9nse5k92"
+SECRET = get_secret(f"{PROJECT_NAME}/prod/django")
+SECRET_KEY = SECRET["key"]
 
 API_URL = f"https://api.dev.{DOMAIN}"
 WEBSOCKET_URL = f"https://ws.dev.{DOMAIN}"
@@ -18,36 +19,27 @@ WEBSOCKET_URL = f"https://ws.dev.{DOMAIN}"
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = ["https://tidy-cheaply-gobbler.ngrok-free.app"]
-
-# local database
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
-}
 
 # remote database
-# DATABASE_SECRET = get_secret(f'{PROJECT_NAME}/dev/db')
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_SECRET['dbname'],
-#         'USER': DATABASE_SECRET['username'],
-#         'PASSWORD': DATABASE_SECRET['password'],
-#         'HOST': DATABASE_SECRET['host'],
-#         'PORT': DATABASE_SECRET['port'],
-#     },
-#     'reader': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': DATABASE_SECRET['dbname'],
-#         'USER': DATABASE_SECRET['username'],
-#         'PASSWORD': DATABASE_SECRET['password'],
-#         'HOST': DATABASE_SECRET['host'].replace('.cluster-', '.cluster-ro-'),
-#         'PORT': DATABASE_SECRET['port'],
-#     },
-# }
+DATABASE_SECRET = get_secret(f"{PROJECT_NAME}/prod/db")
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DATABASE_SECRET["dbname"],
+        "USER": DATABASE_SECRET["username"],
+        "PASSWORD": DATABASE_SECRET["password"],
+        "HOST": DATABASE_SECRET["host"],
+        "PORT": DATABASE_SECRET["port"],
+    },
+    "reader": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DATABASE_SECRET["dbname"],
+        "USER": DATABASE_SECRET["username"],
+        "PASSWORD": DATABASE_SECRET["password"],
+        "HOST": DATABASE_SECRET["host"].replace(".cluster-", ".cluster-ro-"),
+        "PORT": DATABASE_SECRET["port"],
+    },
+}
 
 
 # S3
@@ -85,6 +77,11 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timezone.timedelta(days=365),
     "ROTATE_REFRESH_TOKENS": True,
 }
+
+
+# EMAIL
+EMAIL_HOST_USER = SECRET["email_user"]
+EMAIL_HOST_PASSWORD = SECRET["email_password"]
 
 
 LOGGING = {

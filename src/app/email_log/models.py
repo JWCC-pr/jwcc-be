@@ -1,5 +1,5 @@
-import requests
 from django.conf import settings
+from django.core.mail import send_mail
 from django.db import models
 
 from app.common.models import BaseModel
@@ -26,16 +26,19 @@ class EmailLog(BaseModel):
         verbose_name_plural = verbose_name
 
     def send(self):
-        url = f"https://api.mailgun.net/v3/{settings.MAILGUN_DOMAIN}/messages"
-        data = {
-            "from": settings.MAILGUN_FROM_EMAIL,
-            "to": [self.email],
-            "subject": self.title,
-            "html": self.content,
-        }
-        response = requests.post(url=url, data=data, auth=("api", settings.MAILGUN_API_KEY))
-        if response.ok:
+        try:
+            send_mail(
+                subject=self.title,
+                message="",
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[self.email],
+                html_message=self.content,
+                fail_silently=False,
+            )
             self.status = EmailLogStatus.SUCCESS
-        else:
+            self.fail_reason = ""
+        except Exception as e:
             self.status = EmailLogStatus.FAILURE
+            self.fail_reason = str(e)
+            raise e
         self.save()
