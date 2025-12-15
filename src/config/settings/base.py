@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -63,6 +62,7 @@ THIRD_PARTY_APPS = [
     "ckeditor_uploader",
     "safedelete",
     "ordered_model",
+    "import_export",
 ]
 
 DJANGO_APPS = [

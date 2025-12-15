@@ -148,7 +148,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
     def _send_password_reset_email(self, user):
         request = self.context["request"]
 
-        subject = "비밀번호 초기화 인증 메일"
+        subject = "잠원동 성당 비밀번호 초기화 인증 메일"
         context = {
             "domain": settings.DOMAIN,
             "site_name": settings.SITE_NAME,
