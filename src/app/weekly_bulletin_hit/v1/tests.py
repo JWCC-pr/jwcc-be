@@ -2,12 +2,12 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from app.user.models import User
-from app.weekly_bulletin_request.models import WeeklyBulletinRequest
+from app.weekly_bulletin_hit.models import WeeklyBulletinHit
 
 
-class WeeklyBulletinRequestListAPITest(APITestCase):
-    MODEL = WeeklyBulletinRequest
-    PATH = "/v1/weekly_bulletin_request/"
+class WeeklyBulletinHitListAPITest(APITestCase):
+    MODEL = WeeklyBulletinHit
+    PATH = "/v1/weekly_bulletin_hit/"
 
     def setUp(self) -> None:
         # given
@@ -52,9 +52,9 @@ class WeeklyBulletinRequestListAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class WeeklyBulletinRequestCreateAPITest(APITestCase):
-    MODEL = WeeklyBulletinRequest
-    PATH = "/v1/weekly_bulletin_request/"
+class WeeklyBulletinHitCreateAPITest(APITestCase):
+    MODEL = WeeklyBulletinHit
+    PATH = "/v1/weekly_bulletin_hit/"
 
     def setUp(self) -> None:
         # given
@@ -111,9 +111,9 @@ class WeeklyBulletinRequestCreateAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class WeeklyBulletinRequestRetrieveAPITest(APITestCase):
-    MODEL = WeeklyBulletinRequest
-    PATH = "/v1/weekly_bulletin_request/{id}/"
+class WeeklyBulletinHitRetrieveAPITest(APITestCase):
+    MODEL = WeeklyBulletinHit
+    PATH = "/v1/weekly_bulletin_hit/{id}/"
 
     def setUp(self) -> None:
         # given
@@ -153,9 +153,9 @@ class WeeklyBulletinRequestRetrieveAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class WeeklyBulletinRequestUpdateAPITest(APITestCase):
-    MODEL = WeeklyBulletinRequest
-    PATH = "/v1/weekly_bulletin_request/{id}/"
+class WeeklyBulletinHitUpdateAPITest(APITestCase):
+    MODEL = WeeklyBulletinHit
+    PATH = "/v1/weekly_bulletin_hit/{id}/"
 
     def setUp(self) -> None:
         # given
@@ -210,9 +210,9 @@ class WeeklyBulletinRequestUpdateAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
-class WeeklyBulletinRequestDestroyAPITest(APITestCase):
-    MODEL = WeeklyBulletinRequest
-    PATH = "/v1/weekly_bulletin_request/{id}/"
+class WeeklyBulletinHitDestroyAPITest(APITestCase):
+    MODEL = WeeklyBulletinHit
+    PATH = "/v1/weekly_bulletin_hit/{id}/"
 
     def setUp(self) -> None:
         # given

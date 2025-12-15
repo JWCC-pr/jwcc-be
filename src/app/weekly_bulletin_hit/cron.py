@@ -1,6 +1,6 @@
 from app.common.views import CronView
 
 
-class WeeklyBulletinRequestCron(CronView):
+class WeeklyBulletinHitCron(CronView):
     def cron(self):
         pass

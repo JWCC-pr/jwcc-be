@@ -7,7 +7,6 @@ urlpatterns = [
     path("v1/", include("app.notice.v1.urls")),
     path("v1/", include("app.event.v1.urls")),
     path("v1/", include("app.weekly_bulletin.v1.urls")),
-    path("v1/", include("app.weekly_bulletin_request.v1.urls")),
     path("v1/", include("app.passing_notice.v1.urls")),
     path("v1/", include("app.passing_notice_comment.v1.urls")),
     path("v1/", include("app.liturgy_flower.v1.urls")),

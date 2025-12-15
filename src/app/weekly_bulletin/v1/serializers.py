@@ -11,6 +11,8 @@ class WeeklyBulletinSerializer(serializers.ModelSerializer):
             "thumbnail",
             "title",
             "file",
+            "hit_count",
+            "created_at",
         ]
 
     def validate(self, attrs):

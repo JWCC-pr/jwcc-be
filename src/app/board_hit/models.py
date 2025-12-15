@@ -14,6 +14,6 @@ class BoardHit(BaseModel):
         verbose_name_plural = verbose_name
         ordering = ["-updated_at"]
         constraints = [
-            models.UniqueConstraint(fields=["board", "user"], name="unique_user_hit"),
-            models.UniqueConstraint(fields=["board", "ip_address"], name="unique_ip_hit"),
+            models.UniqueConstraint(fields=["board", "user"], name="unique_board_user_hit"),
+            models.UniqueConstraint(fields=["board", "ip_address"], name="unique_board_ip_hit"),
         ]

@@ -36,7 +36,7 @@ LOCAL_APPS = [
     "app.document.apps.DocumentConfig",
     "app.event.apps.EventConfig",
     "app.weekly_bulletin.apps.WeeklyBulletinConfig",
-    "app.weekly_bulletin_request.apps.WeeklyBulletinRequestConfig",
+    "app.weekly_bulletin_hit.apps.WeeklyBulletinHitConfig",
     "app.passing_notice.apps.PassingNoticeConfig",
     "app.passing_notice_comment.apps.PassingNoticeCommentConfig",
     "app.liturgy_flower.apps.LiturgyFlowerConfig",

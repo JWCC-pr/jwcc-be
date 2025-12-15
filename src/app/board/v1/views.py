@@ -3,7 +3,6 @@ from django.db.models import BooleanField, Case, Exists, F, OuterRef, When
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.board.models import Board
