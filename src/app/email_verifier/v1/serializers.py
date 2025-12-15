@@ -14,7 +14,7 @@ from app.user.models import User
 class EmailVerifierCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = EmailVerifier
-        fields = ["id"]
+        fields = ["id", "email"]
 
     def validate(self, attrs):
         email = attrs["email"]
