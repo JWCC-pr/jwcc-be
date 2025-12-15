@@ -11,7 +11,7 @@ load_dotenv(BASE_DIR / ".env")
 PROJECT_NAME = "jamwoncc"
 SITE_NAME = "jamwoncc"
 SITE_LOGO = "img/logo.png"  # app/staticfiles/static/img/logo.png 변경
-DOMAIN = "domain.com"
+DOMAIN = "jwcc.or.kr"
 
 
 class Response(wsgi.Response):
