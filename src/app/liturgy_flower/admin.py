@@ -17,3 +17,6 @@ class LiturgyFlowerAdmin(admin.ModelAdmin):
     list_display = ["title", "created_at"]
     search_fields = ["title"]
     search_help_text = "제목으로 검색하세요."
+
+    def has_add_permission(self, request):
+        return False
