@@ -28,6 +28,7 @@ CSRF_TRUSTED_ORIGINS = [f"https://admin.{DOMAIN}"]
 CORS_ALLOWED_ORIGINS = [
     f"https://{DOMAIN}",
     f"https://www.{DOMAIN}",
+    "http://localhost:3000",
 ]
 
 
