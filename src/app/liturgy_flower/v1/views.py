@@ -12,9 +12,18 @@ from app.liturgy_flower.v1.serializers import LiturgyFlowerSerializer
 
 @extend_schema_view(
     list=extend_schema(summary="전례꽃 목록 조회"),
+    create=extend_schema(summary="전례꽃 생성"),
+    retrieve=extend_schema(summary="전례꽃 상세 조회"),
+    update=extend_schema(summary="전례꽃 수정"),
+    partial_update=extend_schema(exclude=True),
+    destroy=extend_schema(summary="전례꽃 삭제"),
 )
 class LiturgyFlowerViewSet(
     mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
     GenericViewSet,
 ):
     queryset = LiturgyFlower.objects.all()

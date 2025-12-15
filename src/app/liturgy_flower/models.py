@@ -4,6 +4,7 @@ from app.common.models import BaseModel
 
 
 class LiturgyFlower(BaseModel):
+    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
     title = models.CharField(verbose_name="제목", max_length=100)
 
     class Meta:
