@@ -2,17 +2,19 @@ from django.db import transaction
 from rest_framework import serializers
 
 from app.liturgy_flower.models import LiturgyFlower
-from app.liturgy_flower.v1.nested_serializers import LiturgyFlowerImageSerializer
+from app.liturgy_flower.v1.nested_serializers import LiturgyFlowerImageSerializer, UserSerializer
 from app.liturgy_flower_image.models import LiturgyFlowerImage
 
 
 class LiturgyFlowerSerializer(serializers.ModelSerializer):
+    user = UserSerializer(label="유저", read_only=True)
     image_set = LiturgyFlowerImageSerializer(label="이미지", many=True)
 
     class Meta:
         model = LiturgyFlower
         fields = [
             "id",
+            "user",
             "title",
             "image_set",
             "created_at",
