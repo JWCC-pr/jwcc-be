@@ -27,4 +27,5 @@ class DocumentViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("file_set")
         return queryset

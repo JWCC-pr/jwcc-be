@@ -5,7 +5,6 @@ from app.common.models import BaseModel
 
 class Document(BaseModel):
     title = models.CharField(verbose_name="제목", max_length=100)
-    file = models.FileField(verbose_name="자료", max_length=1000, upload_to="document/")
 
     class Meta:
         db_table = "document"

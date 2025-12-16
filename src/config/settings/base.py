@@ -34,6 +34,7 @@ LOCAL_APPS = [
     "app.email_verifier.apps.EmailVerifierConfig",
     "app.notice.apps.NoticeConfig",
     "app.document.apps.DocumentConfig",
+    "app.document_file.apps.DocumentFileConfig",
     "app.event.apps.EventConfig",
     "app.weekly_bulletin.apps.WeeklyBulletinConfig",
     "app.weekly_bulletin_hit.apps.WeeklyBulletinHitConfig",
