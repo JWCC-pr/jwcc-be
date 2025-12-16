@@ -3,6 +3,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.tokens import default_token_generator
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.template import loader
+from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from rest_framework import serializers
@@ -60,6 +61,8 @@ class UserLoginSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        validated_data["user"].last_login = timezone.localtime()
+        validated_data["user"].save()
         return validated_data["user"]
 
 

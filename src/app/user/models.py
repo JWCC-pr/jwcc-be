@@ -28,7 +28,6 @@ class User(BaseModelMixin, AbstractBaseUser):
         verbose_name="등급", choices=UserGradeChoices, default=UserGradeChoices.GRADE_05
     )
 
-    last_login = None
     is_authenticated = True
     is_active = models.BooleanField(verbose_name="가입승인 여부", default=False, editable=False)
 
