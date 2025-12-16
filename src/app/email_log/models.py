@@ -15,9 +15,7 @@ class EmailLog(BaseModel):
     email = models.EmailField(verbose_name="수신자")
     title = models.CharField(verbose_name="제목", max_length=128)
     content = models.TextField(verbose_name="내용")
-    status = models.CharField(
-        verbose_name="상태", max_length=1, choices=EmailLogStatus.choices, default=EmailLogStatus.READY
-    )
+    status = models.CharField(verbose_name="상태", max_length=1, choices=EmailLogStatus, default=EmailLogStatus.READY)
     fail_reason = models.TextField(verbose_name="실패사유", blank=True, default="")
 
     class Meta:

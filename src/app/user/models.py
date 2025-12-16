@@ -1,3 +1,4 @@
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.hashers import check_password, make_password
 from django.db import models
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
@@ -13,7 +14,7 @@ class UserGradeChoices(models.IntegerChoices):
     GRADE_05 = 5, "본당 신자"
 
 
-class User(BaseModel):
+class User(AbstractBaseUser):
     sub_department_set = models.ManyToManyField("department.SubDepartment", verbose_name="세부분과", blank=True)
     email = models.EmailField(verbose_name="유저네임", unique=True)
     password = models.CharField(verbose_name="비밀번호", max_length=128)
@@ -24,9 +25,10 @@ class User(BaseModel):
     detail_address = models.CharField(verbose_name="상세주소", max_length=200)
     birth = models.DateField(verbose_name="생년월일")
     grade = models.PositiveIntegerField(
-        verbose_name="등급", choices=UserGradeChoices.choices, default=UserGradeChoices.GRADE_05
+        verbose_name="등급", choices=UserGradeChoices, default=UserGradeChoices.GRADE_05
     )
 
+    last_login = None
     is_authenticated = True
     is_active = models.BooleanField(verbose_name="가입승인 여부", default=False, editable=False)
 
