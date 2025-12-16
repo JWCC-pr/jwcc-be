@@ -1,7 +1,7 @@
+import datetime
 import os
 
 import boto3
-from django.utils import timezone
 
 from app.common.secrets import get_secret
 from config.settings.base import *
@@ -39,29 +39,24 @@ DATABASES = {
     },
 }
 
-
-# S3
-AWS_REGION = "ap-northeast-2"
-AWS_STORAGE_BUCKET_NAME = f"{PROJECT_NAME}-dev-bucket"
-AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
-AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=864000"}
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = "public-read"
-AWS_S3_SECURE_URLS = True
-
-
 # CELERY
 CELERY_BROKER_URL = f"sqs://"
 CELERY_BROKER_TRANSPORT_OPTIONS = {
     "region": "ap-northeast-2",
-    "queue_name_prefix": f"{PROJECT_NAME}-dev-",
+    "queue_name_prefix": f"{PROJECT_NAME}-{APP_ENV}-",
 }
+
+
+# S3
+AWS_STORAGE_BUCKET_NAME = f"{PROJECT_NAME}-{APP_ENV}-bucket"
+AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=864000"}
 
 
 # MEDIA
 MEDIAFILES_LOCATION = "_media"
 MEDIA_ROOT = BASE_DIR / MEDIAFILES_LOCATION
 MEDIA_URL = f"/{MEDIAFILES_LOCATION}/"
+
 
 # STATIC
 STATIC_ROOT = BASE_DIR / "_static"
@@ -70,8 +65,8 @@ STATIC_URL = "/_static/"
 
 # JWT
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timezone.timedelta(days=30),
-    "REFRESH_TOKEN_LIFETIME": timezone.timedelta(days=365),
+    "ACCESS_TOKEN_LIFETIME": datetime.timedelta(days=1),
+    "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
 }
 
