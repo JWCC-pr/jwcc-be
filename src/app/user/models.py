@@ -3,7 +3,7 @@ from django.contrib.auth.hashers import check_password, make_password
 from django.db import models
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 
-from app.common.models import BaseModel
+from app.common.models import BaseModel, BaseModelMixin
 
 
 class UserGradeChoices(models.IntegerChoices):
@@ -14,7 +14,7 @@ class UserGradeChoices(models.IntegerChoices):
     GRADE_05 = 5, "본당 신자"
 
 
-class User(AbstractBaseUser):
+class User(BaseModelMixin, AbstractBaseUser):
     sub_department_set = models.ManyToManyField("department.SubDepartment", verbose_name="세부분과", blank=True)
     email = models.EmailField(verbose_name="유저네임", unique=True)
     password = models.CharField(verbose_name="비밀번호", max_length=128)

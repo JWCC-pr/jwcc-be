@@ -2,7 +2,7 @@ from django.apps import apps
 from django.db import models
 from django.db.models import FileField, ImageField
 
-FIELD_CHOICES = []
+FIELD_CHOICES = [("board.Board.body", "자유 게시글")]
 
 
 def get_file_fields():
