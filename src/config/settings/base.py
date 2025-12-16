@@ -276,6 +276,31 @@ CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": {
             "items": [
+                "Undo",
+                "Redo",
+                "|",
+                "heading",
+                "|",
+                "bold",
+                "link",
+                "|",
+                "imageUpload",
+                "imageStyle",
+                "imageStyle:alignLeft",
+                "imageStyle:alignRight",
+                "imageStyle:alignCenter",
+                "ImageResize",
+                "|",
+                "FullScreen",
+            ],
+        },
+    },
+    "media": {
+        "toolbar": {
+            "items": [
+                "Undo",
+                "Redo",
+                "|",
                 "heading",
                 "|",
                 "bold",
@@ -289,8 +314,6 @@ CKEDITOR_5_CONFIGS = {
                 "ImageResize",
                 "|",
                 "mediaEmbed",
-                "|",
-                "SourceEditing",
                 "|",
                 "FullScreen",
             ],

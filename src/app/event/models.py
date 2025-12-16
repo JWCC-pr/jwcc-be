@@ -7,7 +7,7 @@ from app.common.models import BaseModel
 class Event(BaseModel):
     thumbnail = models.ImageField(verbose_name="썸네일", max_length=1000, upload_to="event/thumbnail/")
     title = models.CharField(verbose_name="제목", max_length=100)
-    body = CKEditor5Field(verbose_name="본문")
+    body = CKEditor5Field(verbose_name="본문", config_name="media")
 
     class Meta:
         db_table = "event"
