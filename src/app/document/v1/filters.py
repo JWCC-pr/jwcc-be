@@ -4,4 +4,4 @@ from app.document.models import Document
 
 
 class DocumentFilter(django_filters.FilterSet):
-    pass
+    title = django_filters.CharFilter(field_name="title", lookup_expr="icontains")
