@@ -269,7 +269,7 @@ ALARMTALK_ID = "**"
 ALARMTALK_CLIENT_ID = "**"
 ALARMTALK_CLIENT_SECRET = "**"
 
-
+# CKEDITOR
 CKEDITOR_5_CONFIGS = {
     "default": {
         "toolbar": {
