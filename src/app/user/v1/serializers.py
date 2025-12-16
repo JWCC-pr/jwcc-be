@@ -64,7 +64,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    sub_department_ids = serializers.ListSerializer(label="분과 ID", child=serializers.IntegerField())
+    sub_department_ids = serializers.ListSerializer(label="분과 ID", write_only=True, child=serializers.IntegerField())
     email_verifier_token = serializers.CharField(label="이메일 검증 토큰", write_only=True)
     access_token = serializers.CharField(label="액세스토큰", read_only=True)
     refresh_token = serializers.CharField(label="리프레시토큰", read_only=True)
