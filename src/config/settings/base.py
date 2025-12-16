@@ -318,8 +318,6 @@ CKEDITOR_5_CONFIGS = {
                 "|",
                 "mediaEmbed",
                 "|",
-                "SourceEditing",
-                "|",
                 "FullScreen",
             ],
         },
