@@ -272,8 +272,10 @@ ALARMTALK_CLIENT_ID = "**"
 ALARMTALK_CLIENT_SECRET = "**"
 
 # CKEDITOR
+SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 CKEDITOR_5_CONFIGS = {
     "default": {
+        "language": "ko",
         "toolbar": {
             "items": [
                 "Undo",
@@ -296,6 +298,7 @@ CKEDITOR_5_CONFIGS = {
         },
     },
     "media": {
+        "language": "ko",
         "toolbar": {
             "items": [
                 "Undo",
@@ -314,6 +317,8 @@ CKEDITOR_5_CONFIGS = {
                 "ImageResize",
                 "|",
                 "mediaEmbed",
+                "|",
+                "SourceEditing",
                 "|",
                 "FullScreen",
             ],
