@@ -12,7 +12,9 @@ class Command(BaseCommand):
     help = "AWS session manager를 시작합니다."
 
     def add_arguments(self, parser):
-        parser.add_argument("--port", "-p", default=str(settings.DATABASES["default"]["PORT"]), type=str, help="로컬 포트")
+        parser.add_argument(
+            "--port", "-p", default=str(settings.DATABASES["default"]["PORT"]), type=str, help="로컬 포트"
+        )
 
     def handle(self, *args, **options):
         settings_option = options.get("settings")

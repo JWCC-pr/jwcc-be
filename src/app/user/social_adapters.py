@@ -49,7 +49,7 @@ class KakaoAdapter(SocialAdapter):
 
     def get_social_user_id(self):
         url = "https://kapi.kakao.com/v2/user/me"
-        headers = {"Authorization": f'Bearer {self.get_access_token()}'}
+        headers = {"Authorization": f"Bearer {self.get_access_token()}"}
         response = requests.get(url=url, headers=headers)
         if not response.ok:
             raise ValidationError("KAKAO ME API ERROR")
@@ -80,7 +80,7 @@ class NaverAdapter(SocialAdapter):
 
     def get_social_user_id(self):
         url = "https://openapi.naver.com/v1/nid/me"
-        headers = {"Authorization": f'Bearer {self.get_access_token()}'}
+        headers = {"Authorization": f"Bearer {self.get_access_token()}"}
         response = requests.post(url=url, headers=headers)
         if not response.ok:
             raise ValidationError("NAVER ME API ERROR")

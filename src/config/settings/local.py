@@ -1,9 +1,7 @@
 import os
 
 import boto3
-import sentry_sdk
 from django.utils import timezone
-from sentry_sdk.integrations.django import DjangoIntegration
 
 from app.common.secrets import get_secret
 from config.settings.base import *

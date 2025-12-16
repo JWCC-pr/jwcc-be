@@ -18,9 +18,13 @@ class Command(BaseCommand):
         default_description_3 = "Each email we send will include an unsubscribe link at the bottom, allowing recipients to easily opt out of future emails. When recipients click this link, they will be directed to a page where they can confirm their decision to unsubscribe. This request will be processed immediately, and the recipient's email address will be removed from our mailing list to ensure they no longer receive our emails. Additionally, we will provide a contact email address where recipients can manually request to be unsubscribed, and such requests will be handled promptly by our support team."
         default_description_4 = "The sending rate and sending quota specified in this request were determined based on our current and projected email volume needs. We primarily send emails for user registration verification and password recovery, which are critical for account security. Our estimates are based on our current user base and anticipated growth, ensuring we can handle peak usage times without any issues. These projections allow us to maintain a balance between efficiency and system reliability, ensuring optimal performance and user experience."
         use_case_description = [
-            input(color_string("cyan", f"메일 발송 목록을 어떻게 작성하거나 만들 계획인가요?{blank_message}")) or default_description_1,
-            input(color_string("cyan", f"반송 메일과 수신 거부를 어떻게 처리할 계획인가요?{blank_message}")) or default_description_2,
-            input(color_string("cyan", f"수신자가 귀하가 보내는 이메일을 수신 거부하는 방법은 무엇입니까?{blank_message}"))
+            input(color_string("cyan", f"메일 발송 목록을 어떻게 작성하거나 만들 계획인가요?{blank_message}"))
+            or default_description_1,
+            input(color_string("cyan", f"반송 메일과 수신 거부를 어떻게 처리할 계획인가요?{blank_message}"))
+            or default_description_2,
+            input(
+                color_string("cyan", f"수신자가 귀하가 보내는 이메일을 수신 거부하는 방법은 무엇입니까?{blank_message}")
+            )
             or default_description_3,
             input(
                 color_string(

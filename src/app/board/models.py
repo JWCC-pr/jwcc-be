@@ -1,5 +1,5 @@
-from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
+from django_ckeditor_5.fields import CKEditor5Field
 
 from app.common.models import BaseModel
 
@@ -7,7 +7,7 @@ from app.common.models import BaseModel
 class Board(BaseModel):
     user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
     title = models.CharField(verbose_name="제목", max_length=100)
-    body = RichTextUploadingField(verbose_name="본문")
+    body = CKEditor5Field(verbose_name="본문")
     hit_count = models.PositiveBigIntegerField(verbose_name="조회수", default=0, editable=False)
     comment_count = models.PositiveBigIntegerField(verbose_name="댓글수", default=0, editable=False)
     like_count = models.PositiveBigIntegerField(verbose_name="좋아요수", default=0, editable=False)

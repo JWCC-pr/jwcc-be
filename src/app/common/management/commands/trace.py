@@ -40,6 +40,13 @@ class Command(BaseCommand):
         if events:
             print(color_string("red", events[0]["message"]))
         else:
-            is_retry = input(color_string("red", "로그가 검색되지 않았습니다. 재검색을 원하시면 Y를 입력하세요. (기본: Y, 종료: 아무키)")) or "Y"
+            is_retry = (
+                input(
+                    color_string(
+                        "red", "로그가 검색되지 않았습니다. 재검색을 원하시면 Y를 입력하세요. (기본: Y, 종료: 아무키)"
+                    )
+                )
+                or "Y"
+            )
             if is_retry == "Y":
                 self.get_trace_log(trace_id)

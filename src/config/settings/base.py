@@ -60,9 +60,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "storages",
-    "ckeditor",
-    "ckeditor_uploader",
-    "safedelete",
+    "django_ckeditor_5",
     "ordered_model",
     "import_export",
 ]
@@ -272,39 +270,17 @@ ALARMTALK_CLIENT_ID = "**"
 ALARMTALK_CLIENT_SECRET = "**"
 
 
-# CKEDITOR
-CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_CONFIGS = {
+CKEDITOR_5_CONFIGS = {
     "default": {
-        "width": "1000px",
-        "toolbar": "Custom",
-        "toolbar_Custom": [
-            ["Undo", "Redo"],
-            ["Format"],
-            ["Bold", "Italic", "Underline"],
-            ["Image"],
-            ["Preview"],
-            ["Maximize"],
-            ["Source"],
-        ],
-        "format_tags": "p;h1;h2;h3;h4;h5",
-        "extraPlugins": "image2",
-        "removePlugins": "image",
-        "image2_captionedClass": "image-captioned",
-        "image2_altRequired": True,
-        "filebrowserImageBrowseUrl": False,
-        "filebrowserBrowseUrl": False,
-        "allowedContent": {
-            "h1": True,
-            "p": True,
-            "figure": {"classes": ["image-captioned"]},
-            "figcaption": True,
-            "span": True,
-            "img": {"attributes": ["src", "alt"]},
-            "strong": True,
-            "em": True,
-            "u": True,
-        },
+        "toolbar": {
+            "items": [
+                "heading",
+                "|",
+                "bold",
+                "link",
+                "imageUpload",
+            ],
+        }
     },
 }
 
