@@ -58,7 +58,7 @@ class BoardViewSet(
             ),
             is_liked=Exists(BoardLike.objects.filter(board_id=OuterRef("id"), user_id=self.request.user.id)),
         )
-        queryset = queryset.prefetch_related("user__department_set")
+        queryset = queryset.prefetch_related("user__sub_department_set")
         return queryset
 
     def retrieve(self, request, *args, **kwargs):

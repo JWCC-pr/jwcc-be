@@ -14,7 +14,7 @@ class UserGradeChoices(models.IntegerChoices):
 
 
 class User(BaseModel):
-    department_set = models.ManyToManyField("department.Department", verbose_name="분과", blank=True)
+    sub_department_set = models.ManyToManyField("department.SubDepartment", verbose_name="세부분과", blank=True)
     email = models.EmailField(verbose_name="유저네임", unique=True)
     password = models.CharField(verbose_name="비밀번호", max_length=128)
     name = models.CharField(verbose_name="이름", max_length=20)

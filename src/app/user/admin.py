@@ -76,15 +76,15 @@ class UserAdmin(ExportActionModelAdmin):
         "is_active",
         "created_at",
     ]
-    list_filter = ["department_set", "grade", "is_active"]
+    list_filter = ["sub_department_set", "grade", "is_active"]
     search_fields = ["email", "name", "baptismal_name"]
     search_help_text = "이메일, 이름, 세레명으로 검색하세요."
-    autocomplete_fields = ["department_set"]
+    raw_id_fields = ["sub_department_set"]
     actions = ["approve_users"]
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
-        queryset = queryset.prefetch_related("department_set")
+        queryset = queryset.prefetch_related("sub_department_set")
         return queryset
 
     @admin.action(description="선택된 유저 을/를 가입승인합니다.")

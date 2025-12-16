@@ -64,7 +64,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    department_ids = serializers.ListSerializer(label="분과 ID", child=serializers.IntegerField())
+    sub_department_ids = serializers.ListSerializer(label="분과 ID", child=serializers.IntegerField())
     email_verifier_token = serializers.CharField(label="이메일 검증 토큰", write_only=True)
     access_token = serializers.CharField(label="액세스토큰", read_only=True)
     refresh_token = serializers.CharField(label="리프레시토큰", read_only=True)
@@ -72,7 +72,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "department_ids",
+            "sub_department_ids",
             "email",
             "email_verifier_token",
             "password",
@@ -94,12 +94,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        department_ids = validated_data.pop("department_ids")
+        sub_department_ids = validated_data.pop("sub_department_ids")
         password = validated_data.pop("password", None)
         user = User(**validated_data)
         user.set_password(password)
         user.save()
-        user.department_set.set(department_ids)
+        user.sub_department_set.set(sub_department_ids)
 
         return user
 

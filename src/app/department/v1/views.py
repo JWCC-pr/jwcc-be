@@ -25,4 +25,5 @@ class DepartmentViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("sub_department_set")
         return queryset

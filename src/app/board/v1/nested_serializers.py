@@ -4,15 +4,15 @@ from app.department.models import Department
 from app.user.models import User
 
 
-class DepartmentSerializer(serializers.ModelSerializer):
+class SubDepartmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Department
         fields = ["id", "name"]
-        ref_name = "BoardDepartmentSerializer"
+        ref_name = "BoardSubDepartmentSerializer"
 
 
 class UserSerializer(serializers.ModelSerializer):
-    department_set = DepartmentSerializer(label="분과", many=True)
+    sub_department_set = SubDepartmentSerializer(label="분과", many=True)
 
     class Meta:
         model = User
@@ -20,6 +20,6 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "baptismal_name",
-            "department_set",
+            "sub_department_set",
         ]
         ref_name = "BoardUserSerializer"

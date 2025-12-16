@@ -31,6 +31,7 @@ LOCAL_APPS = [
     "app.email_log.apps.EmailLogConfig",
     "app.presigned_url.apps.PreSignedUrlConfig",
     "app.department.apps.DepartmentConfig",
+    "app.sub_department.apps.SubDepartmentConfig",
     "app.email_verifier.apps.EmailVerifierConfig",
     "app.notice.apps.NoticeConfig",
     "app.document.apps.DocumentConfig",

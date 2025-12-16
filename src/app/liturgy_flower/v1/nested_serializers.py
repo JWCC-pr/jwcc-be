@@ -2,18 +2,19 @@ from rest_framework import serializers
 
 from app.department.models import Department
 from app.liturgy_flower_image.models import LiturgyFlowerImage
+from app.sub_department.models import SubDepartment
 from app.user.models import User
 
 
-class DepartmentSerializer(serializers.ModelSerializer):
+class SubDepartmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Department
+        model = SubDepartment
         fields = ["id", "name"]
-        ref_name = "LiturgyFlowerDepartmentSerializer"
+        ref_name = "LiturgyFlowerSubDepartmentSerializer"
 
 
 class UserSerializer(serializers.ModelSerializer):
-    department_set = DepartmentSerializer(label="분과", many=True)
+    sub_department_set = SubDepartmentSerializer(label="분과", many=True)
 
     class Meta:
         model = User
@@ -21,7 +22,7 @@ class UserSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "baptismal_name",
-            "department_set",
+            "sub_department_set",
         ]
         ref_name = "LiturgyFlowerUserSerializer"
 
