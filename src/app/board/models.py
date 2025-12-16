@@ -11,6 +11,7 @@ class Board(BaseModel):
     hit_count = models.PositiveBigIntegerField(verbose_name="조회수", default=0, editable=False)
     comment_count = models.PositiveBigIntegerField(verbose_name="댓글수", default=0, editable=False)
     like_count = models.PositiveBigIntegerField(verbose_name="좋아요수", default=0, editable=False)
+    is_modified = models.BooleanField(verbose_name="수정여부", default=False, editable=False)
 
     class Meta:
         db_table = "board"

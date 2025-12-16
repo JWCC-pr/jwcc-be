@@ -30,6 +30,7 @@ class PassingNoticeComment(BaseModel):
         related_query_name="child",
     )
     body = models.CharField(verbose_name="내용", max_length=500)
+    is_modified = models.BooleanField(verbose_name="수정여부", default=False, editable=False)
     is_deleted = models.BooleanField(verbose_name="삭제여부", default=False, editable=False)
 
     class Meta:

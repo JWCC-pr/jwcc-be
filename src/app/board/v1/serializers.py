@@ -21,6 +21,7 @@ class BoardSerializer(serializers.ModelSerializer):
             "hit_count",
             "comment_count",
             "like_count",
+            "is_modified",
             "created_at",
             "updated_at",
         ]
@@ -35,5 +36,6 @@ class BoardSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
+        validated_data["is_modified"] = True
         instance = super().update(instance, validated_data)
         return instance

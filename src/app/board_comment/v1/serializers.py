@@ -20,6 +20,7 @@ class BoardCommentSerializer(serializers.ModelSerializer):
             "parent_id",
             "body",
             "is_owned",
+            "is_modified",
             "is_deleted",
             "created_at",
         ]
@@ -40,5 +41,6 @@ class BoardCommentSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
+        validated_data["is_modified"] = True
         instance = super().update(instance, validated_data)
         return instance
