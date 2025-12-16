@@ -21,6 +21,8 @@ class BoardSerializer(serializers.ModelSerializer):
             "hit_count",
             "comment_count",
             "like_count",
+            "created_at",
+            "updated_at",
         ]
 
     def validate(self, attrs):
