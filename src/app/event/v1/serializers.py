@@ -11,7 +11,6 @@ class EventSerializer(serializers.ModelSerializer):
             "thumbnail",
             "title",
             "body",
-            "youtube_link",
             "created_at",
             "updated_at",
         ]
