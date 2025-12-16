@@ -66,15 +66,22 @@ AWS_STORAGE_BUCKET_NAME = f"{PROJECT_NAME}-prod-bucket"
 AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=864000"}
 
 
+# STORAGES
+STORAGES = {
+    "default": {
+        "BACKEND": "app.common.storages.PublicMediaStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "app.common.storages.StaticStorage",
+    },
+}
+
 # STATIC
 STATICFILES_LOCATION = "_static"
-STATICFILES_STORAGE = "app.common.storages.StaticStorage"
 STATIC_URL = f"/{STATICFILES_LOCATION}/"
-
 
 # MEDIA
 MEDIAFILES_LOCATION = "_media"
-DEFAULT_FILE_STORAGE = "app.common.storages.PublicMediaStorage"
 MEDIA_URL = f"/{MEDIAFILES_LOCATION}/"
 
 
