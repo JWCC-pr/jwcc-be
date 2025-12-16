@@ -7,6 +7,7 @@ from app.common.models import BaseModel
 class Notice(BaseModel):
     title = models.CharField(verbose_name="제목", max_length=100)
     body = CKEditor5Field(verbose_name="본문")
+    is_fixed = models.BooleanField(verbose_name="고정여부", default=False)
 
     class Meta:
         db_table = "notice"

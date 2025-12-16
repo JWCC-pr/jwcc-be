@@ -4,4 +4,4 @@ from app.notice.models import Notice
 
 
 class NoticeFilter(django_filters.FilterSet):
-    pass
+    is_fixed = django_filters.BooleanFilter(label="고정여부")
