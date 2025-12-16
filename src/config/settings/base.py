@@ -22,6 +22,7 @@ class Response(wsgi.Response):
 
 wsgi.Response = Response
 
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 50
 
 LOCAL_APPS = [
     "app.staticfile",
@@ -279,9 +280,24 @@ CKEDITOR_5_CONFIGS = {
                 "|",
                 "bold",
                 "link",
+                "|",
                 "imageUpload",
+                "imageStyle",
+                "imageStyle:alignLeft",
+                "imageStyle:alignRight",
+                "imageStyle:alignCenter",
+                "ImageResize",
+                "|",
+                "mediaEmbed",
+                "|",
+                "SourceEditing",
+                "|",
+                "FullScreen",
             ],
-        }
+        },
+        "mediaEmbed": {
+            "previewsInData": True,
+        },
     },
 }
 
