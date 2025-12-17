@@ -29,6 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
             "base_address",
             "detail_address",
             "birth",
+            "grade",
         ]
 
 
