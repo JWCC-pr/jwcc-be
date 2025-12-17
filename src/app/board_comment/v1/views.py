@@ -34,6 +34,7 @@ class BoardCommentViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.filter(board_id=self.kwargs["board_id"])
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),
@@ -42,6 +43,4 @@ class BoardCommentViewSet(
             ),
         )
         queryset = queryset.prefetch_related("user__sub_department_set")
-        if not self.request.query_params.get("parent_id"):
-            queryset = queryset.filter(parent__isnull=True)
         return queryset
