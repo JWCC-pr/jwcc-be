@@ -8,10 +8,12 @@ from app.common.models import BaseModel, BaseModelMixin
 
 class UserGradeChoices(models.IntegerChoices):
     GRADE_01 = 1, "총관리자"
-    GRADE_02 = 2, "관리자"
-    GRADE_03 = 3, "사제 및 수도자"
+    GRADE_02 = 2, "사제 및 수도자"
+    GRADE_03 = 3, "사무실"
     GRADE_04 = 4, "단체장"
-    GRADE_05 = 5, "본당 신자"
+    GRADE_05 = 5, "명도회"
+    GRADE_06 = 6, "본당 신자"
+    GRADE_07 = 7, "타본당 신자"
 
 
 class User(BaseModelMixin, AbstractBaseUser):
@@ -25,7 +27,7 @@ class User(BaseModelMixin, AbstractBaseUser):
     detail_address = models.CharField(verbose_name="상세주소", max_length=200)
     birth = models.DateField(verbose_name="생년월일")
     grade = models.PositiveIntegerField(
-        verbose_name="등급", choices=UserGradeChoices, default=UserGradeChoices.GRADE_05
+        verbose_name="등급", choices=UserGradeChoices, default=UserGradeChoices.GRADE_07
     )
 
     is_authenticated = True

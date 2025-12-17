@@ -12,6 +12,7 @@ class ScheduleSerializer(serializers.ModelSerializer):
             "scheduled_at",
             "start_time",
             "end_time",
+            "location",
         ]
 
     def validate(self, attrs):
