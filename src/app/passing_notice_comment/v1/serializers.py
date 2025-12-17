@@ -6,7 +6,6 @@ from app.passing_notice_comment.v1.nested_serializers import UserSerializer
 
 class PassingNoticeCommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(label="유저", read_only=True)
-    parent_id = serializers.IntegerField(label="부모 댓글 ID", write_only=True, allow_null=True)
     is_owned = serializers.BooleanField(label="소유 여부", read_only=True)
 
     class Meta:
@@ -14,7 +13,6 @@ class PassingNoticeCommentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "user",
-            "parent_id",
             "body",
             "is_owned",
             "is_modified",
