@@ -6,6 +6,7 @@ urlpatterns = [
     path("v1/", include("app.presigned_url.v1.urls")),
     path("v1/", include("app.email_verifier.v1.urls")),
     path("v1/", include("app.notice.v1.urls")),
+    path("v1/", include("app.notice_file.v1.urls")),
     path("v1/", include("app.event.v1.urls")),
     path("v1/", include("app.weekly_bulletin.v1.urls")),
     path("v1/", include("app.passing_notice.v1.urls")),
