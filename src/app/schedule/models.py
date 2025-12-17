@@ -6,7 +6,9 @@ from app.common.models import BaseModel
 class Schedule(BaseModel):
     title = models.CharField(verbose_name="제목", max_length=100)
     scheduled_at = models.DateField(verbose_name="날짜")
-    start_time = models.TimeField(verbose_name="시작시간", help_text="입력하지 않은 경우 하루종일", null=True, blank=True)
+    start_time = models.TimeField(
+        verbose_name="시작시간", help_text="입력하지 않은 경우 하루종일", null=True, blank=True
+    )
     end_time = models.TimeField(verbose_name="종료시간", help_text="입력하지 않은 경우 하루종일", null=True, blank=True)
     location = models.CharField(verbose_name="장소", max_length=200, blank=True, default="")
 
