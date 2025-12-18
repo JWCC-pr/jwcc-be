@@ -101,7 +101,7 @@ class UserAdmin(ExportActionModelAdmin):
             context = {
                 "name": user.name,
                 "email": user.email,
-                "approval_date": now.strftime("%Y년 %m월 %일 %H시 %M분"),
+                "approval_date": now.strftime("%Y년 %m월 %d일 %H시 %M분"),
                 "login_url": f"https://www.{settings.DOMAIN}/login",
             }
             content = loader.render_to_string("user/register_confirm.html", context)

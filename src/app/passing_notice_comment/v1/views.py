@@ -42,6 +42,4 @@ class PassingNoticeCommentViewSet(
             ),
         )
         queryset = queryset.prefetch_related("user__sub_department_set")
-        if not self.request.query_params.get("parent_id"):
-            queryset = queryset.filter(parent__isnull=True)
         return queryset
