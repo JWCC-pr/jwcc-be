@@ -16,9 +16,7 @@ class LiturgyFlowerCommentManager(models.Manager):
 class LiturgyFlowerComment(BaseModel):
     objects = LiturgyFlowerCommentManager()
     user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
-    liturgy_flower = models.ForeignKey(
-        "liturgy_flower.LiturgyFlower", verbose_name="전례꽃", on_delete=models.CASCADE
-    )
+    liturgy_flower = models.ForeignKey("liturgy_flower.LiturgyFlower", verbose_name="전례꽃", on_delete=models.CASCADE)
     parent = models.ForeignKey(
         "self",
         verbose_name="부모 댓글",

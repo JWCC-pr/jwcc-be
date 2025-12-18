@@ -14,9 +14,15 @@ class LiturgyFlowerImageInline(admin.StackedInline):
 @admin.register(LiturgyFlower)
 class LiturgyFlowerAdmin(admin.ModelAdmin):
     inlines = [LiturgyFlowerImageInline]
-    list_display = ["title", "created_at", "comment_count"]
-    search_fields = ["title"]
-    search_help_text = "제목으로 검색하세요."
+    list_display = ["title", "user", "created_at", "hit_count", "comment_count", "like_count"]
+    search_fields = ["user__name", "title"]
+    search_help_text = "유저 이름, 제목으로 검색하세요."
+    raw_id_fields = ["user"]
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        queryset = queryset.select_related("user")
+        return queryset
 
     def has_add_permission(self, request):
         return False

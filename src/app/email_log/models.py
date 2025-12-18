@@ -1,3 +1,4 @@
+import requests
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db import models
@@ -24,19 +25,13 @@ class EmailLog(BaseModel):
         verbose_name_plural = verbose_name
 
     def send(self):
-        try:
-            send_mail(
-                subject=self.title,
-                message="",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[self.email],
-                html_message=self.content,
-                fail_silently=False,
-            )
-            self.status = EmailLogStatus.SUCCESS
-            self.fail_reason = ""
-        except Exception as e:
-            self.status = EmailLogStatus.FAILURE
-            self.fail_reason = str(e)
-            raise e
-        self.save()
+        return requests.post(
+            "https://api.mailgun.net/v3/jwcc.or.kr/messages",
+            auth=("api", settings.MAILGUN_API_KEY),
+            data={
+                "from": settings.DEFAULT_FROM_EMAIL,
+                "to": self.email,
+                "subject": self.title,
+                "html": self.content,
+            },
+        )

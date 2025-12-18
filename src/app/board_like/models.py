@@ -13,5 +13,5 @@ class BoardLike(BaseModel):
         verbose_name_plural = verbose_name
         ordering = ["-created_at"]
         constraints = [
-            models.UniqueConstraint(fields=["board", "user"], name="unique_likes"),
+            models.UniqueConstraint(fields=["board", "user"], name="unique_board_likes"),
         ]

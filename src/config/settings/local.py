@@ -74,7 +74,7 @@ SIMPLE_JWT = {
 # EMAIL
 EMAIL_HOST_USER = SECRET["email_user"]
 EMAIL_HOST_PASSWORD = SECRET["email_password"]
-
+MAILGUN_API_KEY = SECRET["mailgun_api_key"]
 
 LOGGING = {
     "version": 1,

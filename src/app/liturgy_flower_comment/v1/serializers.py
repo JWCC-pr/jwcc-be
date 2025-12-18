@@ -37,9 +37,7 @@ class LiturgyFlowerCommentSerializer(serializers.ModelSerializer):
             validated_data["liturgy_flower_id"] = self.context["view"].kwargs["liturgy_flower_id"]
             validated_data["user_id"] = self.context["request"].user.id
             instance = super().create(validated_data)
-            LiturgyFlower.objects.filter(id=instance.liturgy_flower_id).update(
-                comment_count=F("comment_count") + 1
-            )
+            LiturgyFlower.objects.filter(id=instance.liturgy_flower_id).update(comment_count=F("comment_count") + 1)
         return instance
 
     def update(self, instance, validated_data):
