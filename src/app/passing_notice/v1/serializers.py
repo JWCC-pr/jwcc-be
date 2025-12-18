@@ -21,5 +21,6 @@ class PassingNoticeSerializer(serializers.ModelSerializer):
             "chief_mourner",
             "encoffinment_at",
             "departure_at",
+            "comment_count",
             "created_at",
         ]

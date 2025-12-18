@@ -12,6 +12,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "title",
+            "body",
             "file_set",
             "created_at",
             "updated_at",

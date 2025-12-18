@@ -17,6 +17,7 @@ class PassingNotice(BaseModel):
     chief_mourner = models.CharField(verbose_name="상주", max_length=20)
     encoffinment_at = models.DateTimeField(verbose_name="입관 일정")
     departure_at = models.DateTimeField(verbose_name="발인 일정")
+    comment_count = models.PositiveBigIntegerField(verbose_name="댓글수", default=0, editable=False)
 
     class Meta:
         db_table = "passing_notice"
