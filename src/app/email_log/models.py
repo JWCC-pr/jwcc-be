@@ -35,15 +35,9 @@ class EmailLog(BaseModel):
                 "html": self.content,
             },
         )
-        print(response.text)
-        return response
-        return requests.post(
-            "https://api.mailgun.net/v3/jwcc.or.kr/messages",
-            auth=("api", settings.MAILGUN_API_KEY),
-            data={
-                "from": settings.DEFAULT_FROM_EMAIL,
-                "to": self.email,
-                "subject": self.title,
-                "html": self.content,
-            },
-        )
+        if response.ok:
+            self.status = EmailLogStatus.SUCCESS
+        else:
+            self.status = EmailLogStatus.FAILURE
+            self.fail_reason = response.json()["message"]
+        self.save()

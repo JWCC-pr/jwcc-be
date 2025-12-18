@@ -104,7 +104,7 @@ class UserAdmin(ExportActionModelAdmin):
                 "approval_date": now.strftime("%Y년 %m월 %일 %H시 %M분"),
                 "login_url": f"https://www.{settings.DOMAIN}/login",
             }
-            content = loader.render_to_string("user/password_reset.html", context)
+            content = loader.render_to_string("user/register_confirm.html", context)
             email_log = EmailLog.objects.create(
                 email=user.email,
                 title=subject,
