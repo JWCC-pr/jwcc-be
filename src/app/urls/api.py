@@ -13,6 +13,7 @@ urlpatterns = [
     path("v1/", include("app.passing_notice.v1.urls")),
     path("v1/", include("app.passing_notice_comment.v1.urls")),
     path("v1/", include("app.liturgy_flower.v1.urls")),
+    path("v1/", include("app.liturgy_flower_comment.v1.urls")),
     path("v1/", include("app.board.v1.urls")),
     path("v1/", include("app.board_comment.v1.urls")),
     path("v1/", include("app.board_like.v1.urls")),

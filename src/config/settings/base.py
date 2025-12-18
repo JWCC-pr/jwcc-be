@@ -46,6 +46,7 @@ LOCAL_APPS = [
     "app.passing_notice_comment.apps.PassingNoticeCommentConfig",
     "app.liturgy_flower.apps.LiturgyFlowerConfig",
     "app.liturgy_flower_image.apps.LiturgyFlowerImageConfig",
+    "app.liturgy_flower_comment.apps.LiturgyFlowerCommentConfig",
     "app.board.apps.BoardConfig",
     "app.board_hit.apps.BoardHitConfig",
     "app.board_comment.apps.BoardCommentConfig",
