@@ -33,7 +33,7 @@ class PassingNoticeCommentSerializer(serializers.ModelSerializer):
         validated_data["passing_notice_id"] = self.context["view"].kwargs["passing_notice_id"]
         validated_data["user_id"] = self.context["request"].user.id
         instance = super().create(validated_data)
-        PassingNotice.objects.filter(id=instance.board_id).update(comment_count=F("comment_count") + 1)
+        PassingNotice.objects.filter(id=instance.passing_notice_id).update(comment_count=F("comment_count") + 1)
         return instance
 
     def update(self, instance, validated_data):
