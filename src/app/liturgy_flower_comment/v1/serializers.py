@@ -1,5 +1,8 @@
+from django.db import transaction
+from django.db.models import F
 from rest_framework import serializers
 
+from app.liturgy_flower.models import LiturgyFlower
 from app.liturgy_flower_comment.models import LiturgyFlowerComment
 from app.liturgy_flower_comment.v1.nested_serializers import UserSerializer
 
@@ -30,9 +33,13 @@ class LiturgyFlowerCommentSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        validated_data["liturgy_flower_id"] = self.context["view"].kwargs["liturgy_flower_id"]
-        validated_data["user_id"] = self.context["request"].user.id
-        instance = super().create(validated_data)
+        with transaction.atomic():
+            validated_data["liturgy_flower_id"] = self.context["view"].kwargs["liturgy_flower_id"]
+            validated_data["user_id"] = self.context["request"].user.id
+            instance = super().create(validated_data)
+            LiturgyFlower.objects.filter(id=instance.liturgy_flower_id).update(
+                comment_count=F("comment_count") + 1
+            )
         return instance
 
     def update(self, instance, validated_data):

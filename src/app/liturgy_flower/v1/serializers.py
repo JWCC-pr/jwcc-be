@@ -16,6 +16,7 @@ class LiturgyFlowerSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "title",
+            "comment_count",
             "image_set",
             "created_at",
         ]
