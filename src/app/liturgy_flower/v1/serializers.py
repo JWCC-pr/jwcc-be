@@ -16,6 +16,7 @@ class LiturgyFlowerSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "title",
+            "comment_count",
             "image_set",
             "created_at",
         ]
@@ -25,7 +26,7 @@ class LiturgyFlowerSerializer(serializers.ModelSerializer):
             image_data_set = validated_data.pop("image_set")
             validated_data["user"] = self.context["request"].user
             liturgy_flower = LiturgyFlower.objects.create(**validated_data)
-            LiturgyFlower.objects.bulk_create(
+            LiturgyFlowerImage.objects.bulk_create(
                 [
                     LiturgyFlowerImage(
                         liturgy_flower=liturgy_flower,
@@ -41,7 +42,7 @@ class LiturgyFlowerSerializer(serializers.ModelSerializer):
             image_data_set = validated_data.pop("image_set")
             instance = super().update(instance, validated_data)
             instance.image_set.all().delete()
-            LiturgyFlower.objects.bulk_create(
+            LiturgyFlowerImage.objects.bulk_create(
                 [
                     LiturgyFlowerImage(
                         liturgy_flower=instance,

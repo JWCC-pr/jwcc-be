@@ -14,7 +14,7 @@ class LiturgyFlowerImageInline(admin.StackedInline):
 @admin.register(LiturgyFlower)
 class LiturgyFlowerAdmin(admin.ModelAdmin):
     inlines = [LiturgyFlowerImageInline]
-    list_display = ["title", "created_at"]
+    list_display = ["title", "created_at", "comment_count"]
     search_fields = ["title"]
     search_help_text = "제목으로 검색하세요."
 
