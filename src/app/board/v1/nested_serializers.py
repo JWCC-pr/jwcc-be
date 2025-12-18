@@ -1,12 +1,13 @@
 from rest_framework import serializers
 
-from app.department.models import Department
+
+from app.sub_department.models import SubDepartment
 from app.user.models import User
 
 
 class SubDepartmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Department
+        model = SubDepartment
         fields = ["id", "name"]
         ref_name = "BoardSubDepartmentSerializer"
 

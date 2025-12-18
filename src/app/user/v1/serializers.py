@@ -14,10 +14,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from app.email_log.models import EmailLog
 from app.email_verifier.models import EmailVerifier
 from app.user.models import User
+from app.user.v1.nested_serializers import SubDepartmentSerializer
 from app.user.validators import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
+    sub_department_set = SubDepartmentSerializer(label="분과", many=True)
+
     class Meta:
         model = User
         fields = [
@@ -30,6 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
             "detail_address",
             "birth",
             "grade",
+            "sub_department_set",
         ]
 
 

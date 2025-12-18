@@ -36,6 +36,11 @@ class UserViewSet(
     permission_classes = [IsAuthenticated]
     lookup_value_regex = "me"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("sub_department_set")
+        return queryset
+
     def get_object(self):
         if self.kwargs.get("pk") == "me":
             return self.queryset.get(id=self.request.user.id)
