@@ -42,12 +42,11 @@ class EmailVerifierCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def _send_code(self, attrs):
-        subject = "잠원동 성당 회원가입 인증메일"
+        subject = "회원가입 이메일 인증"
         context = {
-            "subject": subject,
-            "message": f'잠원동 성당 회원가입 인증코드 [{attrs["code"]}]',
+            "code": attrs["code"],
         }
-        content = loader.render_to_string("email_verification.html", context)
+        content = loader.render_to_string("email_verifier/email_verification.html", context)
         email_log = EmailLog.objects.create(
             email=attrs["email"],
             title=subject,
@@ -74,6 +73,8 @@ class EmailVerifierConfirmSerializer(serializers.ModelSerializer):
             email_verifier = EmailVerifier.objects.get(email=email, code=code)
         except EmailVerifier.DoesNotExist:
             raise ValidationError({"code": ["인증번호가 일치하지 않습니다."]})
+        if email_verifier.created_at < timezone.localtime() - timezone.timedelta(minutes=10):
+            raise ValidationError({"code": ["유효시간이 초과했습니다."]})
 
         attrs.update({"token": email_verifier.token})
         return attrs

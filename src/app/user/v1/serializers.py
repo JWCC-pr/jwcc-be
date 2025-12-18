@@ -150,18 +150,11 @@ class UserPasswordResetSerializer(serializers.Serializer):
         return validated_data
 
     def _send_password_reset_email(self, user):
-        request = self.context["request"]
-
-        subject = "잠원동 성당 비밀번호 초기화 인증 메일"
+        subject = "비밀번호 초기화"
         context = {
-            "domain": settings.DOMAIN,
-            "site_name": settings.SITE_NAME,
-            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
-            "user": user,
-            "token": default_token_generator.make_token(user),
-            "protocol": "https" if request.is_secure() else "http",
+            "reset_url": f"https://www.{settings.DOMAIN}/reset-password?uid={urlsafe_base64_encode(force_bytes(user.pk))}&token={default_token_generator.make_token(user)}",
         }
-        content = loader.render_to_string("password_reset.html", context)
+        content = loader.render_to_string("user/password_reset.html", context)
         email_log = EmailLog.objects.create(
             email=user.email,
             title=subject,

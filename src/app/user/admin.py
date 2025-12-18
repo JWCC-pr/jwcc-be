@@ -1,9 +1,13 @@
 from django import forms
+from django.conf import settings
 from django.contrib import admin
+from django.template import loader
+from django.utils import timezone
 from import_export import fields, resources, widgets
 from import_export.admin import ExportActionModelAdmin
 from import_export.formats.base_formats import XLSX
 
+from app.email_log.models import EmailLog
 from app.user.models import User
 
 
@@ -91,4 +95,19 @@ class UserAdmin(ExportActionModelAdmin):
     def approve_users(self, request, queryset):
         updated = queryset.update(is_active=True)
         self.message_user(request, f"{updated}명의 사용자가 승인되었습니다.")
-        # TODO: 이메일 발송
+        now = timezone.localtime()
+        for user in queryset:
+            subject = "회원가입 승인"
+            context = {
+                "name": user.name,
+                "email": user.email,
+                "approval_date": now.strftime("%Y년 %m월 %일 %H시 %M분"),
+                "login_url": f"https://www.{settings.DOMAIN}/login",
+            }
+            content = loader.render_to_string("user/password_reset.html", context)
+            email_log = EmailLog.objects.create(
+                email=user.email,
+                title=subject,
+                content=content,
+            )
+            email_log.send()

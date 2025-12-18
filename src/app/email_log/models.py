@@ -25,6 +25,18 @@ class EmailLog(BaseModel):
         verbose_name_plural = verbose_name
 
     def send(self):
+        response = requests.post(
+            "https://api.mailgun.net/v3/jwcc.or.kr/messages",
+            auth=("api", settings.MAILGUN_API_KEY),
+            data={
+                "from": settings.DEFAULT_FROM_EMAIL,
+                "to": self.email,
+                "subject": self.title,
+                "html": self.content,
+            },
+        )
+        print(response.text)
+        return response
         return requests.post(
             "https://api.mailgun.net/v3/jwcc.or.kr/messages",
             auth=("api", settings.MAILGUN_API_KEY),
