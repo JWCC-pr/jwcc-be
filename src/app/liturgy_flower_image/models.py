@@ -4,7 +4,13 @@ from app.common.models import BaseModel
 
 
 class LiturgyFlowerImage(BaseModel):
-    liturgy_flower = models.ForeignKey("liturgy_flower.LiturgyFlower", verbose_name="전례꽃", on_delete=models.CASCADE)
+    liturgy_flower = models.ForeignKey(
+        "liturgy_flower.LiturgyFlower",
+        verbose_name="전례꽃",
+        on_delete=models.CASCADE,
+        related_name="image_set",
+        related_query_name="image",
+    )
     image = models.ImageField(verbose_name="이미지", max_length=1000, upload_to="liturgy_flower/image/")
 
     class Meta:
