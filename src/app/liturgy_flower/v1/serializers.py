@@ -8,6 +8,8 @@ from app.liturgy_flower_image.models import LiturgyFlowerImage
 
 class LiturgyFlowerSerializer(serializers.ModelSerializer):
     user = UserSerializer(label="유저", read_only=True)
+    is_owned = serializers.BooleanField(label="소유 여부", read_only=True)
+    is_liked = serializers.BooleanField(label="좋아요 여부", read_only=True)
     image_set = LiturgyFlowerImageSerializer(label="이미지", many=True)
 
     class Meta:
@@ -16,8 +18,10 @@ class LiturgyFlowerSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "title",
-            "comment_count",
+            "is_owned",
+            "is_liked",
             "hit_count",
+            "comment_count",
             "like_count",
             "image_set",
             "created_at",
