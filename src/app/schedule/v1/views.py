@@ -1,4 +1,3 @@
-from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
@@ -26,5 +25,4 @@ class ScheduleViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.filter(scheduled_at__gte=timezone.localdate())
         return queryset
