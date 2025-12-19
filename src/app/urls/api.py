@@ -22,4 +22,5 @@ urlpatterns = [
     path("v1/", include("app.pastoral_guidelines.v1.urls")),
     path("v1/", include("app.schedule.v1.urls")),
     path("v1/", include("app.contact.v1.urls")),
+    path("v1/", include("app.banner.v1.urls")),
 ]
