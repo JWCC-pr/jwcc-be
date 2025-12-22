@@ -16,12 +16,12 @@ class NewsPermission(permissions.BasePermission):
         if not request.user.is_authenticated:
             return False
 
-        # 타본당 신자(GRADE_07): 리스트만 접근 가능
-        if request.user.grade == UserGradeChoices.GRADE_07:
-            return view.action == "list"
-
         # 본당 신자(GRADE_06) 이상: 모든 접근 가능
         if request.user.grade <= UserGradeChoices.GRADE_06:
+            return True
+
+        # 타본당 신자(GRADE_07): 리스트만 접근 가능
+        if view.action == "list" and request.user.grade == UserGradeChoices.GRADE_07:
             return True
 
         return False
