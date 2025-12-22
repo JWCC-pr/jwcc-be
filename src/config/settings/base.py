@@ -278,27 +278,26 @@ ALARMTALK_CLIENT_SECRET = "**"
 
 # CKEDITOR
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
+CKEDITOR_5_CUSTOM_CSS = "ckeditor/css/main.css"
 CKEDITOR_5_CONFIGS = {
     "default": {
         "language": "ko",
         "toolbar": {
             "items": [
-                "Undo",
-                "Redo",
-                "|",
-                "heading",
-                "|",
+                # "heading",
+                # "|",
                 "bold",
-                "link",
+                "italic",
+                "strikethrough",
+                "underline",
+                "|",
+                "alignment",
                 "|",
                 "imageUpload",
-                "imageStyle",
-                "imageStyle:alignLeft",
-                "imageStyle:alignRight",
-                "imageStyle:alignCenter",
-                "ImageResize",
                 "|",
-                "FullScreen",
+                "fullscreen",
+                "|",
+                "link",
             ],
         },
     },

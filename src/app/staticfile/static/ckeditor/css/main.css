@@ -1,0 +1,32 @@
+.ck-content p {
+  color: #1b1c1d;
+
+  margin: 0;
+  margin-bottom: 8px;
+
+  font-family: 'Pretendard Variable';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 160%;
+  letter-spacing: -0.32px;
+}
+
+.ck-content p:last-child {
+  margin-bottom: 0;
+}
+
+.ck-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.ck-content i,
+.ck-content em {
+  font-style: italic;
+}
+
+.ck-content a {
+  color: #1d7afc;
+  text-decoration: underline;
+}
