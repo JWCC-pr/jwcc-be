@@ -57,6 +57,8 @@ LOCAL_APPS = [
     "app.pastoral_guidelines.apps.PastoralGuidelinesConfig",
     "app.schedule.apps.ScheduleConfig",
     "app.contact.apps.ContactConfig",
+    "app.priest.apps.PriestConfig",
+    "app.religious.apps.ReligiousConfig",
 ]
 
 THIRD_PARTY_APPS = [
