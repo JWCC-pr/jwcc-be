@@ -170,7 +170,7 @@ class UserPasswordResetSerializer(serializers.Serializer):
 class UserPasswordResetConfirmSerializer(serializers.Serializer):
     password = serializers.CharField(write_only=True)
     password_confirm = serializers.CharField(write_only=True)
-    uid = serializers.CharField(write_only=True)
+    uid = serializers.CharField()
     token = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
@@ -200,12 +200,11 @@ class UserPasswordResetConfirmSerializer(serializers.Serializer):
                 errors["password_confirm"] = list(error)
         if errors:
             raise ValidationError(errors)
-
+        attrs["user"] = user
         return attrs
 
-    def update(self, instance, validated_data):
+    def create(self, validated_data):
         password = validated_data["password"]
-        instance.set_password(password)
-        instance.save()
-
-        return instance
+        validated_data["user"].set_password(password)
+        validated_data["user"].save()
+        return validated_data
