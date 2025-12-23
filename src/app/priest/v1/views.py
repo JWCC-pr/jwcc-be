@@ -8,7 +8,7 @@ from app.common.pagination import LimitOffsetPagination
 from app.priest.models import Priest, PriestRoleChoices
 from app.priest.v1.filters import PriestFilter
 from app.priest.v1.permissions import PriestPermission
-from app.priest.v1.serializers import PriestSerializer
+from app.priest.v1.serializers import PriestSerializer, PastorSerializer, AssociateSerializer
 
 
 @extend_schema_view(
@@ -39,6 +39,13 @@ class PriestViewSet(
         if self.action == "list":
             queryset = queryset.filter(is_retired=False)
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == "pastor_history":
+            return PastorSerializer
+        if self.action == "associate_history":
+            return AssociateSerializer
+        return PriestSerializer
 
     @action(detail=False, methods=["get"], url_path="history")
     def history(self, request):
