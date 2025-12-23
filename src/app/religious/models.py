@@ -1,6 +1,6 @@
 from django.db import models
 from ordered_model.models import OrderedModel
-
+from django.core.exceptions import ValidationError
 from app.common.models import BaseModelMixin
 
 
@@ -15,8 +15,6 @@ class Religious(BaseModelMixin, OrderedModel):
     end_date = models.DateField(verbose_name="재임 종료일", null=True, blank=True)
 
     def clean(self):
-        from django.core.exceptions import ValidationError
-
         if self.is_retired and not self.end_date:
             raise ValidationError({"end_date": "퇴임 시 재임 종료일을 입력해야 합니다."})
 

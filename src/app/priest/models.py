@@ -1,5 +1,5 @@
 from django.db import models
-from ordered_model.models import OrderedModel
+from ordered_model.models import OrderedModel, OrderedModelManager
 
 from app.common.models import BaseModelMixin
 
@@ -9,12 +9,12 @@ class PriestRoleChoices(models.TextChoices):
     ASSOCIATE = "ASSOCIATE", "부주임신부 및 보좌신부"
 
 
-class PastorManager(models.Manager):
+class PastorManager(OrderedModelManager):
     def get_queryset(self):
         return super().get_queryset().filter(role=PriestRoleChoices.PASTOR)
 
 
-class AssociateManager(models.Manager):
+class AssociateManager(OrderedModelManager):
     def get_queryset(self):
         return super().get_queryset().filter(role=PriestRoleChoices.ASSOCIATE)
 
