@@ -11,6 +11,15 @@ class Religious(BaseModelMixin, OrderedModel):
     baptismal_name = models.CharField(verbose_name="세례명", max_length=40)
     start_date = models.DateField(verbose_name="재임 시작일")
 
+    is_retired = models.BooleanField(verbose_name="퇴임 여부", default=False)
+    end_date = models.DateField(verbose_name="재임 종료일", null=True, blank=True)
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+
+        if self.is_retired and not self.end_date:
+            raise ValidationError({"end_date": "퇴임 시 재임 종료일을 입력해야 합니다."})
+
     class Meta:
         db_table = "religious"
         verbose_name = "수도자"

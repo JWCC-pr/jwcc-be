@@ -12,6 +12,7 @@ class PriestSerializer(serializers.ModelSerializer):
             "name",
             "baptismal_name",
             "ordination_date",
+            "is_retired",
             "order",
             "created_at",
             "updated_at",
