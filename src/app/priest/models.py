@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from ordered_model.models import OrderedModel, OrderedModelManager
 
@@ -28,7 +29,7 @@ class Priest(BaseModelMixin, OrderedModel):
     is_retired = models.BooleanField(verbose_name="퇴임 여부", default=False)
 
     role = models.CharField(
-        verbose_name="직책 구분",
+        verbose_name="직책 부여",
         max_length=10,
         choices=PriestRoleChoices,
         null=True,
@@ -43,8 +44,20 @@ class Priest(BaseModelMixin, OrderedModel):
         verbose_name="보좌 체제", max_length=50, blank=True, null=True, help_text="부주임신부에게만 사용"
     )
 
-    start_date = models.DateField(verbose_name="재임 시작일")
+    start_date = models.DateField(verbose_name="재임 시작일", blank=True, null=True)
     end_date = models.DateField(verbose_name="재임 종료일", blank=True, null=True)
+
+    def clean(self):
+        if self.role:
+            if not self.start_date or not self.end_date:
+                raise ValidationError({"end_date": "재임 기간을 입력해야 합니다."})
+
+            if not self.division:
+                raise ValidationError({"division": "구분을 입력해야합니다."})
+
+            if self.role == PriestRoleChoices.ASSOCIATE:
+                if not self.assistant_system:
+                    raise ValidationError({"assistant_system": "보좌 체제를 입력해야 합니다."})
 
     class Meta:
         db_table = "priest"
