@@ -10,6 +10,8 @@ class Priest(BaseModelMixin, OrderedModel):
     baptismal_name = models.CharField(verbose_name="세례명", max_length=40)
     ordination_date = models.DateField(verbose_name="수품일")
 
+    is_retired = models.BooleanField(verbose_name="퇴임 여부", default=False)
+
     class Meta:
         db_table = "priest"
         verbose_name = "사제"
