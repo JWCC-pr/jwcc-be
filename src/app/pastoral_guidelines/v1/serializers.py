@@ -8,16 +8,11 @@ class PastoralGuidelinesSerializer(serializers.ModelSerializer):
         model = PastoralGuidelines
         fields = [
             "id",
+            "image",
+            "category",
+            "title",
+            "subtitle",
+            "body",
+            "signature_text",
+            "signature_image",
         ]
-
-    def validate(self, attrs):
-        attrs = super().validate(attrs)
-        return attrs
-
-    def create(self, validated_data):
-        instance = super().create(validated_data)
-        return instance
-
-    def update(self, instance, validated_data):
-        instance = super().update(instance, validated_data)
-        return instance
