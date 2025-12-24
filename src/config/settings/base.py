@@ -39,7 +39,6 @@ LOCAL_APPS = [
     "app.news.apps.NewsConfig",
     "app.document.apps.DocumentConfig",
     "app.document_file.apps.DocumentFileConfig",
-    "app.event.apps.EventConfig",
     "app.weekly_bulletin.apps.WeeklyBulletinConfig",
     "app.weekly_bulletin_hit.apps.WeeklyBulletinHitConfig",
     "app.passing_notice.apps.PassingNoticeConfig",
