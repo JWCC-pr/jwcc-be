@@ -1,18 +1,18 @@
 from rest_framework import serializers
 
-from app.religious.models import Religious
+from app.religious_history.models import ReligiousHistory
 
 
-class ReligiousSerializer(serializers.ModelSerializer):
+class ReligiousHistorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Religious
+        model = ReligiousHistory
         fields = [
             "id",
-            "image",
             "category",
             "name",
             "baptismal_name",
             "start_date",
+            "end_date",
             "order",
             "created_at",
             "updated_at",

@@ -58,6 +58,10 @@ LOCAL_APPS = [
     "app.contact.apps.ContactConfig",
     "app.priest.apps.PriestConfig",
     "app.religious.apps.ReligiousConfig",
+    "app.priest_history.apps.PriestHistoryConfig",
+    "app.pastor_history.apps.PastorHistoryConfig",
+    "app.religious_history.apps.ReligiousHistoryConfig",
+    "app.assistant_priest_history.apps.AssistantPriestHistoryConfig",
 ]
 
 THIRD_PARTY_APPS = [
