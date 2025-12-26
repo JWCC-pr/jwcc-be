@@ -13,8 +13,6 @@ class ReligiousSerializer(serializers.ModelSerializer):
             "name",
             "baptismal_name",
             "start_date",
-            "is_retired",
-            "end_date",
             "order",
             "created_at",
             "updated_at",
