@@ -15,7 +15,7 @@ class ReligiousHistory(BaseModelMixin, OrderedModel):
         db_table = "religious_history"
         verbose_name = "본당출신 수도자"
         verbose_name_plural = verbose_name
-        ordering = ["order"]
+        ordering = ["start_date", "category"]
 
     def __str__(self):
         return f"{self.name} ({self.baptismal_name})"

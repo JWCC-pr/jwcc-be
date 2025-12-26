@@ -15,7 +15,7 @@ class Religious(BaseModelMixin, OrderedModel):
         db_table = "religious"
         verbose_name = "수도자"
         verbose_name_plural = verbose_name
-        ordering = ["order"]
+        ordering = ["start_date", "category"]
 
     def __str__(self):
         return f"{self.name} ({self.baptismal_name})"
