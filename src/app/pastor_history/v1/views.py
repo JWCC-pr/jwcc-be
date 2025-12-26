@@ -11,11 +11,11 @@ from app.pastor_history.models import PastorHistory
 
 
 @extend_schema_view(
-    list=extend_schema(summary="PastorHistory 목록 조회"),
-    create=extend_schema(summary="PastorHistory 등록"),
-    update=extend_schema(summary="PastorHistory 수정"),
+    list=extend_schema(summary="역대 주임신부 목록 조회"),
+    create=extend_schema(summary="역대 주임신부 등록"),
+    update=extend_schema(summary="역대 주임신부 수정"),
     partial_update=extend_schema(exclude=True),
-    destroy=extend_schema(summary="PastorHistory 삭제"),
+    destroy=extend_schema(summary="역대 주임신부 삭제"),
 )
 class PastorHistoryViewSet(
     mixins.ListModelMixin,

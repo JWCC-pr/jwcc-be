@@ -11,11 +11,11 @@ from app.priest_history.models import PriestHistory
 
 
 @extend_schema_view(
-    list=extend_schema(summary="PriestHistory 목록 조회"),
-    create=extend_schema(summary="PriestHistory 등록"),
-    update=extend_schema(summary="PriestHistory 수정"),
+    list=extend_schema(summary="본당 출신 사제 목록 조회"),
+    create=extend_schema(summary="본당 출신 사제 등록"),
+    update=extend_schema(summary="본당 출신 사제 수정"),
     partial_update=extend_schema(exclude=True),
-    destroy=extend_schema(summary="PriestHistory 삭제"),
+    destroy=extend_schema(summary="본당 출신 사제 삭제"),
 )
 class PriestHistoryViewSet(
     mixins.ListModelMixin,
