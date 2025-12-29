@@ -30,7 +30,7 @@ class PriestViewSet(
     queryset = Priest.objects.all()
     serializer_class = PriestSerializer
     permission_classes = [PriestPermission]
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     filterset_class = PriestFilter
 
     def get_queryset(self):
