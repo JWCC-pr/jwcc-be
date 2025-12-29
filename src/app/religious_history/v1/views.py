@@ -27,7 +27,7 @@ class ReligiousHistoryViewSet(
     queryset = ReligiousHistory.objects.all()
     serializer_class = ReligiousHistorySerializer
     permission_classes = [ReligiousHistoryPermission]
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     filterset_class = ReligiousHistoryFilter
 
     def get_queryset(self):

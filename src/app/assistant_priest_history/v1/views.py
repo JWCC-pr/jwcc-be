@@ -27,7 +27,7 @@ class AssistantPriestHistoryViewSet(
     queryset = AssistantPriestHistory.objects.all()
     serializer_class = AssistantPriestHistorySerializer
     permission_classes = [AssistantPriestHistoryPermission]
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     filterset_class = AssistantPriestHistoryFilter
 
     def get_queryset(self):

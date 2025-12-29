@@ -27,7 +27,7 @@ class PastorHistoryViewSet(
     queryset = PastorHistory.objects.all()
     serializer_class = PastorHistorySerializer
     permission_classes = [PastorHistoryPermission]
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     filterset_class = PastorHistoryFilter
 
     def get_queryset(self):

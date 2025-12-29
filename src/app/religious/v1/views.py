@@ -30,7 +30,7 @@ class ReligiousViewSet(
     queryset = Religious.objects.all()
     serializer_class = ReligiousSerializer
     permission_classes = [ReligiousPermission]
-    pagination_class = LimitOffsetPagination
+    pagination_class = None
     filterset_class = ReligiousFilter
 
     def get_queryset(self):
