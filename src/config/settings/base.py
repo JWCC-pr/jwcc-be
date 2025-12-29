@@ -303,6 +303,9 @@ CKEDITOR_5_CONFIGS = {
                 "link",
             ],
         },
+        "link": {
+            "defaultProtocol": "https://",
+        },
     },
     "media": {
         "language": "ko",
@@ -321,6 +324,9 @@ CKEDITOR_5_CONFIGS = {
                 "|",
                 "link",
             ],
+        },
+        "link": {
+            "defaultProtocol": "https://",
         },
         "mediaEmbed": {
             "previewsInData": True,
