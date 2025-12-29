@@ -6,8 +6,10 @@ from django.utils import timezone
 from import_export import fields, resources, widgets
 from import_export.admin import ExportActionModelAdmin
 from import_export.formats.base_formats import XLSX
+from import_export.widgets import ManyToManyWidget
 
 from app.email_log.models import EmailLog
+from app.sub_department.models import SubDepartment
 from app.user.models import User
 
 
@@ -23,6 +25,18 @@ class UserResource(resources.ModelResource):
     )
     grade = fields.Field(attribute="grade", column_name="등급")
     is_active = fields.Field(attribute="is_active", column_name="가입승인 여부")
+    sub_department_set = fields.Field(
+        column_name="세부분과",
+        attribute="sub_department_set",
+        widget=ManyToManyWidget(model="department.SubDepartment", field="name"),
+    )
+    base_address = fields.Field(attribute="base_address", column_name="기본주소")
+    detail_address = fields.Field(attribute="detail_address", column_name="상세주소")
+    created_at = fields.Field(
+        attribute="created_at",
+        column_name="가입일",
+        widget=widgets.DateTimeWidget(format="%Y-%m-%d %H:%M"),
+    )
 
     class Meta:
         model = User
@@ -34,6 +48,10 @@ class UserResource(resources.ModelResource):
             "birth",
             "grade",
             "is_active",
+            "sub_department_set",
+            "base_address",
+            "detail_address",
+            "created_at",
         )
 
 
