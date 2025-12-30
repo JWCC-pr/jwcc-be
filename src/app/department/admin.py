@@ -1,16 +1,19 @@
 from django.contrib import admin
+from ordered_model.admin import OrderedTabularInline, OrderedInlineModelAdminMixin
 
 from app.department.models import Department
 from app.sub_department.models import SubDepartment
 
 
-class SubDepartmentInline(admin.TabularInline):
+class SubDepartmentInline(OrderedTabularInline):
     model = SubDepartment
+    fields = ("name", "order", "move_up_down_links")
+    readonly_fields = ("order", "move_up_down_links")
     extra = 0
 
 
 @admin.register(Department)
-class DepartmentAdmin(admin.ModelAdmin):
+class DepartmentAdmin(OrderedInlineModelAdminMixin, admin.ModelAdmin):
     inlines = [SubDepartmentInline]
     list_display = ["name"]
     search_fields = ["name"]
