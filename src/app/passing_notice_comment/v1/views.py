@@ -34,6 +34,8 @@ class PassingNoticeCommentViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        passing_notice_id = self.kwargs.get("passing_notice_id")
+        queryset = queryset.filter(passing_notice_id=passing_notice_id)
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),
