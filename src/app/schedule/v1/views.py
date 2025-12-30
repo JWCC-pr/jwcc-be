@@ -1,3 +1,4 @@
+from django.db.models import F
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
@@ -25,4 +26,5 @@ class ScheduleViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.order_by("scheduled_at", F("start_time").asc(nulls_first=True))
         return queryset
