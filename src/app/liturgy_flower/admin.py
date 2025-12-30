@@ -23,6 +23,3 @@ class LiturgyFlowerAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         queryset = queryset.select_related("user")
         return queryset
-
-    def has_add_permission(self, request):
-        return False
