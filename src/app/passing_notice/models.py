@@ -14,7 +14,7 @@ class PassingNotice(BaseModel):
     funeral_mass_at = models.DateField(verbose_name="장례미사 일정")
     funeral_mass_location = models.CharField(verbose_name="장례미사 장소", max_length=200)
     funeral_hall_address = models.CharField(verbose_name="빈소 위치", max_length=200)
-    chief_mourner = models.CharField(verbose_name="상주", max_length=20)
+    chief_mourner = models.CharField(verbose_name="상주")
     encoffinment_at = models.DateTimeField(verbose_name="입관 일정")
     departure_at = models.DateTimeField(verbose_name="발인 일정")
     comment_count = models.PositiveBigIntegerField(verbose_name="댓글수", default=0, editable=False)
