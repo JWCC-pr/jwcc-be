@@ -18,4 +18,4 @@ class LiturgyFlowerImage(BaseModel):
         db_table = "liturgy_flower_image"
         verbose_name = "이미지"
         verbose_name_plural = verbose_name
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
