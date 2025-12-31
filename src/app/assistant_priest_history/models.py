@@ -5,7 +5,7 @@ from app.common.models import BaseModelMixin
 
 
 class AssistantPriestHistory(BaseModelMixin, OrderedModel):
-    assistant_system = models.CharField(verbose_name="보좌 체제", max_length=50)
+    assistant_system = models.CharField(verbose_name="보좌 체제", max_length=50, null=True, blank=True)
     category = models.CharField(verbose_name="구분", max_length=50)
     name = models.CharField(verbose_name="이름", max_length=20)
     baptismal_name = models.CharField(verbose_name="세례명", max_length=40)
