@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.admin.models import LogEntry
 from django.template import loader
 from django.utils import timezone
 from import_export import fields, resources, widgets
@@ -129,3 +130,42 @@ class UserAdmin(ExportActionModelAdmin):
                 content=content,
             )
             email_log.send()
+
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    list_display = [
+        "action_time",
+        "user",
+        "content_type",
+        "object_repr",
+        "action_flag_display",
+        "change_message",
+    ]
+    list_filter = ["action_time", "content_type", "user"]
+    search_fields = ["object_repr", "change_message"]
+    date_hierarchy = "action_time"
+    readonly_fields = [
+        "action_time",
+        "user",
+        "content_type",
+        "object_id",
+        "object_repr",
+        "action_flag",
+        "change_message",
+    ]
+
+    def action_flag_display(self, obj):
+        flags = {1: "추가", 2: "변경", 3: "삭제"}
+        return flags.get(obj.action_flag, obj.action_flag)
+
+    action_flag_display.short_description = "작업 유형"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
