@@ -9,6 +9,7 @@ class Priest(BaseModelMixin, OrderedModel):
     name = models.CharField(verbose_name="이름", max_length=20)
     baptismal_name = models.CharField(verbose_name="세례명", max_length=40)
     ordination_date = models.DateField(verbose_name="수품일")
+    start_date = models.DateField(verbose_name="재임 시작일")
 
     class Meta:
         db_table = "priest"
