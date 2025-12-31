@@ -8,7 +8,7 @@ class LiturgyFlowerImageInline(admin.StackedInline):
     model = LiturgyFlowerImage
     extra = 0
     min_num = 1
-    max_num = 5
+    max_num = 20
 
 
 @admin.register(LiturgyFlower)
