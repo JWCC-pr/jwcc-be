@@ -6,9 +6,7 @@ from app.common.models import BaseModel
 class DepartmentBoard(BaseModel):
     user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
     department = models.ForeignKey("department.Department", verbose_name="분과", on_delete=models.CASCADE)
-    sub_department_set = models.ManyToManyField(
-        "department.SubDepartment", verbose_name="세부분과", null=True, blank=True
-    )
+    sub_department_set = models.ManyToManyField("department.SubDepartment", verbose_name="세부분과", blank=True)
     title = models.CharField(verbose_name="제목", max_length=100)
     body = CKEditor5Field(verbose_name="본문")
 
@@ -23,3 +21,6 @@ class DepartmentBoard(BaseModel):
         verbose_name = "분과 게시글"
         verbose_name_plural = verbose_name
         ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.title

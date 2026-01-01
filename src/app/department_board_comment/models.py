@@ -33,6 +33,7 @@ class DepartmentBoardComment(BaseModel):
     is_deleted = models.BooleanField(verbose_name="삭제여부", default=False, editable=False)
 
     class Meta:
+        app_label = "department_board"
         db_table = "department_board_comment"
         verbose_name = "분과 게시글 댓글"
         verbose_name_plural = verbose_name
