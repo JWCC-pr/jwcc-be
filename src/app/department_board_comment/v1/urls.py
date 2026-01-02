@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from app.department_board_comment.v1.views import DepartmentBoardCommentViewSet
 
 router = DefaultRouter()
-router.register("department_board_comment", DepartmentBoardCommentViewSet, basename="department_board_comment")
+router.register("comment", DepartmentBoardCommentViewSet, basename="department_board_comment")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("department_board/<int:department_board_id>/", include(router.urls)),
 ]
