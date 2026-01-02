@@ -10,8 +10,6 @@ class PassingNoticeAdmin(admin.ModelAdmin):
         "name",
         "baptismal_name",
         "age",
-        "funeral_start_at",
-        "funeral_end_at",
         "funeral_mass_at",
         "funeral_mass_location",
         "chief_mourner",
