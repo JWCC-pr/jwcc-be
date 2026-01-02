@@ -12,7 +12,7 @@ class SubDepartmentSerializer(serializers.ModelSerializer):
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
-    sub_department = SubDepartmentSerializer(label="세부 분과")
+    sub_department = SubDepartmentSerializer(label="세부 분과", many=True)
 
     class Meta:
         model = Department
