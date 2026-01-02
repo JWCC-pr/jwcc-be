@@ -48,7 +48,7 @@ class WeeklyBulletinEditorial(BaseModel, OrderedModel):
 
     class Meta:
         db_table = "weekly_bulletin_editorial"
-        verbose_name = "주보_7면"
+        verbose_name = "주보7면"
         verbose_name_plural = verbose_name
         ordering = ["-created_at"]
 
@@ -61,7 +61,7 @@ class MyeongdoDocument(WeeklyBulletinEditorial):
 
     class Meta:
         proxy = True
-        verbose_name = "명도회 자료실"
+        verbose_name = "명도회 자료"
         verbose_name_plural = verbose_name
 
 
