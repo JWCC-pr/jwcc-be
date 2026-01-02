@@ -1,27 +1,25 @@
+from django.db.models import BooleanField, Case, When
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import CursorPagination
+from app.department_board_comment.models import DepartmentBoardComment
 from app.department_board_comment.v1.filters import DepartmentBoardCommentFilter
 from app.department_board_comment.v1.permissions import DepartmentBoardCommentPermission
 from app.department_board_comment.v1.serializers import DepartmentBoardCommentSerializer
-from app.department_board_comment.models import DepartmentBoardComment
 
 
 @extend_schema_view(
-    list=extend_schema(summary="DepartmentBoardComment 목록 조회"),
-    create=extend_schema(summary="DepartmentBoardComment 등록"),
-    retrieve=extend_schema(summary="DepartmentBoardComment 상세 조회"),
-    update=extend_schema(summary="DepartmentBoardComment 수정"),
+    list=extend_schema(summary="분과 게시글 댓글 목록 조회", tags=["department_board_comment"]),
+    create=extend_schema(summary="분과 게시글 댓글 등록", tags=["department_board_comment"]),
+    update=extend_schema(summary="분과 게시글 댓글 수정", tags=["department_board_comment"]),
     partial_update=extend_schema(exclude=True),
-    destroy=extend_schema(summary="DepartmentBoardComment 삭제"),
+    destroy=extend_schema(summary="분과 게시글 댓글 삭제", tags=["department_board_comment"]),
 )
 class DepartmentBoardCommentViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     GenericViewSet,
@@ -31,14 +29,17 @@ class DepartmentBoardCommentViewSet(
     permission_classes = [DepartmentBoardCommentPermission]
     pagination_class = CursorPagination
     filterset_class = DepartmentBoardCommentFilter
+    ordering = "-created_at"
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        queryset = queryset.filter(department_board_id=self.kwargs["department_board_id"])
+        queryset = queryset.annotate(
+            is_owned=Case(
+                When(user_id=self.request.user.id, then=True),
+                default=False,
+                output_field=BooleanField(),
+            ),
+        )
+        queryset = queryset.prefetch_related("user__sub_department_set")
         return queryset
-
-    # 특정 action에 다른 Filter를 설정해야하는 경우 사용
-    def get_filterset_class(self):
-        return getattr(self, "filterset_class", None)
-
-    def partial_update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("patch")
