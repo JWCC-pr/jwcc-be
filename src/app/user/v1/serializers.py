@@ -14,12 +14,12 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from app.email_log.models import EmailLog
 from app.email_verifier.models import EmailVerifier
 from app.user.models import User
-from app.user.v1.nested_serializers import SubDepartmentSerializer
+from app.user.v1.nested_serializers import DepartmentSerializer
 from app.user.validators import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
-    sub_department_set = SubDepartmentSerializer(label="분과", many=True)
+    department_set = serializers.SerializerMethodField(label="분과")
 
     class Meta:
         model = User
@@ -33,8 +33,26 @@ class UserSerializer(serializers.ModelSerializer):
             "detail_address",
             "birth",
             "grade",
-            "sub_department_set",
+            "department_set",
         ]
+
+    def get_department_set(self, obj):
+        departments = {}
+        for sub_dept in obj.sub_department_set.select_related("department").all():
+            dept = sub_dept.department
+            if dept.id not in departments:
+                departments[dept.id] = {
+                    "id": dept.id,
+                    "name": dept.name,
+                    "sub_department": [],
+                }
+            departments[dept.id]["sub_department"].append(
+                {
+                    "id": sub_dept.id,
+                    "name": sub_dept.name,
+                }
+            )
+        return list(departments.values())
 
 
 class UserLoginSerializer(serializers.ModelSerializer):
