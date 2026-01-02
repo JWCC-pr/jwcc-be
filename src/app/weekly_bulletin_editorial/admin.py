@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from app.weekly_bulletin_editorial.models import (
+    MyeongdoDocument,
     WeeklyBulletinEditorialDraft,
     WeeklyBulletinEditorialFinal,
     WeeklyBulletinEditorialTemplate,
@@ -29,6 +30,11 @@ class WeeklyBulletinEditorialAdmin(admin.ModelAdmin):
         if self.default_state is not None:
             obj.state = self.default_state
         super().save_model(request, obj, form, change)
+
+
+@admin.register(MyeongdoDocument)
+class MyeongdoDocumentAdmin(WeeklyBulletinEditorialAdmin):
+    default_state = WeeklyBulletinEditorialStateChoices.MYEONGDO
 
 
 @admin.register(WeeklyBulletinEditorialDraft)

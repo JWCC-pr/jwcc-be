@@ -6,9 +6,20 @@ from app.common.models import BaseModel
 
 
 class WeeklyBulletinEditorialStateChoices(models.IntegerChoices):
-    DRAFT = 1, "편집"
-    FINAL = 2, "최종본"
-    TEMPLATE = 3, "양식"
+    MYEONGDO = 1, "명도회"
+    DRAFT = 2, "편집"
+    FINAL = 3, "최종본"
+    TEMPLATE = 4, "양식"
+
+
+class MyeongdoDocumentManager(OrderedModelManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(state=WeeklyBulletinEditorialStateChoices.MYEONGDO)
+
+
+class WeeklyBulletinEditorialDraftManager(OrderedModelManager):
+    def get_queryset(self):
+        return super().get_queryset().filter(state=WeeklyBulletinEditorialStateChoices.DRAFT)
 
 
 class WeeklyBulletinEditorialDraftManager(OrderedModelManager):
@@ -32,7 +43,7 @@ class WeeklyBulletinEditorial(BaseModel, OrderedModel):
     state = models.PositiveIntegerField(
         verbose_name="상태",
         choices=WeeklyBulletinEditorialStateChoices,
-        default=WeeklyBulletinEditorialStateChoices.DRAFT,
+        default=WeeklyBulletinEditorialStateChoices.MYEONGDO,
     )
 
     class Meta:
@@ -43,6 +54,15 @@ class WeeklyBulletinEditorial(BaseModel, OrderedModel):
 
     def __str__(self):
         return self.title
+
+
+class MyeongdoDocument(WeeklyBulletinEditorial):
+    objects = MyeongdoDocumentManager()
+
+    class Meta:
+        proxy = True
+        verbose_name = "명도회 자료실"
+        verbose_name_plural = verbose_name
 
 
 class WeeklyBulletinEditorialDraft(WeeklyBulletinEditorial):
