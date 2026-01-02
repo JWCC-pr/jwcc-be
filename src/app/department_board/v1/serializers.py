@@ -53,6 +53,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         with transaction.atomic():
+            validated_data["is_modified"] = True
             image_data_set = validated_data.pop("image_set")
             department_board = super().update(instance, validated_data)
             department_board.image_set.all().delete()
@@ -65,7 +66,4 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
                     for image_data in image_data_set
                 ]
             )
-        return instance
-        validated_data["is_modified"] = True
-        instance = super().update(instance, validated_data)
-        return instance
+        return department_board
