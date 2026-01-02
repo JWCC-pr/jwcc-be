@@ -3,7 +3,7 @@ from django.db.models import Case, When, BooleanField, Exists, OuterRef, F
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
@@ -49,6 +49,19 @@ class DepartmentBoardViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        user_department_ids = list(self.request.user.sub_department_set.values_list("department_id", flat=True))
+        department_param = self.request.query_params.get("department")
+
+        if department_param:
+            try:
+                department_id = int(department_param)
+                if department_id not in user_department_ids:
+                    raise ValidationError({"department": "소속된 분과만 조회할 수 있습니다."})
+            except ValueError:
+                raise ValidationError({"department": "유효한 분과 ID를 입력해주세요."})
+
+        queryset = queryset.filter(department_id__in=user_department_ids)
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),
