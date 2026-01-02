@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from app.department_board_like.v1.views import DepartmentBoardLikeViewSet
 
 router = DefaultRouter()
-router.register("department_board_like", DepartmentBoardLikeViewSet, basename="department_board_like")
+router.register("like", DepartmentBoardLikeViewSet, basename="department_board_like")
 
 urlpatterns = [
-    path("", include(router.urls)),
+    path("department_board/<int:department_board_id>/", include(router.urls)),
 ]
