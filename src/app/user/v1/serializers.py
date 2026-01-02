@@ -6,6 +6,7 @@ from django.template import loader
 from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework_simplejwt.settings import api_settings
@@ -36,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
             "department_set",
         ]
 
+    @extend_schema_field(DepartmentSerializer(many=True))
     def get_department_set(self, obj):
         departments = {}
         for sub_dept in obj.sub_department_set.select_related("department").all():
