@@ -13,8 +13,6 @@ class PassingNoticeSerializer(serializers.ModelSerializer):
             "baptismal_name",
             "age",
             "passing_at",
-            "funeral_start_at",
-            "funeral_end_at",
             "funeral_mass_at",
             "funeral_mass_location",
             "funeral_hall_address",
