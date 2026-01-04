@@ -14,11 +14,14 @@ from app.user.v1.serializers import (
     UserRefreshSerializer,
     UserRegisterSerializer,
     UserSerializer,
+    UserUpdateSerializer,
 )
 
 
 @extend_schema_view(
     retrieve=extend_schema(summary="유저 조회"),
+    update=extend_schema(summary="유저 정보 수정"),
+    partial_update=extend_schema(exclude=True),
     destroy=extend_schema(summary="유저 삭제(탈퇴)"),
     login=extend_schema(summary="유저 로그인"),
     refresh=extend_schema(summary="유저 리프레시"),
@@ -28,6 +31,7 @@ from app.user.v1.serializers import (
 )
 class UserViewSet(
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     GenericViewSet,
 ):
@@ -40,6 +44,11 @@ class UserViewSet(
         queryset = super().get_queryset()
         queryset = queryset.prefetch_related("sub_department_set")
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == "update":
+            return UserUpdateSerializer
+        return super().get_serializer_class()
 
     def get_object(self):
         if self.kwargs.get("pk") == "me":

@@ -57,6 +57,19 @@ class UserSerializer(serializers.ModelSerializer):
         return list(departments.values())
 
 
+class UserUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            "name",
+            "baptismal_name",
+            "postcode",
+            "base_address",
+            "detail_address",
+            "birth",
+        ]
+
+
 class UserLoginSerializer(serializers.ModelSerializer):
     access_token = serializers.CharField(label="액세스토큰", read_only=True)
     refresh_token = serializers.CharField(label="리프레시토큰", read_only=True)
