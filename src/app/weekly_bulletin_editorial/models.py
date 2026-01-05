@@ -33,6 +33,7 @@ class WeeklyBulletinEditorialTemplateManager(OrderedModelManager):
 
 
 class WeeklyBulletinEditorial(BaseModel, OrderedModel):
+    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
     title = models.CharField(verbose_name="제목", max_length=100)
     body = CKEditor5Field(verbose_name="본문")
     state = models.PositiveIntegerField(
