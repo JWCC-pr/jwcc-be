@@ -48,17 +48,6 @@ class BaseEditorialViewSet(
 
 
 @extend_schema_view(
-    list=extend_schema(summary="주보7면 목록 조회"),
-    create=extend_schema(summary="주보7면 등록"),
-    retrieve=extend_schema(summary="주보7면 상세 조회"),
-    partial_update=extend_schema(exclude=True),
-    destroy=extend_schema(summary="주보7면 삭제"),
-)
-class WeeklyBulletinEditorialViewSet(BaseEditorialViewSet):
-    pass
-
-
-@extend_schema_view(
     list=extend_schema(summary="편집본 목록 조회"),
     create=extend_schema(summary="편집본 등록"),
     retrieve=extend_schema(summary="편집본 상세 조회"),
