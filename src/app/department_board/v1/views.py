@@ -3,7 +3,8 @@ from django.db.models import Case, When, BooleanField, Exists, OuterRef, F
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import ValidationError
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
@@ -45,7 +46,9 @@ class DepartmentBoardViewSet(
     permission_classes = [DepartmentBoardPermission]
     pagination_class = LimitOffsetPagination
     filterset_class = DepartmentBoardFilter
-    ordering_fields = ["-created_at"]
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    ordering_fields = ["created_at", "like_count"]
+    ordering = ["-created_at"]
 
     def get_queryset(self):
         queryset = super().get_queryset()
