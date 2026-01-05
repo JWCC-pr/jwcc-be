@@ -39,7 +39,6 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["sub_department_set"]
 
     def validate_department(self, value):
         user = self.context["request"].user

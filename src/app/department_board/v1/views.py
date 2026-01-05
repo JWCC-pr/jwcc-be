@@ -49,12 +49,6 @@ class DepartmentBoardViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
-        user_department_ids = list(self.request.user.sub_department_set.values_list("department_id", flat=True))
-
-        # 내 분과 게시글만 조회
-        queryset = queryset.filter(department_id__in=user_department_ids)
-
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),
