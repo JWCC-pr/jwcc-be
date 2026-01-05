@@ -75,9 +75,10 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             validated_data["is_modified"] = True
-            image_data_set = validated_data.pop("image_set", [])
+            image_data_set = validated_data.pop("image_set", None)
             department_board = super().update(instance, validated_data)
 
+            # 이미지가 명시적으로 전달된 경우에만 처리
             if image_data_set is not None:
                 department_board.image_set.all().delete()
                 if image_data_set:

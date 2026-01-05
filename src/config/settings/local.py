@@ -23,13 +23,15 @@ DATABASE_SECRET = get_secret(f"{PROJECT_NAME}/prod/db")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": f'{DATABASE_SECRET["dbname"]}-dev',
+        "NAME": f'{DATABASE_SECRET["dbname"]}_dev',
         "USER": DATABASE_SECRET["username"],
         "PASSWORD": DATABASE_SECRET["password"],
         "HOST": DATABASE_SECRET["host"],
         "PORT": DATABASE_SECRET["port"],
     },
 }
+print(PROJECT_NAME)
+print(DATABASES)
 
 # CELERY
 CELERY_BROKER_URL = f"sqs://"
@@ -64,8 +66,6 @@ SIMPLE_JWT = {
 
 
 # EMAIL
-EMAIL_HOST_USER = SECRET["email_user"]
-EMAIL_HOST_PASSWORD = SECRET["email_password"]
 MAILGUN_API_KEY = SECRET["mailgun_api_key"]
 
 LOGGING = {

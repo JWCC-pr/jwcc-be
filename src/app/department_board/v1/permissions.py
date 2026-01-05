@@ -6,4 +6,7 @@ class DepartmentBoardPermission(permissions.BasePermission):
         return super().has_permission(request, view)
 
     def has_object_permission(self, request, view, obj):
-        return super().has_object_permission(request, view, obj)
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return obj.user == request.user
