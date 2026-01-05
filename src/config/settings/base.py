@@ -46,6 +46,8 @@ LOCAL_APPS = [
     "app.document_file.apps.DocumentFileConfig",
     "app.weekly_bulletin.apps.WeeklyBulletinConfig",
     "app.weekly_bulletin_hit.apps.WeeklyBulletinHitConfig",
+    "app.weekly_bulletin_editorial.apps.WeeklyBulletinEditorialConfig",
+    "app.weekly_bulletin_editorial_file.apps.WeeklyBulletinEditorialFileConfig",
     "app.passing_notice.apps.PassingNoticeConfig",
     "app.passing_notice_comment.apps.PassingNoticeCommentConfig",
     "app.liturgy_flower.apps.LiturgyFlowerConfig",
