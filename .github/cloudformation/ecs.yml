@@ -44,7 +44,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: !Sub '${ProjectName}-${ENV}-ecs-cluster-sg'
-      VpcId: {'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-VPC'}
+      VpcId: {'Fn::ImportValue': !Sub '${ProjectName}-prod-VPC'}
   SecurityGroupInboundSSH:
     Type: AWS::EC2::SecurityGroupIngress
     Properties:
@@ -107,8 +107,8 @@ Resources:
       IpAddressType: ipv4
       Scheme: internet-facing
       Subnets:
-        - {'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1'}
-        - {'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2'}
+        - {'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet1'}
+        - {'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet2'}
       SecurityGroups: [!Ref SecurityGroup]
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds
@@ -127,7 +127,7 @@ Resources:
       Protocol: HTTP
       TargetType: ip
       UnhealthyThresholdCount: 2
-      VpcId: {'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-VPC'}
+      VpcId: {'Fn::ImportValue': !Sub '${ProjectName}-prod-VPC'}
       TargetGroupAttributes:
         - Key: deregistration_delay.timeout_seconds
           Value: 5
@@ -264,8 +264,8 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           Subnets:
-            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' }
-            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' }
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet1' }
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet2' }
           SecurityGroups: [!Ref SecurityGroup]
       LoadBalancers:
         - ContainerName: web
@@ -340,8 +340,8 @@ Resources:
         AwsvpcConfiguration:
           AssignPublicIp: ENABLED
           Subnets:
-            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' }
-            - { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' }
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet1' }
+            - { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet2' }
           SecurityGroups: [ !Ref SecurityGroup ]
   ServiceScalingTargetCelery:
     Type: AWS::ApplicationAutoScaling::ScalableTarget
@@ -411,8 +411,8 @@ Resources:
 #        AwsvpcConfiguration:
 #          AssignPublicIp: ENABLED
 #          Subnets:
-#            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PrivateSubnet1' }, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet1' } ]
-#            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PrivateSubnet2' }, { 'Fn::ImportValue': !Sub '${ProjectName}-${ENV}-PublicSubnet2' } ]
+#            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PrivateSubnet1' }, { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet1' } ]
+#            - !If [ IsProd, { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PrivateSubnet2' }, { 'Fn::ImportValue': !Sub '${ProjectName}-prod-PublicSubnet2' } ]
 #          SecurityGroups: [ !Ref SecurityGroup ]
 
 
