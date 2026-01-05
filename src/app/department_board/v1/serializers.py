@@ -26,7 +26,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "department",
-            "sub_department_set",
+            "sub_department",
             "title",
             "body",
             "image_set",
@@ -47,17 +47,22 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("소속된 분과만 선택할 수 있습니다.")
         return value
 
+    def validate(self, attrs):
+        department = attrs.get("department")
+        sub_department = attrs.get("sub_department")
+
+        if sub_department and department and sub_department.department_id != department.id:
+            raise serializers.ValidationError("선택한 분과에 속한 세부분과만 선택할 수 있습니다.")
+
+        return attrs
+
     def create(self, validated_data):
         with transaction.atomic():
             image_data_set = validated_data.pop("image_set", [])
             user = self.context["request"].user
             validated_data["user"] = user
-            department = validated_data["department"]
 
             department_board = DepartmentBoard.objects.create(**validated_data)
-
-            user_sub_departments = user.sub_department_set.filter(department=department)
-            department_board.sub_department_set.set(user_sub_departments)
 
             if image_data_set:
                 DepartmentBoardImage.objects.bulk_create(

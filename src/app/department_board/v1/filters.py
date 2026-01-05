@@ -5,7 +5,7 @@ from app.department_board.models import DepartmentBoard
 
 class DepartmentBoardFilter(django_filters.FilterSet):
     department = django_filters.NumberFilter(field_name="department_id", label="분과 ID", required=True)
-    sub_department = django_filters.BaseInFilter(field_name="sub_department_set", label="세부분과 ID")
+    sub_department = django_filters.NumberFilter(field_name="sub_department_id", label="세부분과 ID")
 
     class Meta:
         model = DepartmentBoard
