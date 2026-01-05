@@ -30,8 +30,6 @@ DATABASES = {
         "PORT": DATABASE_SECRET["port"],
     },
 }
-print(PROJECT_NAME)
-print(DATABASES)
 
 # CELERY
 CELERY_BROKER_URL = f"sqs://"
