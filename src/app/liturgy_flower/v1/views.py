@@ -16,7 +16,6 @@ from app.liturgy_flower_like.models import LiturgyFlowerLike
 
 
 def get_client_ip(request):
-    """클라이언트의 IP 주소를 반환합니다."""
     x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
     if x_forwarded_for:
         ip = x_forwarded_for.split(",")[0]

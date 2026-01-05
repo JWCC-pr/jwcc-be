@@ -18,11 +18,11 @@ CSRF_TRUSTED_ORIGINS = [f"https://admin.dev.{DOMAIN}"]
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-DATABASE_SECRET = get_secret(f"{PROJECT_NAME}/{APP_ENV}/db")
+DATABASE_SECRET = get_secret(f"{PROJECT_NAME}/prod/db")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": DATABASE_SECRET["dbname"],
+        "NAME": f'{DATABASE_SECRET["dbname"]}-dev',
         "USER": DATABASE_SECRET["username"],
         "PASSWORD": DATABASE_SECRET["password"],
         "HOST": DATABASE_SECRET["host"],
@@ -69,6 +69,12 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": datetime.timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
 }
+
+
+# EMAIL
+EMAIL_HOST_USER = SECRET["email_user"]
+EMAIL_HOST_PASSWORD = SECRET["email_password"]
+MAILGUN_API_KEY = SECRET["mailgun_api_key"]
 
 
 boto3_client = boto3.client("logs", region_name="ap-northeast-2")

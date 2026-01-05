@@ -3,6 +3,11 @@ from django.urls import include, path
 urlpatterns = [
     path("v1/", include("app.user.v1.urls")),
     path("v1/", include("app.department.v1.urls")),
+    path("v1/", include("app.department_board.v1.urls")),
+    path("v1/", include("app.department_board_comment.v1.urls")),
+    path("v1/", include("app.department_board_hit.v1.urls")),
+    path("v1/", include("app.department_board_like.v1.urls")),
+    path("v1/", include("app.department_board_image.v1.urls")),
     path("v1/", include("app.presigned_url.v1.urls")),
     path("v1/", include("app.email_verifier.v1.urls")),
     path("v1/", include("app.notice.v1.urls")),
