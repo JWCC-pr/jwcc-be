@@ -22,11 +22,6 @@ class WeeklyBulletinEditorialDraftManager(OrderedModelManager):
         return super().get_queryset().filter(state=WeeklyBulletinEditorialStateChoices.DRAFT)
 
 
-class WeeklyBulletinEditorialDraftManager(OrderedModelManager):
-    def get_queryset(self):
-        return super().get_queryset().filter(state=WeeklyBulletinEditorialStateChoices.DRAFT)
-
-
 class WeeklyBulletinEditorialFinalManager(OrderedModelManager):
     def get_queryset(self):
         return super().get_queryset().filter(state=WeeklyBulletinEditorialStateChoices.FINAL)
