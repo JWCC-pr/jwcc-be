@@ -13,7 +13,7 @@ class ReligiousHistory(BaseModelMixin, OrderedModel):
 
     class Meta:
         db_table = "religious_history"
-        verbose_name = "본당출신 수도자"
+        verbose_name = "역대 수도자"
         verbose_name_plural = verbose_name
         ordering = ["start_date", "category"]
 

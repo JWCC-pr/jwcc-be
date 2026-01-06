@@ -27,6 +27,7 @@ Resources:
               - "*"
             AllowedMethods:
               - POST
+              - GET
             AllowedOrigins:
               - "*"
       OwnershipControls:

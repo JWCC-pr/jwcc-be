@@ -10,7 +10,7 @@ class News(BaseModel):
 
     class Meta:
         db_table = "news"
-        verbose_name = "본당소식"
+        verbose_name = "본당일정"
         verbose_name_plural = verbose_name
         ordering = ["-created_at"]
 

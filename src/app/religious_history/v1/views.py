@@ -11,11 +11,11 @@ from app.religious_history.models import ReligiousHistory
 
 
 @extend_schema_view(
-    list=extend_schema(summary="본당 출신 수도자 목록 조회"),
-    create=extend_schema(summary="본당 출신 수도자 등록"),
-    update=extend_schema(summary="본당 출신 수도자 수정"),
+    list=extend_schema(summary="역대 수도자 목록 조회"),
+    create=extend_schema(summary="역대 수도자 등록"),
+    update=extend_schema(summary="역대 수도자 수정"),
     partial_update=extend_schema(exclude=True),
-    destroy=extend_schema(summary="본당 출신 수도자 삭제"),
+    destroy=extend_schema(summary="역대 수도자 삭제"),
 )
 class ReligiousHistoryViewSet(
     mixins.ListModelMixin,
