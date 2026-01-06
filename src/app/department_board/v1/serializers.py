@@ -2,7 +2,6 @@ from django.db import transaction
 from rest_framework import serializers
 
 from app.board.v1.nested_serializers import UserSerializer
-from app.department.models import Department
 from app.department_board.models import DepartmentBoard
 from app.department_board_image.models import DepartmentBoardImage
 from app.department_board_image.v1.serializers import DepartmentBoardImageSerializer
@@ -10,7 +9,6 @@ from app.department_board_image.v1.serializers import DepartmentBoardImageSerial
 
 class DepartmentBoardSerializer(serializers.ModelSerializer):
     user = UserSerializer(label="유저", read_only=True)
-    department = serializers.PrimaryKeyRelatedField(label="분과", queryset=Department.objects.all())
     is_owned = serializers.BooleanField(label="소유 여부", read_only=True)
     is_liked = serializers.BooleanField(label="좋아요 여부", read_only=True)
     image_set = DepartmentBoardImageSerializer(
@@ -26,7 +24,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "id",
             "user",
             "department",
-            "sub_department_set",
+            "sub_department",
             "title",
             "body",
             "image_set",
@@ -39,13 +37,13 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["sub_department_set"]
+        read_only_fields = ["department"]
 
-    def validate_department(self, value):
+    def validate_sub_department(self, value):
         user = self.context["request"].user
-        user_department_ids = user.sub_department_set.values_list("department_id", flat=True)
-        if value.id not in user_department_ids:
-            raise serializers.ValidationError("소속된 분과만 선택할 수 있습니다.")
+        user_sub_department_ids = user.sub_department_set.values_list("id", flat=True)
+        if value.id not in user_sub_department_ids:
+            raise serializers.ValidationError("소속된 세부분과만 선택할 수 있습니다.")
         return value
 
     def create(self, validated_data):
@@ -53,12 +51,9 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             image_data_set = validated_data.pop("image_set", [])
             user = self.context["request"].user
             validated_data["user"] = user
-            department = validated_data["department"]
+            validated_data["department"] = validated_data["sub_department"].department
 
             department_board = DepartmentBoard.objects.create(**validated_data)
-
-            user_sub_departments = user.sub_department_set.filter(department=department)
-            department_board.sub_department_set.set(user_sub_departments)
 
             if image_data_set:
                 DepartmentBoardImage.objects.bulk_create(
@@ -75,9 +70,14 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         with transaction.atomic():
             validated_data["is_modified"] = True
-            image_data_set = validated_data.pop("image_set", [])
+            image_data_set = validated_data.pop("image_set", None)
+
+            if "sub_department" in validated_data:
+                validated_data["department"] = validated_data["sub_department"].department
+
             department_board = super().update(instance, validated_data)
 
+            # 이미지가 명시적으로 전달된 경우에만 처리
             if image_data_set is not None:
                 department_board.image_set.all().delete()
                 if image_data_set:

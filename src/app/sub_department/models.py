@@ -23,4 +23,4 @@ class SubDepartment(BaseModel, OrderedModel):
         ordering = ["order"]
 
     def __str__(self):
-        return self.name
+        return f"[{self.id}] {self.name}"
