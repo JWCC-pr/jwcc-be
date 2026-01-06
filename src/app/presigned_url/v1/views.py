@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
 
-from app.presigned_url.v1.serializers import PresignedSerializer
+from app.presigned_url.v1.serializers import PresignedDownloadSerializer, PresignedSerializer
 
 
 @extend_schema(
@@ -21,4 +21,17 @@ from app.presigned_url.v1.serializers import PresignedSerializer
 )
 class PresignedUrlCreateView(CreateAPIView):
     serializer_class = PresignedSerializer
+    permission_classes = [IsAuthenticated]
+
+
+@extend_schema(
+    summary="다운로드용 미리 서명된 URL 발급",
+    description="""
+파일 다운로드를 위한 presigned URL을 발급합니다.
+- Content-Disposition: attachment 헤더가 포함되어 다운로드가 강제됩니다.
+- iPhone + Kakao 브라우저 등에서 파일 다운로드 시 사용하세요.
+""",
+)
+class PresignedDownloadUrlCreateView(CreateAPIView):
+    serializer_class = PresignedDownloadSerializer
     permission_classes = [IsAuthenticated]
