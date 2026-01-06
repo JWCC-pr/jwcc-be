@@ -1,6 +1,5 @@
 import mimetypes
 from urllib.parse import unquote
-from urllib.parse import quote
 
 from storages.backends.s3boto3 import S3Boto3Storage
 
@@ -28,10 +27,10 @@ class DefaultMediaStorage(S3Boto3Storage):
 
         if is_download:
             fields.update(
-                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{file_name}"}
+                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{quote(file_name)}"}
             )
             conditions.append(
-                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{file_name}"}
+                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{quote(file_name)}"}
             )
 
         response = self.bucket.meta.client.generate_presigned_post(
@@ -42,21 +41,6 @@ class DefaultMediaStorage(S3Boto3Storage):
             ExpiresIn=360,
         )
         return response
-
-    def generate_presigned_download_url(self, name, expires_in=360):
-        file_name = name.rsplit("/", 1)[-1]
-        encoded_filename = quote(file_name)
-
-        url = self.bucket.meta.client.generate_presigned_url(
-            "get_object",
-            Params={
-                "Bucket": self.bucket.name,
-                "Key": f"{self.location}/{name}",
-                "ResponseContentDisposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{encoded_filename}",
-            },
-            ExpiresIn=expires_in,
-        )
-        return url
 
 
 class StaticStorage(S3Boto3Storage):
