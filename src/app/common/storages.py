@@ -1,5 +1,5 @@
 import mimetypes
-from urllib.parse import unquote
+from urllib.parse import unquote, quote
 
 from storages.backends.s3boto3 import S3Boto3Storage
 
