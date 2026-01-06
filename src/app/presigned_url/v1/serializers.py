@@ -40,3 +40,17 @@ class PresignedSerializer(serializers.Serializer):
         except Exception as e:
             raise ValidationError("Invalid Model Data")
         return model, field_name
+
+
+class PresignedDownloadSerializer(serializers.Serializer):
+    file_path = serializers.CharField(write_only=True, help_text="S3 파일 경로 (예: upload/file.pdf)")
+    url = serializers.URLField(read_only=True)
+
+    def validate(self, attrs):
+        file_path = attrs["file_path"]
+        url = PublicMediaStorage().generate_presigned_download_url(file_path)
+        attrs["url"] = url
+        return attrs
+
+    def create(self, validated_data):
+        return validated_data
