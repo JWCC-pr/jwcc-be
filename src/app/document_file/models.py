@@ -1,6 +1,7 @@
 from django.db import models
 
 from app.common.models import BaseModel
+from app.common.storages import DownloadableMediaStorage
 
 
 class DocumentFile(BaseModel):
@@ -11,7 +12,12 @@ class DocumentFile(BaseModel):
         related_name="file_set",
         related_query_name="file",
     )
-    file = models.FileField(verbose_name="자료", max_length=1000, upload_to="document/file/")
+    file = models.FileField(
+        verbose_name="자료",
+        max_length=1000,
+        upload_to="document/file/",
+        storage=DownloadableMediaStorage(),
+    )
 
     class Meta:
         app_label = "document"
