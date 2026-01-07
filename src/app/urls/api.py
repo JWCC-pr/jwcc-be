@@ -34,4 +34,5 @@ urlpatterns = [
     path("v1/", include("app.religious_history.v1.urls")),
     path("v1/", include("app.pastor_history.v1.urls")),
     path("v1/", include("app.assistant_priest_history.v1.urls")),
+    path("v1/", include("app.catechism_room.v1.urls")),
 ]
