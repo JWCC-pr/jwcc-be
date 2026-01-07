@@ -3,6 +3,8 @@ from rest_framework import serializers
 
 from app.board.v1.nested_serializers import UserSerializer
 from app.department_board.models import DepartmentBoard
+from app.department_board_file.models import DepartmentBoardFile
+from app.department_board_file.v1.serializers import DepartmentBoardFileSerializer
 from app.department_board_image.models import DepartmentBoardImage
 from app.department_board_image.v1.serializers import DepartmentBoardImageSerializer
 
@@ -13,6 +15,12 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
     is_liked = serializers.BooleanField(label="좋아요 여부", read_only=True)
     image_set = DepartmentBoardImageSerializer(
         label="이미지",
+        many=True,
+        required=False,
+        allow_empty=True,
+    )
+    file_set = DepartmentBoardFileSerializer(
+        label="파일",
         many=True,
         required=False,
         allow_empty=True,
@@ -28,6 +36,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "title",
             "body",
             "image_set",
+            "file_set",
             "is_owned",
             "is_liked",
             "hit_count",
@@ -49,6 +58,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         with transaction.atomic():
             image_data_set = validated_data.pop("image_set", [])
+            file_data_set = validated_data.pop("file_set", [])
             user = self.context["request"].user
             validated_data["user"] = user
             validated_data["department"] = validated_data["sub_department"].department
@@ -65,12 +75,24 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
                         for image_data in image_data_set
                     ]
                 )
+
+            if file_data_set:
+                DepartmentBoardFile.objects.bulk_create(
+                    [
+                        DepartmentBoardFile(
+                            department_board=department_board,
+                            **file_data,
+                        )
+                        for file_data in file_data_set
+                    ]
+                )
         return department_board
 
     def update(self, instance, validated_data):
         with transaction.atomic():
             validated_data["is_modified"] = True
             image_data_set = validated_data.pop("image_set", None)
+            file_data_set = validated_data.pop("file_set", None)
 
             if "sub_department" in validated_data:
                 validated_data["department"] = validated_data["sub_department"].department
@@ -88,6 +110,20 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
                                 **image_data,
                             )
                             for image_data in image_data_set
+                        ]
+                    )
+
+            # 파일이 명시적으로 전달된 경우에만 처리
+            if file_data_set is not None:
+                department_board.file_set.all().delete()
+                if file_data_set:
+                    DepartmentBoardFile.objects.bulk_create(
+                        [
+                            DepartmentBoardFile(
+                                department_board=department_board,
+                                **file_data,
+                            )
+                            for file_data in file_data_set
                         ]
                     )
         return department_board

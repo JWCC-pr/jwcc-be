@@ -37,6 +37,7 @@ LOCAL_APPS = [
     "app.department_board_comment.apps.DepartmentBoardCommentConfig",
     "app.department_board_like.apps.DepartmentBoardLikeConfig",
     "app.department_board_image.apps.DepartmentBoardImageConfig",
+    "app.department_board_file.apps.DepartmentBoardFileConfig",
     "app.sub_department.apps.SubDepartmentConfig",
     "app.email_verifier.apps.EmailVerifierConfig",
     "app.notice.apps.NoticeConfig",
