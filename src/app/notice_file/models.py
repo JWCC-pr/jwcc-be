@@ -1,6 +1,7 @@
 from django.db import models
 
 from app.common.models import BaseModel
+from app.common.storages import DownloadableMediaStorage
 
 
 class NoticeFile(BaseModel):
@@ -11,7 +12,12 @@ class NoticeFile(BaseModel):
         related_name="file_set",
         related_query_name="file",
     )
-    file = models.FileField(verbose_name="파일", max_length=1000, upload_to="notice/file/")
+    file = models.FileField(
+        verbose_name="파일",
+        max_length=1000,
+        upload_to="notice/file/",
+        storage=DownloadableMediaStorage(),
+    )
 
     class Meta:
         app_label = "notice"
