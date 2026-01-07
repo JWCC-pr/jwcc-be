@@ -16,15 +16,6 @@ from app.department_board_hit.models import DepartmentBoardHit
 from app.department_board_like.models import DepartmentBoardLike
 
 
-def get_client_ip(request):
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(",")[0]
-    else:
-        ip = request.META.get("REMOTE_ADDR")
-    return ip
-
-
 @extend_schema_view(
     list=extend_schema(summary="분과 게시글 목록 조회"),
     create=extend_schema(summary="분과 게시글 등록"),
@@ -67,17 +58,10 @@ class DepartmentBoardViewSet(
 
     def retrieve(self, request, *args, **kwargs):
         with transaction.atomic():
-            if request.user.is_authenticated:
-                hit, created = DepartmentBoardHit.objects.get_or_create(
-                    department_board_id=self.kwargs["pk"],
-                    user_id=request.user.id,
-                )
-            else:
-                ip_address = get_client_ip(request)
-                hit, created = DepartmentBoardHit.objects.get_or_create(
-                    department_board_id=self.kwargs["pk"],
-                    ip_address=ip_address,
-                )
+            hit, created = DepartmentBoardHit.objects.get_or_create(
+                department_board_id=self.kwargs["pk"],
+                user_id=request.user.id,
+            )
 
             if created:
                 DepartmentBoard.objects.filter(id=self.kwargs["pk"]).update(hit_count=F("hit_count") + 1)
