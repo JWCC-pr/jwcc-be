@@ -38,7 +38,7 @@ class DepartmentBoardViewSet(
     pagination_class = LimitOffsetPagination
     filterset_class = DepartmentBoardFilter
     filter_backends = [DjangoFilterBackend, OrderingFilter]
-    ordering_fields = ["created_at", "like_count"]
+    ordering_fields = ["created_at", "hit_count"]
     ordering = ["-created_at"]
 
     def get_queryset(self):
