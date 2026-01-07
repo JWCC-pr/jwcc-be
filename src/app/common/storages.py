@@ -13,6 +13,7 @@ class DefaultMediaStorage(S3Boto3Storage):
     def generate_presigned_post(self, name, is_download=False):
         object_key = self.get_available_name(name)
         file_name = name.rsplit("/", 1)[-1]
+        encoded_filename = quote(file_name)
 
         content_type, _ = mimetypes.guess_type(object_key)
         if content_type is None:
@@ -27,10 +28,10 @@ class DefaultMediaStorage(S3Boto3Storage):
 
         if is_download:
             fields.update(
-                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{quote(file_name)}"}
+                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{encoded_filename}"}
             )
             conditions.append(
-                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{quote(file_name)}"}
+                {"Content-Disposition": f"attachment; filename=\"{file_name}\"; filename*=UTF-8''{encoded_filename}"}
             )
 
         response = self.bucket.meta.client.generate_presigned_post(
@@ -62,3 +63,24 @@ class PrivateMediaStorage(DefaultMediaStorage):
     location = "_media/private"
     file_overwrite = False
     querystring_auth = True
+
+
+class DownloadableMediaStorage(PublicMediaStorage):
+    def get_object_parameters(self, name):
+        params = super().get_object_parameters(name)
+
+        file_name = name.rsplit("/", 1)[-1]
+        encoded_filename = quote(file_name)
+
+        content_type, _ = mimetypes.guess_type(name)
+        if content_type is None:
+            content_type = "application/octet-stream"
+
+        params.update(
+            {
+                "ContentType": content_type,
+                "ContentDisposition": (f'attachment; filename="{file_name}"; ' f"filename*=UTF-8''{encoded_filename}"),
+            }
+        )
+
+        return params
