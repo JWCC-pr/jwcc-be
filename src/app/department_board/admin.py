@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from app.department_board.models import DepartmentBoard
+from app.department_board_file.models import DepartmentBoardFile
 from app.department_board_image.models import DepartmentBoardImage
 
 
@@ -10,9 +11,15 @@ class DepartmentBoardImageInline(admin.StackedInline):
     max_num = 20
 
 
+class DepartmentBoardFileInline(admin.StackedInline):
+    model = DepartmentBoardFile
+    extra = 0
+    max_num = 20
+
+
 @admin.register(DepartmentBoard)
 class DepartmentBoardAdmin(admin.ModelAdmin):
-    inlines = [DepartmentBoardImageInline]
+    inlines = [DepartmentBoardImageInline, DepartmentBoardFileInline]
     list_display = [
         "title",
         "user",
