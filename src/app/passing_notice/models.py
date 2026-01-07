@@ -9,7 +9,7 @@ class PassingNotice(BaseModel):
     baptismal_name = models.CharField(verbose_name="고인 세례명", max_length=40)
     age = models.PositiveIntegerField(verbose_name="고인 나이")
     passing_at = models.DateTimeField(verbose_name="선종일시")
-    funeral_mass_at = models.DateField(verbose_name="장례미사 일정")
+    funeral_mass_at = models.DateTimeField(verbose_name="장례미사 일정")
     funeral_mass_location = models.CharField(verbose_name="장례미사 장소", max_length=200)
     funeral_hall_address = models.CharField(verbose_name="빈소 위치", max_length=200)
     chief_mourner = models.CharField(verbose_name="상주")
