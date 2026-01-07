@@ -71,6 +71,7 @@ LOCAL_APPS = [
     "app.religious_history.apps.ReligiousHistoryConfig",
     "app.assistant_priest_history.apps.AssistantPriestHistoryConfig",
     "app.catechism_room.apps.CatechismRoomConfig",
+    "app.room_reservation.apps.RoomReservationConfig",
 ]
 
 THIRD_PARTY_APPS = [
