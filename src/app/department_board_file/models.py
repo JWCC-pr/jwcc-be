@@ -18,7 +18,6 @@ class DepartmentBoardFile(BaseModel):
         upload_to="department_board/file/",
         storage=DownloadableMediaStorage(),
     )
-    file_name = models.CharField(verbose_name="파일명", max_length=255)
 
     class Meta:
         app_label = "department_board"

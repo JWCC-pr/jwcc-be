@@ -9,5 +9,4 @@ class DepartmentBoardFileSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "file",
-            "file_name",
         ]

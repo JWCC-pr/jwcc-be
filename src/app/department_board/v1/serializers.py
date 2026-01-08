@@ -3,13 +3,18 @@ from rest_framework import serializers
 
 from app.board.v1.nested_serializers import UserSerializer
 from app.department_board.models import DepartmentBoard
-from app.department_board.v1.nested_serializers import DepartmentBoardFileSerializer, DepartmentBoardImageSerializer
+from app.department_board.v1.nested_serializers import (
+    DepartmentBoardFileSerializer,
+    DepartmentBoardImageSerializer,
+    SubDepartmentSerializer,
+)
 from app.department_board_file.models import DepartmentBoardFile
 from app.department_board_image.models import DepartmentBoardImage
 
 
 class DepartmentBoardSerializer(serializers.ModelSerializer):
     user = UserSerializer(label="유저", read_only=True)
+    sub_department = SubDepartmentSerializer(label="세부분과")
     is_owned = serializers.BooleanField(label="소유 여부", read_only=True)
     is_liked = serializers.BooleanField(label="좋아요 여부", read_only=True)
     image_set = DepartmentBoardImageSerializer(
