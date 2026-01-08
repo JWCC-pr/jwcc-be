@@ -4,6 +4,7 @@ from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.exceptions import ValidationError
 from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import GenericViewSet
 
@@ -55,6 +56,11 @@ class DepartmentBoardViewSet(
         )
         queryset = queryset.prefetch_related("user__sub_department_set")
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        if not request.query_params.get("department"):
+            raise ValidationError({"department": ["이 필드는 필수 항목입니다."]})
+        return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         with transaction.atomic():
