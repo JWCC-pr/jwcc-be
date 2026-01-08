@@ -3,10 +3,9 @@ from rest_framework import serializers
 
 from app.board.v1.nested_serializers import UserSerializer
 from app.department_board.models import DepartmentBoard
+from app.department_board.v1.nested_serializers import DepartmentBoardFileSerializer, DepartmentBoardImageSerializer
 from app.department_board_file.models import DepartmentBoardFile
-from app.department_board_file.v1.serializers import DepartmentBoardFileSerializer
 from app.department_board_image.models import DepartmentBoardImage
-from app.department_board_image.v1.serializers import DepartmentBoardImageSerializer
 
 
 class DepartmentBoardSerializer(serializers.ModelSerializer):
