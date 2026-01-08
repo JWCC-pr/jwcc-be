@@ -1,5 +1,5 @@
 import django_filters
-
+from django.db.models import Q
 from app.department_board.models import DepartmentBoard
 
 
@@ -13,6 +13,4 @@ class DepartmentBoardFilter(django_filters.FilterSet):
         fields = ["department", "sub_department", "search"]
 
     def filter_search(self, queryset, name, value):
-        from django.db.models import Q
-
         return queryset.filter(Q(title__icontains=value) | Q(body__icontains=value))
