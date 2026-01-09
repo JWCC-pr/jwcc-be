@@ -1,6 +1,7 @@
 import mimetypes
 from urllib.parse import unquote, quote
 
+from django.utils.text import get_valid_filename
 from storages.backends.s3boto3 import S3Boto3Storage
 
 
@@ -11,8 +12,13 @@ class DefaultMediaStorage(S3Boto3Storage):
         return unquote(super().url(name, format, **kwargs))
 
     def generate_presigned_post(self, name, is_download=False):
+        # 파일명에서 공백 등 특수문자를 _로 변환
+        parts = name.rsplit("/", 1)
+        raw_file_name = parts[-1]
+        file_name = get_valid_filename(raw_file_name)
+        name = f"{parts[0]}/{file_name}" if len(parts) > 1 else file_name
+
         object_key = self.get_available_name(name)
-        file_name = name.rsplit("/", 1)[-1]
         encoded_filename = quote(file_name)
 
         content_type, _ = mimetypes.guess_type(object_key)
