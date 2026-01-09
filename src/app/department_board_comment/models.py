@@ -15,7 +15,7 @@ class DepartmentBoardCommentManager(models.Manager):
 
 class DepartmentBoardComment(BaseModel):
     objects = DepartmentBoardCommentManager()
-    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
+    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.SET_NULL, null=True)
     department_board = models.ForeignKey(
         "department_board.DepartmentBoard", verbose_name="분과 게시글", on_delete=models.CASCADE
     )

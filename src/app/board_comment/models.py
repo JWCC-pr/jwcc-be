@@ -16,7 +16,7 @@ class BoardCommentManager(models.Manager):
 
 class BoardComment(BaseModel):
     objects = BoardCommentManager()
-    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
+    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.SET_NULL, null=True)
     board = models.ForeignKey("board.Board", verbose_name="자유 게시글", on_delete=models.CASCADE)
     parent = models.ForeignKey(
         "self",
