@@ -19,7 +19,7 @@ class PassingNoticeComment(BaseModel):
     passing_notice = models.ForeignKey(
         "passing_notice.PassingNotice", verbose_name="선종 안내 댓글", on_delete=models.CASCADE
     )
-    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.CASCADE)
+    user = models.ForeignKey("user.User", verbose_name="유저", on_delete=models.SET_NULL, null=True)
     body = models.CharField(verbose_name="내용", max_length=500)
     is_modified = models.BooleanField(verbose_name="수정여부", default=False, editable=False)
     is_deleted = models.BooleanField(verbose_name="삭제여부", default=False, editable=False)
