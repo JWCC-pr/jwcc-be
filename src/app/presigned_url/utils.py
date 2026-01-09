@@ -8,7 +8,6 @@ FIELD_CHOICES = []
 def get_file_fields():
     global FIELD_CHOICES
     if not FIELD_CHOICES:
-        FIELD_CHOICES.append(("board.Board.body", "자유 게시글"))
         for model in apps.get_models():
             for field in model._meta.fields:
                 if isinstance(field, (ImageField, FileField)):
