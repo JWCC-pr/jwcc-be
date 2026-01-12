@@ -3,14 +3,27 @@ from rest_framework import serializers
 
 from app.board.v1.nested_serializers import UserSerializer
 from app.department_board.models import DepartmentBoard
+from app.department_board.v1.nested_serializers import (
+    DepartmentBoardFileSerializer,
+    DepartmentBoardImageSerializer,
+    SubDepartmentSerializer,
+)
 from app.department_board_file.models import DepartmentBoardFile
-from app.department_board_file.v1.serializers import DepartmentBoardFileSerializer
 from app.department_board_image.models import DepartmentBoardImage
-from app.department_board_image.v1.serializers import DepartmentBoardImageSerializer
+from app.sub_department.models import SubDepartment
 
 
 class DepartmentBoardSerializer(serializers.ModelSerializer):
-    user = UserSerializer(label="유저", read_only=True)
+    user = UserSerializer(read_only=True)
+    sub_department = serializers.PrimaryKeyRelatedField(
+        queryset=SubDepartment.objects.all(),
+        label="세부분과 ID",
+    )
+    sub_department_info = SubDepartmentSerializer(
+        source="sub_department",
+        read_only=True,
+        label="세부분과",
+    )
     is_owned = serializers.BooleanField(label="소유 여부", read_only=True)
     is_liked = serializers.BooleanField(label="좋아요 여부", read_only=True)
     image_set = DepartmentBoardImageSerializer(
@@ -33,6 +46,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "user",
             "department",
             "sub_department",
+            "sub_department_info",
             "title",
             "body",
             "image_set",
@@ -50,8 +64,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
 
     def validate_sub_department(self, value):
         user = self.context["request"].user
-        user_sub_department_ids = user.sub_department_set.values_list("id", flat=True)
-        if value.id not in user_sub_department_ids:
+        if not user.sub_department_set.filter(id=value.id).exists():
             raise serializers.ValidationError("소속된 세부분과만 선택할 수 있습니다.")
         return value
 

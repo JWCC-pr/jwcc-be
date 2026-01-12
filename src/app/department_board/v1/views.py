@@ -3,8 +3,7 @@ from django.db.models import Case, When, BooleanField, Exists, OuterRef, F
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import OrderingFilter
+from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
@@ -37,8 +36,7 @@ class DepartmentBoardViewSet(
     permission_classes = [DepartmentBoardPermission]
     pagination_class = LimitOffsetPagination
     filterset_class = DepartmentBoardFilter
-    filter_backends = [DjangoFilterBackend, OrderingFilter]
-    ordering_fields = ["created_at", "hit_count"]
+    ordering_fields = ["-created_at", "-hit_count"]
     ordering = ["-created_at"]
 
     def get_queryset(self):
@@ -55,6 +53,11 @@ class DepartmentBoardViewSet(
         )
         queryset = queryset.prefetch_related("user__sub_department_set")
         return queryset
+
+    def list(self, request, *args, **kwargs):
+        if not request.query_params.get("department"):
+            raise ValidationError({"department": ["이 필드는 필수 항목입니다."]})
+        return super().list(request, *args, **kwargs)
 
     def retrieve(self, request, *args, **kwargs):
         with transaction.atomic():
