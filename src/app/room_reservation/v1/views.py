@@ -44,25 +44,14 @@ class RoomReservationViewSet(
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("patch")
 
-    @extend_schema(summary="반복 예약 그룹 전체 삭제")
-    @action(detail=True, methods=["delete"], url_path="repeat-group")
-    def delete_repeat_group(self, request, pk=None):
-        reservation = self.get_object()
-        if not reservation.repeat:
-            return Response({"detail": "반복 예약이 아닙니다."}, status=status.HTTP_400_BAD_REQUEST)
-
-        repeat = reservation.repeat
-        deleted_count, _ = RoomReservation.objects.filter(repeat=repeat).delete()
-        repeat.delete()
-
-        return Response({"deleted_count": deleted_count}, status=status.HTTP_200_OK)
-
 
 @extend_schema_view(
     create=extend_schema(summary="교리실 반복 예약 등록"),
+    destroy=extend_schema(summary="교리실 반복 예약 삭제"),
 )
 class RepeatRoomReservationViewSet(
     mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
     GenericViewSet,
 ):
     queryset = RepeatRoomReservation.objects.all()
