@@ -4,9 +4,9 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from app.liturgy_flower_like.models import LiturgyFlowerLike
 from app.liturgy_flower_like.v1.permissions import LiturgyFlowerLikePermission
 from app.liturgy_flower_like.v1.serializers import LiturgyFlowerLikeToggleSerializer
-from app.liturgy_flower_like.models import LiturgyFlowerLike
 
 
 @extend_schema_view(

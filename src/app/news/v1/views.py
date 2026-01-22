@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.news.models import News
 from app.news.v1.filters import NewsFilter
 from app.news.v1.permissions import NewsPermission
 from app.news.v1.serializers import NewsSerializer
-from app.news.models import News
 
 
 @extend_schema_view(

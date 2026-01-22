@@ -1,5 +1,5 @@
 import mimetypes
-from urllib.parse import unquote, quote
+from urllib.parse import quote, unquote
 
 from django.utils.text import get_valid_filename
 from storages.backends.s3boto3 import S3Boto3Storage

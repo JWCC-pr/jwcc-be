@@ -6,10 +6,10 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.religious.models import Religious
 from app.religious.v1.filters import ReligiousFilter
 from app.religious.v1.permissions import ReligiousPermission
 from app.religious.v1.serializers import ReligiousSerializer
-from app.religious.models import Religious
 
 
 @extend_schema_view(

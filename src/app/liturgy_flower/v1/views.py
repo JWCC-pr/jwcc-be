@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Case, When, BooleanField, Exists, OuterRef, F
+from django.db.models import BooleanField, Case, Exists, F, OuterRef, When
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins

@@ -4,10 +4,10 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import CursorPagination
+from app.weekly_bulletin_editorial_file.models import WeeklyBulletinEditorialFile
 from app.weekly_bulletin_editorial_file.v1.filters import WeeklyBulletinEditorialFileFilter
 from app.weekly_bulletin_editorial_file.v1.permissions import WeeklyBulletinEditorialFilePermission
 from app.weekly_bulletin_editorial_file.v1.serializers import WeeklyBulletinEditorialFileSerializer
-from app.weekly_bulletin_editorial_file.models import WeeklyBulletinEditorialFile
 
 
 @extend_schema_view(

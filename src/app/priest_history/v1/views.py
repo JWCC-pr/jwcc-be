@@ -4,10 +4,10 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.priest_history.models import PriestHistory
 from app.priest_history.v1.filters import PriestHistoryFilter
 from app.priest_history.v1.permissions import PriestHistoryPermission
 from app.priest_history.v1.serializers import PriestHistorySerializer
-from app.priest_history.models import PriestHistory
 
 
 @extend_schema_view(

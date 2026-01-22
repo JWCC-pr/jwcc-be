@@ -1,6 +1,7 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from ordered_model.models import OrderedModel
-from django.core.exceptions import ValidationError
+
 from app.common.models import BaseModelMixin
 
 
