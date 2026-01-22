@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ordered_model.admin import OrderedModelAdmin, OrderedTabularInline, OrderedInlineModelAdminMixin
+from ordered_model.admin import OrderedInlineModelAdminMixin, OrderedModelAdmin, OrderedTabularInline
 
 from app.department.models import Department
 from app.sub_department.models import SubDepartment

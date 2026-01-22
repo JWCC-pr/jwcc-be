@@ -4,13 +4,10 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.weekly_bulletin_editorial.models import WeeklyBulletinEditorial, WeeklyBulletinEditorialStateChoices
 from app.weekly_bulletin_editorial.v1.filters import WeeklyBulletinEditorialFilter
 from app.weekly_bulletin_editorial.v1.permissions import WeeklyBulletinEditorialPermission
 from app.weekly_bulletin_editorial.v1.serializers import WeeklyBulletinEditorialSerializer
-from app.weekly_bulletin_editorial.models import (
-    WeeklyBulletinEditorial,
-    WeeklyBulletinEditorialStateChoices,
-)
 
 
 class BaseEditorialViewSet(

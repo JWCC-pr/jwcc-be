@@ -1,6 +1,6 @@
 from django.db import models
 from django_ckeditor_5.fields import CKEditor5Field
-from ordered_model.models import OrderedModelManager, OrderedModel
+from ordered_model.models import OrderedModel, OrderedModelManager
 
 from app.common.models import BaseModel
 
