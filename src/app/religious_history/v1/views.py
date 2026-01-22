@@ -4,10 +4,10 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.religious_history.models import ReligiousHistory
 from app.religious_history.v1.filters import ReligiousHistoryFilter
 from app.religious_history.v1.permissions import ReligiousHistoryPermission
 from app.religious_history.v1.serializers import ReligiousHistorySerializer
-from app.religious_history.models import ReligiousHistory
 
 
 @extend_schema_view(

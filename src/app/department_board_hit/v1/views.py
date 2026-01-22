@@ -4,10 +4,10 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import CursorPagination
+from app.department_board_hit.models import DepartmentBoardHit
 from app.department_board_hit.v1.filters import DepartmentBoardHitFilter
 from app.department_board_hit.v1.permissions import DepartmentBoardHitPermission
 from app.department_board_hit.v1.serializers import DepartmentBoardHitSerializer
-from app.department_board_hit.models import DepartmentBoardHit
 
 
 @extend_schema_view(

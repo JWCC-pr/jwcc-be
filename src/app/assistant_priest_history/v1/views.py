@@ -3,11 +3,11 @@ from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
-from app.common.pagination import LimitOffsetPagination
+from app.assistant_priest_history.models import AssistantPriestHistory
 from app.assistant_priest_history.v1.filters import AssistantPriestHistoryFilter
 from app.assistant_priest_history.v1.permissions import AssistantPriestHistoryPermission
 from app.assistant_priest_history.v1.serializers import AssistantPriestHistorySerializer
-from app.assistant_priest_history.models import AssistantPriestHistory
+from app.common.pagination import LimitOffsetPagination
 
 
 @extend_schema_view(

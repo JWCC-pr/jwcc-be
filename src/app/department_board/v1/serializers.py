@@ -11,6 +11,7 @@ from app.department_board.v1.nested_serializers import (
 from app.department_board_file.models import DepartmentBoardFile
 from app.department_board_image.models import DepartmentBoardImage
 from app.sub_department.models import SubDepartment
+from app.user.models import UserGradeChoices
 
 
 class DepartmentBoardSerializer(serializers.ModelSerializer):
@@ -64,6 +65,9 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
 
     def validate_sub_department(self, value):
         user = self.context["request"].user
+        # 총관리자는 모든 세부분과에 글을 작성할 수 있음
+        if user.grade == UserGradeChoices.GRADE_01:
+            return value
         if not user.sub_department_set.filter(id=value.id).exists():
             raise serializers.ValidationError("소속된 세부분과만 선택할 수 있습니다.")
         return value

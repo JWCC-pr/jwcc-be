@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import Case, When, BooleanField, Exists, OuterRef, F
+from django.db.models import BooleanField, Case, Exists, F, OuterRef, When
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
@@ -7,10 +7,10 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.department_board.models import DepartmentBoard
 from app.department_board.v1.filters import DepartmentBoardFilter
 from app.department_board.v1.permissions import DepartmentBoardPermission
 from app.department_board.v1.serializers import DepartmentBoardSerializer
-from app.department_board.models import DepartmentBoard
 from app.department_board_hit.models import DepartmentBoardHit
 from app.department_board_like.models import DepartmentBoardLike
 

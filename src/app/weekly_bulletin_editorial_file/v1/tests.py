@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from app.weekly_bulletin_editorial_file.models import WeeklyBulletinEditorialFile
 from app.user.models import User
+from app.weekly_bulletin_editorial_file.models import WeeklyBulletinEditorialFile
 
 
 class WeeklyBulletinEditorialFileListAPITest(APITestCase):

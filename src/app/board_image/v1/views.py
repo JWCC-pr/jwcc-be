@@ -3,11 +3,11 @@ from rest_framework import mixins
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
-from app.common.pagination import CursorPagination
+from app.board_image.models import BoardImage
 from app.board_image.v1.filters import BoardImageFilter
 from app.board_image.v1.permissions import BoardImagePermission
 from app.board_image.v1.serializers import BoardImageSerializer
-from app.board_image.models import BoardImage
+from app.common.pagination import CursorPagination
 
 
 @extend_schema_view(

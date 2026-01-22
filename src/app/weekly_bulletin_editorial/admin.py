@@ -4,8 +4,8 @@ from app.weekly_bulletin_editorial.models import (
     MyeongdoDocument,
     WeeklyBulletinEditorialDraft,
     WeeklyBulletinEditorialFinal,
-    WeeklyBulletinEditorialTemplate,
     WeeklyBulletinEditorialStateChoices,
+    WeeklyBulletinEditorialTemplate,
 )
 from app.weekly_bulletin_editorial_file.models import WeeklyBulletinEditorialFile
 
