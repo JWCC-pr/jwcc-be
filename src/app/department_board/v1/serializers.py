@@ -65,8 +65,11 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
 
     def validate_sub_department(self, value):
         user = self.context["request"].user
-        # 총관리자는 모든 세부분과에 글을 작성할 수 있음
         if user.grade == UserGradeChoices.GRADE_01:
+            return value
+        if user.grade == UserGradeChoices.GRADE_05 or user.sub_department_set.filter(name="명도회").exists():
+            if value.department.name == "사목협의회":
+                raise serializers.ValidationError("사목협의회에는 글을 작성할 수 없습니다.")
             return value
         if not user.sub_department_set.filter(id=value.id).exists():
             raise serializers.ValidationError("소속된 세부분과만 선택할 수 있습니다.")
