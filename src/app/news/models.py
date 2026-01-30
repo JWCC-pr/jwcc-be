@@ -8,6 +8,7 @@ class News(BaseModel):
     title = models.CharField(verbose_name="제목", max_length=100)
     thumbnail = models.ImageField(verbose_name="썸네일", max_length=1000, upload_to="news/thumbnail/")
     body = CKEditor5Field(verbose_name="본문", config_name="media")
+    is_public = models.BooleanField(verbose_name="전체공개", default=True)
 
     class Meta:
         db_table = "news"

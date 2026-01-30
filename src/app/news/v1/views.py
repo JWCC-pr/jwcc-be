@@ -38,6 +38,9 @@ class NewsViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        # 비로그인 사용자는 전체공개 뉴스만 조회 가능
+        if not self.request.user.is_authenticated:
+            queryset = queryset.filter(is_public=True)
         return queryset
 
     # 특정 action에 다른 Filter를 설정해야하는 경우 사용
