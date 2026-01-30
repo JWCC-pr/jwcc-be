@@ -1,9 +1,35 @@
+from django import forms
 from django.contrib import admin
-from django.core.exceptions import ValidationError
 
 from app.department_board.models import DepartmentBoard
 from app.department_board_file.models import DepartmentBoardFile
 from app.department_board_image.models import DepartmentBoardImage
+
+
+class DepartmentBoardAdminForm(forms.ModelForm):
+    class Meta:
+        model = DepartmentBoard
+        fields = "__all__"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        is_pinned = cleaned_data.get("is_pinned")
+        sub_department = cleaned_data.get("sub_department")
+
+        if is_pinned and sub_department:
+            pinned_count = (
+                DepartmentBoard.objects.filter(
+                    sub_department=sub_department,
+                    is_pinned=True,
+                )
+                .exclude(id=self.instance.id)
+                .count()
+            )
+
+            if pinned_count >= 5:
+                raise forms.ValidationError("고정글은 최대 5개까지만 등록할 수 있습니다.")
+
+        return cleaned_data
 
 
 class DepartmentBoardImageInline(admin.StackedInline):
@@ -20,6 +46,7 @@ class DepartmentBoardFileInline(admin.StackedInline):
 
 @admin.register(DepartmentBoard)
 class DepartmentBoardAdmin(admin.ModelAdmin):
+    form = DepartmentBoardAdminForm
     inlines = [DepartmentBoardImageInline, DepartmentBoardFileInline]
     list_display = [
         "title",
@@ -45,18 +72,4 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         obj.department = obj.sub_department.department
-
-        if obj.is_pinned:
-            pinned_count = (
-                DepartmentBoard.objects.filter(
-                    sub_department=obj.sub_department,
-                    is_pinned=True,
-                )
-                .exclude(id=obj.id)
-                .count()
-            )
-
-            if pinned_count >= 5:
-                raise ValidationError("고정글은 최대 5개까지만 등록할 수 있습니다.")
-
         super().save_model(request, obj, form, change)

@@ -79,7 +79,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         attrs = super().validate(attrs)
-        is_pinned = attrs.get("is_pinned", False)
+        is_pinned = attrs.get("is_pinned", self.instance.is_pinned if self.instance else False)
 
         if is_pinned:
             user = self.context["request"].user
