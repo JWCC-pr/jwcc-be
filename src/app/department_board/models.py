@@ -16,6 +16,7 @@ class DepartmentBoard(BaseModel):
     like_count = models.PositiveBigIntegerField(verbose_name="좋아요수", default=0, editable=False)
 
     is_modified = models.BooleanField(verbose_name="수정여부", default=False, editable=False)
+    is_pinned = models.BooleanField(verbose_name="고정", default=False)
 
     class Meta:
         db_table = "department_board"

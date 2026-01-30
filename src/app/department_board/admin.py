@@ -25,6 +25,7 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
         "user",
         "department",
         "sub_department",
+        "is_pinned",
         "created_at",
         "hit_count",
         "comment_count",
