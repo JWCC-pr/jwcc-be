@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.db.models import BooleanField, Case, Exists, F, OuterRef, When
+from django.db.models import BooleanField, Case, Exists, F, OuterRef, Q, When
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
@@ -13,6 +13,7 @@ from app.department_board.v1.permissions import DepartmentBoardPermission
 from app.department_board.v1.serializers import DepartmentBoardSerializer
 from app.department_board_hit.models import DepartmentBoardHit
 from app.department_board_like.models import DepartmentBoardLike
+from app.user.models import UserGradeChoices
 
 
 @extend_schema_view(
@@ -41,6 +42,12 @@ class DepartmentBoardViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+
+        # 비밀글 필터링: 총관리자이거나, 비밀글이 아니거나, 해당 세부분과 소속인 경우만 조회 가능
+        if self.request.user.grade != UserGradeChoices.GRADE_01:
+            user_sub_departments = self.request.user.sub_department_set.values_list("id", flat=True)
+            queryset = queryset.filter(Q(is_secret=False) | Q(sub_department_id__in=user_sub_departments))
+
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),

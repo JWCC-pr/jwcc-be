@@ -59,6 +59,7 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "like_count",
             "is_modified",
             "is_pinned",
+            "is_secret",
             "created_at",
             "updated_at",
         ]

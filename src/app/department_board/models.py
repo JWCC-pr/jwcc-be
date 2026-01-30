@@ -17,6 +17,7 @@ class DepartmentBoard(BaseModel):
 
     is_modified = models.BooleanField(verbose_name="수정여부", default=False, editable=False)
     is_pinned = models.BooleanField(verbose_name="고정", default=False)
+    is_secret = models.BooleanField(verbose_name="비밀글", default=False)
 
     class Meta:
         db_table = "department_board"

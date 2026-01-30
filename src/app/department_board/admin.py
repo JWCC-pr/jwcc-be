@@ -26,6 +26,7 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
         "department",
         "sub_department",
         "is_pinned",
+        "is_secret",
         "created_at",
         "hit_count",
         "comment_count",
