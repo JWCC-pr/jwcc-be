@@ -1,15 +1,15 @@
 from django.contrib import admin
 from django.core.exceptions import ValidationError
 
-from app.room_reservation.models import RepeatRoomReservation, RoomReservation
+from app.room_reservation.models import CatechismRoom, RepeatRoomReservation, RoomReservation
 from app.room_reservation.v1.serializers import RepeatRoomReservationSerializer
 
 
 @admin.register(RoomReservation)
 class RoomReservationAdmin(admin.ModelAdmin):
-    list_display = ["id", "room", "title", "date", "start_at", "end_at", "repeat", "created_at"]
+    list_display = ["id", "room", "title", "user_name", "date", "start_at", "end_at", "repeat", "created_by"]
     list_filter = ["room", "date", "repeat"]
-    search_fields = ["room__name", "title"]
+    search_fields = ["room__name", "title", "user_name"]
     search_help_text = "교리실명, 예약 제목으로 검색하세요."
 
 
@@ -19,16 +19,18 @@ class RepeatRoomReservationAdmin(admin.ModelAdmin):
         "id",
         "room",
         "title",
+        "user_name",
         "repeat_type",
         "start_date",
         "end_date",
         "start_at",
         "end_at",
         "reservation_count",
+        "created_by",
         "created_at",
     ]
     list_filter = ["room", "repeat_type"]
-    search_fields = ["room__name", "title"]
+    search_fields = ["room__name", "title", "user_name"]
     search_help_text = "교리실명, 예약 제목으로 검색하세요."
 
     @admin.display(description="예약 수")
@@ -50,3 +52,10 @@ class RepeatRoomReservationAdmin(admin.ModelAdmin):
             serializer.save()
         except Exception as e:
             raise ValidationError(str(e))
+
+
+@admin.register(CatechismRoom)
+class CatechismRoomAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "location", "created_at"]
+    search_fields = ["name", "location"]
+    search_help_text = "교리실명, 위치로 검색하세요."

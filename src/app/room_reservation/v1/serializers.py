@@ -1,15 +1,72 @@
-from datetime import timedelta
+import calendar
+from datetime import date, timedelta
 
 from dateutil.relativedelta import relativedelta
 from django.db import transaction
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from app.room_reservation.models import RepeatRoomReservation, RoomReservation
+from app.room_reservation.models import CatechismRoom, RepeatRoomReservation, RoomReservation
+from app.room_reservation.v1.utils import find_conflicts
+
+
+def iter_month_starts(start_date, end_date):
+    current = date(start_date.year, start_date.month, 1)
+    while current <= end_date:
+        yield current
+        current += relativedelta(months=1)
+
+
+def generate_repeat_dates(repeat):
+    dates = []
+
+    if repeat.repeat_type == RepeatRoomReservation.RepeatType.WEEKLY:
+        if repeat.week_of_month:
+            for month_start in iter_month_starts(repeat.start_date, repeat.end_date):
+                month_calendar = calendar.monthcalendar(month_start.year, month_start.month)
+                week_index = repeat.week_of_month - 1
+                for weekday in repeat.weekdays:
+                    if week_index < len(month_calendar):
+                        day = month_calendar[week_index][weekday]
+                        if day:
+                            candidate = date(month_start.year, month_start.month, day)
+                            if repeat.start_date <= candidate <= repeat.end_date:
+                                dates.append(candidate)
+        else:
+            current = repeat.start_date
+            while current <= repeat.end_date:
+                if current.weekday() in repeat.weekdays:
+                    dates.append(current)
+                current += timedelta(days=1)
+
+    if repeat.repeat_type == RepeatRoomReservation.RepeatType.MONTHLY_DATE:
+        for month_start in iter_month_starts(repeat.start_date, repeat.end_date):
+            last_day = calendar.monthrange(month_start.year, month_start.month)[1]
+            if repeat.month_day <= last_day:
+                candidate = date(month_start.year, month_start.month, repeat.month_day)
+                if repeat.start_date <= candidate <= repeat.end_date:
+                    dates.append(candidate)
+
+    return sorted(set(dates))
+
+
+class CatechismRoomSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CatechismRoom
+        fields = [
+            "id",
+            "name",
+            "location",
+            "description",
+            "created_at",
+            "updated_at",
+        ]
 
 
 class RoomReservationSerializer(serializers.ModelSerializer):
     room_name = serializers.CharField(source="room.name", read_only=True)
+    created_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_by_name = serializers.CharField(source="created_by.name", read_only=True)
 
     class Meta:
         model = RoomReservation
@@ -19,15 +76,23 @@ class RoomReservationSerializer(serializers.ModelSerializer):
             "room_name",
             "repeat",
             "title",
+            "user_name",
             "date",
             "start_at",
             "end_at",
+            "created_by",
+            "created_by_name",
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["repeat"]
+        read_only_fields = ["repeat", "created_by", "created_by_name"]
 
     def validate(self, attrs):
+        if self.instance:
+            forbidden = {"room", "date", "start_at", "end_at", "repeat"}
+            if forbidden & set(attrs.keys()):
+                raise serializers.ValidationError("날짜 및 시간 변경은 삭제 후 재등록해야 합니다.")
+
         instance = self.instance or RoomReservation()
         instance.room = attrs.get("room", getattr(instance, "room", None))
         instance.date = attrs.get("date", getattr(instance, "date", None))
@@ -41,71 +106,98 @@ class RoomReservationSerializer(serializers.ModelSerializer):
 
         return attrs
 
+    def create(self, validated_data):
+        request = self.context.get("request")
+        if request and request.user and request.user.is_authenticated:
+            validated_data["created_by"] = request.user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get("title", instance.title)
+        instance.user_name = validated_data.get("user_name", instance.user_name)
+        instance.save(update_fields=["title", "user_name", "updated_at"])
+        return instance
+
 
 class RepeatRoomReservationSerializer(serializers.ModelSerializer):
+    created_by = serializers.PrimaryKeyRelatedField(read_only=True)
+    created_by_name = serializers.CharField(source="created_by.name", read_only=True)
+
     class Meta:
         model = RepeatRoomReservation
-        fields = "id", "room", "title", "start_at", "end_at", "start_date", "end_date", "repeat_type", "weekdays"
+        fields = [
+            "id",
+            "room",
+            "title",
+            "user_name",
+            "repeat_type",
+            "start_date",
+            "end_date",
+            "start_at",
+            "end_at",
+            "weekdays",
+            "week_of_month",
+            "month_day",
+            "created_by",
+            "created_by_name",
+        ]
+        read_only_fields = ["created_by", "created_by_name"]
 
     def validate(self, attrs):
         instance = self.instance or RepeatRoomReservation()
 
-        instance.start_at = attrs.get("start_at", instance.start_at)
-        instance.end_at = attrs.get("end_at", instance.end_at)
+        instance.room = attrs.get("room", instance.room)
+        instance.title = attrs.get("title", instance.title)
+        instance.user_name = attrs.get("user_name", instance.user_name)
+        instance.repeat_type = attrs.get("repeat_type", instance.repeat_type)
         instance.start_date = attrs.get("start_date", instance.start_date)
         instance.end_date = attrs.get("end_date", instance.end_date)
-        instance.repeat_type = attrs.get("repeat_type", instance.repeat_type)
+        instance.start_at = attrs.get("start_at", instance.start_at)
+        instance.end_at = attrs.get("end_at", instance.end_at)
         instance.weekdays = attrs.get("weekdays", instance.weekdays)
+        instance.week_of_month = attrs.get("week_of_month", instance.week_of_month)
+        instance.month_day = attrs.get("month_day", instance.month_day)
 
         try:
             instance.clean()
         except ValidationError as e:
             raise serializers.ValidationError(e.message_dict or e.messages)
 
-        if instance.repeat_type == RepeatRoomReservation.RepeatType.WEEKLY and not instance.weekdays:
-            raise serializers.ValidationError({"weekdays": "매주 반복 시 요일을 선택해야 합니다."})
-
         return attrs
 
     @transaction.atomic
     def create(self, validated_data):
-        repeat = RepeatRoomReservation.objects.create(**validated_data)
+        request = self.context.get("request")
+        if request and request.user and request.user.is_authenticated:
+            validated_data["created_by"] = request.user
 
-        reservations = []
-        current = repeat.start_date
+        repeat = RepeatRoomReservation(**validated_data)
 
-        while current <= repeat.end_date:
-            should_create = False
+        dates = generate_repeat_dates(repeat)
+        if not dates:
+            raise serializers.ValidationError({"detail": "반복 일정이 생성되지 않았습니다."})
 
-            if repeat.repeat_type == RepeatRoomReservation.RepeatType.DAILY:
-                should_create = True
+        find_conflicts(
+            room=repeat.room,
+            start_at=repeat.start_at,
+            end_at=repeat.end_at,
+            dates=dates,
+        )
 
-            elif repeat.repeat_type == RepeatRoomReservation.RepeatType.WEEKLY:
-                if current.weekday() in repeat.weekdays:
-                    should_create = True
-
-            elif repeat.repeat_type == RepeatRoomReservation.RepeatType.MONTHLY:
-                if current.day == repeat.start_date.day:
-                    should_create = True
-
-            if should_create:
-                reservation = RoomReservation(
-                    room=repeat.room,
-                    title=repeat.title,
-                    date=current,
-                    start_at=repeat.start_at,
-                    end_at=repeat.end_at,
-                    repeat=repeat,
-                )
-                # 기존 단일 예약 검증 로직 재사용
-                reservation.clean()
-                reservations.append(reservation)
-
-            # 날짜 증가
-            if repeat.repeat_type == RepeatRoomReservation.RepeatType.MONTHLY:
-                current += relativedelta(months=1)
-            else:
-                current += timedelta(days=1)
+        repeat.save()
+        reservations = [
+            RoomReservation(
+                room=repeat.room,
+                title=repeat.title,
+                user_name=repeat.user_name,
+                date=reservation_date,
+                start_at=repeat.start_at,
+                end_at=repeat.end_at,
+                repeat=repeat,
+                created_by=repeat.created_by,
+            )
+            for reservation_date in dates
+        ]
 
         RoomReservation.objects.bulk_create(reservations)
         return repeat

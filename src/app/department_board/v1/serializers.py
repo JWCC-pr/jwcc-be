@@ -11,6 +11,7 @@ from app.department_board.v1.nested_serializers import (
 from app.department_board_file.models import DepartmentBoardFile
 from app.department_board_image.models import DepartmentBoardImage
 from app.sub_department.models import SubDepartment
+from app.user.models import UserGradeChoices
 
 
 class DepartmentBoardSerializer(serializers.ModelSerializer):
@@ -49,6 +50,8 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "sub_department_info",
             "title",
             "body",
+            "is_pinned",
+            "is_secret",
             "image_set",
             "file_set",
             "is_owned",
@@ -61,6 +64,59 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["department"]
+
+    def _validate_pin_limit(self, instance, sub_department, is_pinned):
+        if not is_pinned:
+            return
+
+        department_id = None
+        if sub_department:
+            department_id = sub_department.department_id
+        elif instance:
+            department_id = instance.department_id
+
+        if not department_id:
+            return
+
+        qs = DepartmentBoard.objects.filter(department_id=department_id, is_pinned=True)
+        if instance and instance.pk:
+            qs = qs.exclude(pk=instance.pk)
+
+        if qs.count() >= 5:
+            raise serializers.ValidationError({"is_pinned": "분과별 고정 게시글은 최대 5개까지 등록할 수 있습니다."})
+
+    def _validate_pin_permission(self, instance, sub_department, is_pinned):
+        request = self.context.get("request")
+        user = getattr(request, "user", None)
+        if not user or not user.is_authenticated:
+            return
+
+        allowed_grades = {
+            UserGradeChoices.GRADE_01,
+            UserGradeChoices.GRADE_02,
+            UserGradeChoices.GRADE_03,
+            UserGradeChoices.GRADE_04,
+        }
+
+        if instance and instance.is_pinned and not is_pinned:
+            if user.grade != UserGradeChoices.GRADE_01 and instance.user_id != user.id:
+                raise serializers.ValidationError({"is_pinned": "자신이 등록한 공지만 해제할 수 있습니다."})
+            return
+
+        if is_pinned:
+            if user.grade not in allowed_grades:
+                raise serializers.ValidationError({"is_pinned": "공지글 작성 권한이 없습니다."})
+
+            if instance and instance.pk and user.grade != UserGradeChoices.GRADE_01 and instance.user_id != user.id:
+                raise serializers.ValidationError({"is_pinned": "자신이 등록한 공지만 수정할 수 있습니다."})
+
+    def validate(self, attrs):
+        instance = getattr(self, "instance", None)
+        sub_department = attrs.get("sub_department", getattr(instance, "sub_department", None))
+        is_pinned = attrs.get("is_pinned", getattr(instance, "is_pinned", False))
+        self._validate_pin_permission(instance, sub_department, is_pinned)
+        self._validate_pin_limit(instance, sub_department, is_pinned)
+        return attrs
 
     def validate_sub_department(self, value):
         user = self.context["request"].user

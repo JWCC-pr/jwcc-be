@@ -8,11 +8,26 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-        ("catechism_room", "0001_initial"),
-    ]
+    dependencies = []
 
     operations = [
+        migrations.CreateModel(
+            name="CatechismRoom",
+            fields=[
+                ("id", models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name="ID")),
+                ("created_at", models.DateTimeField(auto_now_add=True, verbose_name="생성일시")),
+                ("updated_at", models.DateTimeField(auto_now=True, verbose_name="수정일시")),
+                ("name", models.CharField(max_length=50, verbose_name="교리실명")),
+                ("location", models.TextField(blank=True, default="", verbose_name="위치")),
+                ("description", models.TextField(blank=True, default="", verbose_name="설명")),
+            ],
+            options={
+                "verbose_name": "교리실",
+                "verbose_name_plural": "교리실",
+                "db_table": "catechism_room",
+                "ordering": ["-created_at"],
+            },
+        ),
         migrations.CreateModel(
             name="RepeatRoomReservation",
             fields=[
@@ -38,7 +53,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="repeat_reservation_set",
-                        to="catechism_room.catechismroom",
+                        to="room_reservation.catechismroom",
                         verbose_name="교리실",
                     ),
                 ),
@@ -75,7 +90,7 @@ class Migration(migrations.Migration):
                     models.ForeignKey(
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="reservation_set",
-                        to="catechism_room.catechismroom",
+                        to="room_reservation.catechismroom",
                         verbose_name="교리실",
                     ),
                 ),

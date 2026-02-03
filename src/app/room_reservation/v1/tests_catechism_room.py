@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from app.catechism_room.models import CatechismRoom
+from app.room_reservation.models import CatechismRoom
 from app.user.models import User
 
 

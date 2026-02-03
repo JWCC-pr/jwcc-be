@@ -1,6 +1,6 @@
 import django_filters
 
-from app.room_reservation.models import RoomReservation
+from app.room_reservation.models import CatechismRoom, RoomReservation
 
 
 class RoomReservationFilter(django_filters.FilterSet):
@@ -10,3 +10,9 @@ class RoomReservationFilter(django_filters.FilterSet):
     class Meta:
         model = RoomReservation
         fields = ["room", "date"]
+
+
+class CatechismRoomFilter(django_filters.FilterSet):
+    class Meta:
+        model = CatechismRoom
+        fields = []
