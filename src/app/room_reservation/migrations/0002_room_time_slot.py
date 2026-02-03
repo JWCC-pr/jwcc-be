@@ -29,6 +29,7 @@ def forwards_create_time_slots(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ("room_reservation", "0001_initial"),

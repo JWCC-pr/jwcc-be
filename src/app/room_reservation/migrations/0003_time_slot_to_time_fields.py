@@ -37,6 +37,7 @@ def forwards_copy_time_fields(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
+    atomic = False
 
     dependencies = [
         ("user", "0006_remove_user_model_test"),
