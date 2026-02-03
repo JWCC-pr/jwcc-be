@@ -1,5 +1,3 @@
-
-
 from django.db import migrations, models
 
 
@@ -14,6 +12,5 @@ class Migration(migrations.Migration):
             model_name="departmentboard",
             name="is_secret",
             field=models.BooleanField(default=False, verbose_name="비공개 여부"),
-
         ),
     ]
