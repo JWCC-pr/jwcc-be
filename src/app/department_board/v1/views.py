@@ -1,9 +1,10 @@
 from django.db import transaction
-from django.db.models import BooleanField, Case, Exists, F, OuterRef, Q, When
+from django.db.models import Case, When, BooleanField, Exists, OuterRef, F, Q
+
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
@@ -42,12 +43,14 @@ class DepartmentBoardViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
-        # 비밀글 필터링: 총관리자이거나, 비밀글이 아니거나, 해당 세부분과 소속인 경우만 조회 가능
-        if self.request.user.grade != UserGradeChoices.GRADE_01:
-            user_sub_departments = self.request.user.sub_department_set.values_list("id", flat=True)
-            queryset = queryset.filter(Q(is_secret=False) | Q(sub_department_id__in=user_sub_departments))
-
+        department_id = self.request.query_params.get("department")
+        if department_id:
+            if not self.request.user.sub_department_set.filter(department_id=department_id).exists():
+                raise PermissionDenied("선택한 분과에 소속된 사용자만 조회할 수 있습니다.")
+            allowed_sub_departments = self.request.user.sub_department_set.values_list("id", flat=True)
+            queryset = queryset.filter(
+                department_id=department_id,
+            ).filter(Q(is_secret=False) | Q(is_secret=True, sub_department_id__in=allowed_sub_departments))
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),
