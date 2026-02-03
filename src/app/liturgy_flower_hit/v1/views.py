@@ -4,10 +4,10 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import CursorPagination
+from app.liturgy_flower_hit.models import LiturgyFlowerHit
 from app.liturgy_flower_hit.v1.filters import LiturgyFlowerHitFilter
 from app.liturgy_flower_hit.v1.permissions import LiturgyFlowerHitPermission
 from app.liturgy_flower_hit.v1.serializers import LiturgyFlowerHitSerializer
-from app.liturgy_flower_hit.models import LiturgyFlowerHit
 
 
 @extend_schema_view(

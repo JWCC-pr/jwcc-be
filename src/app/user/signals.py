@@ -1,11 +1,11 @@
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 
-from app.user.models import User
 from app.board_comment.models import BoardComment
 from app.department_board_comment.models import DepartmentBoardComment
 from app.liturgy_flower_comment.models import LiturgyFlowerComment
 from app.passing_notice_comment.models import PassingNoticeComment
+from app.user.models import User
 
 
 @receiver(pre_delete, sender=User)

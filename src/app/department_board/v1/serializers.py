@@ -60,6 +60,8 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "comment_count",
             "like_count",
             "is_modified",
+            "is_pinned",
+            "is_secret",
             "created_at",
             "updated_at",
         ]
@@ -120,9 +122,42 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
 
     def validate_sub_department(self, value):
         user = self.context["request"].user
+        if user.grade == UserGradeChoices.GRADE_01:
+            return value
+        if user.grade == UserGradeChoices.GRADE_05 or user.sub_department_set.filter(name="명도회").exists():
+            if value.department.name == "사목협의회":
+                raise serializers.ValidationError("사목협의회에는 글을 작성할 수 없습니다.")
+            return value
         if not user.sub_department_set.filter(id=value.id).exists():
             raise serializers.ValidationError("소속된 세부분과만 선택할 수 있습니다.")
         return value
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        is_pinned = attrs.get("is_pinned", self.instance.is_pinned if self.instance else False)
+
+        if is_pinned:
+            user = self.context["request"].user
+            # 단체장(GRADE_04) 이하만 고정글 설정 가능
+            if user.grade > UserGradeChoices.GRADE_04:
+                raise serializers.ValidationError({"is_pinned": "고정글 설정 권한이 없습니다."})
+
+            # sub_department별 최대 5개 제한
+            sub_department = attrs.get("sub_department") or (self.instance.sub_department if self.instance else None)
+            if sub_department:
+                pinned_count = (
+                    DepartmentBoard.objects.filter(
+                        sub_department=sub_department,
+                        is_pinned=True,
+                    )
+                    .exclude(id=self.instance.id if self.instance else None)
+                    .count()
+                )
+
+                if pinned_count >= 5:
+                    raise serializers.ValidationError({"is_pinned": "고정글은 최대 5개까지만 등록할 수 있습니다."})
+
+        return attrs
 
     def create(self, validated_data):
         with transaction.atomic():

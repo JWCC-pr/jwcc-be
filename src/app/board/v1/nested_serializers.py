@@ -1,6 +1,5 @@
 from rest_framework import serializers
 
-
 from app.sub_department.models import SubDepartment
 from app.user.models import User
 

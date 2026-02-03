@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.news.models import News
 from app.news.v1.filters import NewsFilter
 from app.news.v1.permissions import NewsPermission
 from app.news.v1.serializers import NewsSerializer
-from app.news.models import News
 
 
 @extend_schema_view(
@@ -38,6 +38,9 @@ class NewsViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        # 비로그인 사용자는 전체공개 뉴스만 조회 가능
+        if not self.request.user.is_authenticated:
+            queryset = queryset.filter(is_public=True)
         return queryset
 
     # 특정 action에 다른 Filter를 설정해야하는 경우 사용

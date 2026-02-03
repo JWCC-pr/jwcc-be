@@ -1,5 +1,6 @@
 from django.db import transaction
 from django.db.models import Case, When, BooleanField, Exists, OuterRef, F, Q
+
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
@@ -7,12 +8,13 @@ from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
+from app.department_board.models import DepartmentBoard
 from app.department_board.v1.filters import DepartmentBoardFilter
 from app.department_board.v1.permissions import DepartmentBoardPermission
 from app.department_board.v1.serializers import DepartmentBoardSerializer
-from app.department_board.models import DepartmentBoard
 from app.department_board_hit.models import DepartmentBoardHit
 from app.department_board_like.models import DepartmentBoardLike
+from app.user.models import UserGradeChoices
 
 
 @extend_schema_view(
@@ -37,7 +39,7 @@ class DepartmentBoardViewSet(
     pagination_class = LimitOffsetPagination
     filterset_class = DepartmentBoardFilter
     ordering_fields = ["-created_at", "-hit_count"]
-    ordering = ["-created_at"]
+    ordering = ["-is_pinned", "-created_at"]
 
     def get_queryset(self):
         queryset = super().get_queryset()
