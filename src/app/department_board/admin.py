@@ -74,23 +74,27 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
         return queryset
 
     def save_model(self, request, obj, form, change):
-        allowed_grades = {
-            UserGradeChoices.GRADE_01,
-            UserGradeChoices.GRADE_02,
-            UserGradeChoices.GRADE_03,
-            UserGradeChoices.GRADE_04,
-        }
-        if obj.is_pinned and request.user.grade not in allowed_grades:
-            raise ValidationError("공지글 작성 권한이 없습니다.")
+        # AdminUser(관리자)는 grade 속성이 없으므로 권한 체크 스킵
+        user_grade = getattr(request.user, "grade", None)
 
-        if change and obj.pk:
-            original = DepartmentBoard.objects.filter(pk=obj.pk).only("user_id", "is_pinned").first()
-            if original and original.is_pinned and not obj.is_pinned:
-                if request.user.grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
-                    raise ValidationError("자신이 등록한 공지만 해제할 수 있습니다.")
-            if original and obj.is_pinned:
-                if request.user.grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
-                    raise ValidationError("자신이 등록한 공지만 수정할 수 있습니다.")
+        if user_grade is not None:
+            allowed_grades = {
+                UserGradeChoices.GRADE_01,
+                UserGradeChoices.GRADE_02,
+                UserGradeChoices.GRADE_03,
+                UserGradeChoices.GRADE_04,
+            }
+            if obj.is_pinned and user_grade not in allowed_grades:
+                raise ValidationError("공지글 작성 권한이 없습니다.")
+
+            if change and obj.pk:
+                original = DepartmentBoard.objects.filter(pk=obj.pk).only("user_id", "is_pinned").first()
+                if original and original.is_pinned and not obj.is_pinned:
+                    if user_grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
+                        raise ValidationError("자신이 등록한 공지만 해제할 수 있습니다.")
+                if original and obj.is_pinned:
+                    if user_grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
+                        raise ValidationError("자신이 등록한 공지만 수정할 수 있습니다.")
 
         obj.department = obj.sub_department.department
         obj.full_clean()
