@@ -8,6 +8,9 @@ class DepartmentBoardPermission(permissions.BasePermission):
         return request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
+        if request.user.grade == UserGradeChoices.GRADE_01:
+            return True
+
         if request.method in permissions.SAFE_METHODS:
             if not request.user.sub_department_set.filter(department_id=obj.department_id).exists():
                 return False
