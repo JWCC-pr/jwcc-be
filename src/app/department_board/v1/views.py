@@ -39,7 +39,7 @@ class DepartmentBoardViewSet(
     pagination_class = LimitOffsetPagination
     filterset_class = DepartmentBoardFilter
     ordering_fields = ["-created_at", "-hit_count"]
-    ordering = ["-is_pinned", "-created_at"]
+    ordering = ["-created_at"]
 
     def get_queryset(self):
         queryset = super().get_queryset()

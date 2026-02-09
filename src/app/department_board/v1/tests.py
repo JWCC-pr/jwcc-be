@@ -1,8 +1,243 @@
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from app.department.models import Department
 from app.department_board.models import DepartmentBoard
-from app.user.models import User
+from app.sub_department.models import SubDepartment
+from app.user.models import User, UserGradeChoices
+
+
+class DepartmentBoardPinLimitAPITest(APITestCase):
+    """분과 게시판 고정글 최대 5개 제한 테스트"""
+
+    PATH = "/v1/department_board/"
+
+    def setUp(self):
+        # 분과/세부분과 생성
+        self.department = Department.objects.create(name="테스트분과")
+        self.sub_department = SubDepartment.objects.create(department=self.department, name="테스트세부분과")
+        self.sub_department_2 = SubDepartment.objects.create(department=self.department, name="다른세부분과")
+
+        # 다른 분과 (격리 테스트용)
+        self.other_department = Department.objects.create(name="다른분과")
+        self.other_sub_department = SubDepartment.objects.create(
+            department=self.other_department, name="다른분과세부분과"
+        )
+
+        # 단체장(GRADE_04) - 고정글 권한 있음
+        self.user = User.objects.create(
+            email="leader@test.com",
+            password="test1234",
+            name="단체장",
+            baptismal_name="요한",
+            postcode="12345",
+            base_address="서울",
+            detail_address="강남",
+            birth="1990-01-01",
+            grade=UserGradeChoices.GRADE_04,
+            is_active=True,
+        )
+        self.user.sub_department_set.add(self.sub_department, self.sub_department_2, self.other_sub_department)
+
+        # 일반 신자(GRADE_06) - 고정글 권한 없음
+        self.normal_user = User.objects.create(
+            email="normal@test.com",
+            password="test1234",
+            name="일반신자",
+            baptismal_name="바오로",
+            postcode="12345",
+            base_address="서울",
+            detail_address="강남",
+            birth="1990-01-01",
+            grade=UserGradeChoices.GRADE_06,
+            is_active=True,
+        )
+        self.normal_user.sub_department_set.add(self.sub_department)
+
+    def _create_board(self, user, sub_department, is_pinned=False, title="테스트"):
+        """게시글 생성 헬퍼"""
+        self.client.force_authenticate(user)
+        return self.client.post(
+            self.PATH,
+            data={
+                "sub_department": sub_department.id,
+                "title": title,
+                "body": "<p>테스트 본문</p>",
+                "is_pinned": is_pinned,
+            },
+            format="json",
+        )
+
+    def test_pin_1_to_5_success(self):
+        """고정글 1~5개까지 등록 성공"""
+        for i in range(1, 6):
+            response = self._create_board(self.user, self.sub_department, is_pinned=True, title=f"고정글{i}")
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_201_CREATED,
+                f"{i}번째 고정글 등록 실패: {response.data}",
+            )
+
+        # DB에 고정글 5개 확인
+        pinned_count = DepartmentBoard.objects.filter(sub_department=self.sub_department, is_pinned=True).count()
+        self.assertEqual(pinned_count, 5)
+
+    def test_pin_6th_fail(self):
+        """6번째 고정글 등록 시 실패"""
+        # 5개 먼저 생성
+        for i in range(5):
+            DepartmentBoard.objects.create(
+                user=self.user,
+                department=self.department,
+                sub_department=self.sub_department,
+                title=f"고정글{i + 1}",
+                body="본문",
+                is_pinned=True,
+            )
+
+        # 6번째 시도
+        response = self._create_board(self.user, self.sub_department, is_pinned=True, title="고정글6")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("is_pinned", response.data)
+
+    def test_pin_different_sub_department_independent(self):
+        """다른 세부분과의 고정글은 별도로 카운트"""
+        # sub_department에 5개 고정
+        for i in range(5):
+            DepartmentBoard.objects.create(
+                user=self.user,
+                department=self.department,
+                sub_department=self.sub_department,
+                title=f"고정글{i + 1}",
+                body="본문",
+                is_pinned=True,
+            )
+
+        # sub_department_2에는 아직 고정글 가능
+        response = self._create_board(self.user, self.sub_department_2, is_pinned=True, title="다른분과고정글")
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+            f"다른 세부분과에 고정글 등록 실패: {response.data}",
+        )
+
+    def test_pin_different_department_independent(self):
+        """다른 분과의 고정글은 별도로 카운트"""
+        # department에 5개 고정
+        for i in range(5):
+            DepartmentBoard.objects.create(
+                user=self.user,
+                department=self.department,
+                sub_department=self.sub_department,
+                title=f"고정글{i + 1}",
+                body="본문",
+                is_pinned=True,
+            )
+
+        # other_department에는 고정 가능
+        response = self._create_board(self.user, self.other_sub_department, is_pinned=True, title="타분과고정글")
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+            f"다른 분과에 고정글 등록 실패: {response.data}",
+        )
+
+    def test_unpin_then_pin_new_one(self):
+        """고정 해제 후 새 고정글 등록 가능"""
+        # 5개 고정
+        boards = []
+        for i in range(5):
+            board = DepartmentBoard.objects.create(
+                user=self.user,
+                department=self.department,
+                sub_department=self.sub_department,
+                title=f"고정글{i + 1}",
+                body="본문",
+                is_pinned=True,
+            )
+            boards.append(board)
+
+        # 첫 번째 고정 해제
+        self.client.force_authenticate(self.user)
+        response = self.client.put(
+            f"{self.PATH}{boards[0].id}/",
+            data={
+                "sub_department": self.sub_department.id,
+                "title": boards[0].title,
+                "body": boards[0].body,
+                "is_pinned": False,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK, f"고정 해제 실패: {response.data}")
+
+        # 새 고정글 등록
+        response = self._create_board(self.user, self.sub_department, is_pinned=True, title="새고정글")
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+            f"고정 해제 후 새 고정글 등록 실패: {response.data}",
+        )
+
+    def test_update_existing_pinned_post_no_count_issue(self):
+        """이미 고정된 게시글 수정 시 자기 자신 제외하여 카운트"""
+        # 5개 고정
+        boards = []
+        for i in range(5):
+            board = DepartmentBoard.objects.create(
+                user=self.user,
+                department=self.department,
+                sub_department=self.sub_department,
+                title=f"고정글{i + 1}",
+                body="본문",
+                is_pinned=True,
+            )
+            boards.append(board)
+
+        # 기존 고정 게시글 제목만 수정 (is_pinned=True 유지)
+        self.client.force_authenticate(self.user)
+        response = self.client.put(
+            f"{self.PATH}{boards[0].id}/",
+            data={
+                "sub_department": self.sub_department.id,
+                "title": "수정된 고정글",
+                "body": "수정된 본문",
+                "is_pinned": True,
+            },
+            format="json",
+        )
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_200_OK,
+            f"기존 고정글 수정 실패: {response.data}",
+        )
+
+    def test_non_pinned_post_not_affected_by_limit(self):
+        """고정되지 않은 일반 게시글은 제한에 영향 없음"""
+        # 5개 고정
+        for i in range(5):
+            DepartmentBoard.objects.create(
+                user=self.user,
+                department=self.department,
+                sub_department=self.sub_department,
+                title=f"고정글{i + 1}",
+                body="본문",
+                is_pinned=True,
+            )
+
+        # 일반 게시글은 여전히 등록 가능
+        response = self._create_board(self.user, self.sub_department, is_pinned=False, title="일반글")
+        self.assertEqual(
+            response.status_code,
+            status.HTTP_201_CREATED,
+            f"일반 게시글 등록 실패: {response.data}",
+        )
+
+    def test_normal_user_cannot_pin(self):
+        """권한 없는 유저(GRADE_06)는 고정글 등록 불가"""
+        response = self._create_board(self.normal_user, self.sub_department, is_pinned=True, title="무권한고정시도")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("is_pinned", response.data)
 
 
 class DepartmentBoardListAPITest(APITestCase):
