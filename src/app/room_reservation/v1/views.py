@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
+from drf_spectacular.utils import OpenApiExample, extend_schema, extend_schema_view, inline_serializer
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
@@ -97,7 +97,50 @@ class RoomReservationViewSet(
 
 
 @extend_schema_view(
-    create=extend_schema(summary="교리실 반복 예약 등록"),
+    create=extend_schema(
+        summary="교리실 반복 예약 등록",
+        description=(
+            "`repeatType=weekly` 사용 시 `weekdays`는 0(월)~6(일) 숫자 배열입니다. "
+            "`weekOfMonth`는 1~4주차 지정값이며, 매주 반복이면 `null` 또는 생략합니다. "
+            "`repeatType=monthlyDate` 사용 시 `monthDay`를 1~31로 전달합니다."
+        ),
+        examples=[
+            OpenApiExample(
+                "요일 반복(매주 월/수)",
+                value={
+                    "room": 1,
+                    "title": "초등부 교리",
+                    "userName": "홍길동",
+                    "repeatType": "weekly",
+                    "startDate": "2026-03-01",
+                    "endDate": "2026-06-30",
+                    "startAt": "19:00:00",
+                    "endAt": "20:00:00",
+                    "weekdays": [0, 2],
+                    "weekOfMonth": None,
+                    "monthDay": None,
+                },
+                request_only=True,
+            ),
+            OpenApiExample(
+                "날짜 반복(매월 10일)",
+                value={
+                    "room": 1,
+                    "title": "교리봉사자 모임",
+                    "userName": "이몽룡",
+                    "repeatType": "monthlyDate",
+                    "startDate": "2026-03-01",
+                    "endDate": "2026-12-31",
+                    "startAt": "10:00:00",
+                    "endAt": "11:00:00",
+                    "weekdays": [],
+                    "weekOfMonth": None,
+                    "monthDay": 10,
+                },
+                request_only=True,
+            ),
+        ],
+    ),
     destroy=extend_schema(summary="교리실 반복 예약 삭제"),
 )
 class RepeatRoomReservationViewSet(

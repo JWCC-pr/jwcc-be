@@ -122,6 +122,26 @@ class RoomReservationSerializer(serializers.ModelSerializer):
 class RepeatRoomReservationSerializer(serializers.ModelSerializer):
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by_name = serializers.CharField(source="created_by.name", read_only=True)
+    weekdays = serializers.ListField(
+        child=serializers.IntegerField(min_value=0, max_value=6),
+        required=False,
+        allow_empty=True,
+        help_text="요일 반복 값. 0=월, 1=화, 2=수, 3=목, 4=금, 5=토, 6=일",
+    )
+    week_of_month = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        min_value=1,
+        max_value=4,
+        help_text="월별 n주차 반복에서만 사용합니다. 매주 반복이면 null 또는 생략하세요.",
+    )
+    month_day = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        min_value=1,
+        max_value=31,
+        help_text="날짜 반복(monthlyDate)일 때 사용할 일자(1~31)",
+    )
 
     class Meta:
         model = RepeatRoomReservation
