@@ -1,11 +1,13 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema, extend_schema_view, inline_serializer
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+
+from rest_framework import serializers as drf_serializers
 
 from app.common.pagination import LimitOffsetPagination
 from app.room_reservation.models import CatechismRoom, RepeatRoomReservation, RoomReservation
@@ -112,7 +114,25 @@ class RepeatRoomReservationViewSet(
 
 
 @extend_schema_view(
-    list=extend_schema(summary="교리실 목록 조회"),
+    list=extend_schema(
+        summary="교리실 목록 조회",
+        responses=inline_serializer(
+            name="CatechismRoomGrouped",
+            fields={
+                "building": drf_serializers.CharField(),
+                "rooms": inline_serializer(
+                    name="CatechismRoomItem",
+                    fields={
+                        "id": drf_serializers.IntegerField(),
+                        "name": drf_serializers.CharField(),
+                        "location": drf_serializers.CharField(),
+                    },
+                    many=True,
+                ),
+            },
+            many=True,
+        ),
+    ),
     create=extend_schema(summary="교리실 등록"),
     retrieve=extend_schema(summary="교리실 상세 조회"),
     update=extend_schema(summary="교리실 수정"),
