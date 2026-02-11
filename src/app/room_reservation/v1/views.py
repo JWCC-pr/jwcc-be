@@ -62,6 +62,7 @@ class RoomReservationViewSet(
             update_fields = {
                 "title": serializer.validated_data.get("title", instance.title),
                 "user_name": serializer.validated_data.get("user_name", instance.user_name),
+                "organization_name": serializer.validated_data.get("organization_name", instance.organization_name),
                 "updated_at": timezone.now(),
             }
 
@@ -73,7 +74,8 @@ class RoomReservationViewSet(
             repeat = instance.repeat
             repeat.title = update_fields["title"]
             repeat.user_name = update_fields["user_name"]
-            repeat.save(update_fields=["title", "user_name", "updated_at"])
+            repeat.organization_name = update_fields["organization_name"]
+            repeat.save(update_fields=["title", "user_name", "organization_name", "updated_at"])
 
         return Response(serializer.data)
 
@@ -108,9 +110,10 @@ class RoomReservationViewSet(
             OpenApiExample(
                 "요일 반복(매주 월/수)",
                 value={
-                    "room": 1,
+                    "roomId": 1,
                     "title": "초등부 교리",
                     "userName": "홍길동",
+                    "organizationName": "초등부",
                     "repeatType": "weekly",
                     "startDate": "2026-03-01",
                     "endDate": "2026-06-30",
@@ -125,9 +128,10 @@ class RoomReservationViewSet(
             OpenApiExample(
                 "날짜 반복(매월 10일)",
                 value={
-                    "room": 1,
+                    "roomId": 1,
                     "title": "교리봉사자 모임",
                     "userName": "이몽룡",
+                    "organizationName": "교리봉사단",
                     "repeatType": "monthlyDate",
                     "startDate": "2026-03-01",
                     "endDate": "2026-12-31",
@@ -166,7 +170,7 @@ class RepeatRoomReservationViewSet(
                 "rooms": inline_serializer(
                     name="CatechismRoomItem",
                     fields={
-                        "id": drf_serializers.IntegerField(),
+                        "roomId": drf_serializers.IntegerField(),
                         "name": drf_serializers.CharField(),
                         "location": drf_serializers.CharField(),
                     },
@@ -193,6 +197,7 @@ class CatechismRoomViewSet(
     queryset = CatechismRoom.objects.all()
     serializer_class = CatechismRoomSerializer
     permission_classes = [CatechismRoomPermission]
+    pagination_class = None
     filterset_class = CatechismRoomFilter
     filter_backends = [DjangoFilterBackend]
 
@@ -207,7 +212,7 @@ class CatechismRoomViewSet(
                 }
             grouped[room.building]["rooms"].append(
                 {
-                    "id": room.id,
+                    "roomId": room.id,
                     "name": room.name,
                     "location": room.location,
                 }

@@ -51,6 +51,7 @@ class RepeatRoomReservation(BaseModel):
     )
     title = models.CharField(verbose_name="예약 제목", max_length=50)
     user_name = models.CharField(verbose_name="사용자명", max_length=10, default="")
+    organization_name = models.CharField(verbose_name="사용단체명", max_length=50, blank=True, default="")
     repeat_type = models.CharField(
         verbose_name="반복 유형",
         max_length=20,
@@ -120,6 +121,7 @@ class RoomReservation(BaseModel):
     )
     title = models.CharField(verbose_name="예약 제목", max_length=50)
     user_name = models.CharField(verbose_name="사용자명", max_length=10, default="")
+    organization_name = models.CharField(verbose_name="사용단체명", max_length=50, blank=True, default="")
     date = models.DateField(verbose_name="예약 날짜")
     start_at = models.TimeField(verbose_name="시작 시간")
     end_at = models.TimeField(verbose_name="종료 시간")

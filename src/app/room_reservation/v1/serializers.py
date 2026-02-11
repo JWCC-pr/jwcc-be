@@ -64,6 +64,7 @@ class CatechismRoomSerializer(serializers.ModelSerializer):
 
 
 class RoomReservationSerializer(serializers.ModelSerializer):
+    room_id = serializers.PrimaryKeyRelatedField(source="room", queryset=CatechismRoom.objects.all())
     room_name = serializers.CharField(source="room.name", read_only=True)
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by_name = serializers.CharField(source="created_by.name", read_only=True)
@@ -72,11 +73,12 @@ class RoomReservationSerializer(serializers.ModelSerializer):
         model = RoomReservation
         fields = [
             "id",
-            "room",
+            "room_id",
             "room_name",
             "repeat",
             "title",
             "user_name",
+            "organization_name",
             "date",
             "start_at",
             "end_at",
@@ -90,7 +92,7 @@ class RoomReservationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         if self.instance:
             forbidden = {"room", "date", "start_at", "end_at", "repeat"}
-            if forbidden & set(attrs.keys()):
+            if forbidden & set(attrs):
                 raise serializers.ValidationError("날짜 및 시간 변경은 삭제 후 재등록해야 합니다.")
 
         instance = self.instance or RoomReservation()
@@ -115,11 +117,13 @@ class RoomReservationSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.title = validated_data.get("title", instance.title)
         instance.user_name = validated_data.get("user_name", instance.user_name)
-        instance.save(update_fields=["title", "user_name", "updated_at"])
+        instance.organization_name = validated_data.get("organization_name", instance.organization_name)
+        instance.save(update_fields=["title", "user_name", "organization_name", "updated_at"])
         return instance
 
 
 class RepeatRoomReservationSerializer(serializers.ModelSerializer):
+    room_id = serializers.PrimaryKeyRelatedField(source="room", queryset=CatechismRoom.objects.all())
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by_name = serializers.CharField(source="created_by.name", read_only=True)
     weekdays = serializers.ListField(
@@ -147,9 +151,10 @@ class RepeatRoomReservationSerializer(serializers.ModelSerializer):
         model = RepeatRoomReservation
         fields = [
             "id",
-            "room",
+            "room_id",
             "title",
             "user_name",
+            "organization_name",
             "repeat_type",
             "start_date",
             "end_date",
@@ -210,6 +215,7 @@ class RepeatRoomReservationSerializer(serializers.ModelSerializer):
                 room=repeat.room,
                 title=repeat.title,
                 user_name=repeat.user_name,
+                organization_name=repeat.organization_name,
                 date=reservation_date,
                 start_at=repeat.start_at,
                 end_at=repeat.end_at,
