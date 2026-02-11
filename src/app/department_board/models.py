@@ -17,7 +17,7 @@ class DepartmentBoard(BaseModel):
     like_count = models.PositiveBigIntegerField(verbose_name="좋아요수", default=0, editable=False)
 
     is_modified = models.BooleanField(verbose_name="수정여부", default=False, editable=False)
-    is_pinned = models.BooleanField(verbose_name="고정 여부", default=False)
+    is_fixed = models.BooleanField(verbose_name="고정 여부", default=False)
     is_secret = models.BooleanField(verbose_name="비공개 여부", default=False)
 
     class Meta:
@@ -27,14 +27,14 @@ class DepartmentBoard(BaseModel):
         ordering = ["-created_at"]
 
     def clean(self):
-        if not self.is_pinned:
+        if not self.is_fixed:
             return
 
         department_id = self.department_id
         if not department_id:
             return
 
-        qs = DepartmentBoard.objects.filter(department_id=department_id, is_pinned=True)
+        qs = DepartmentBoard.objects.filter(department_id=department_id, is_fixed=True)
         if self.pk:
             qs = qs.exclude(pk=self.pk)
 

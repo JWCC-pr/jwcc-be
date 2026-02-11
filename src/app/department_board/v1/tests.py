@@ -54,7 +54,7 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
         )
         self.normal_user.sub_department_set.add(self.sub_department)
 
-    def _create_board(self, user, sub_department, is_pinned=False, title="테스트"):
+    def _create_board(self, user, sub_department, is_fixed=False, title="테스트"):
         """게시글 생성 헬퍼"""
         self.client.force_authenticate(user)
         return self.client.post(
@@ -63,7 +63,7 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 "sub_department": sub_department.id,
                 "title": title,
                 "body": "<p>테스트 본문</p>",
-                "is_pinned": is_pinned,
+                "is_fixed": is_fixed,
             },
             format="json",
         )
@@ -71,7 +71,7 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
     def test_pin_1_to_5_success(self):
         """고정글 1~5개까지 등록 성공"""
         for i in range(1, 6):
-            response = self._create_board(self.user, self.sub_department, is_pinned=True, title=f"고정글{i}")
+            response = self._create_board(self.user, self.sub_department, is_fixed=True, title=f"고정글{i}")
             self.assertEqual(
                 response.status_code,
                 status.HTTP_201_CREATED,
@@ -79,7 +79,7 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
             )
 
         # DB에 고정글 5개 확인
-        pinned_count = DepartmentBoard.objects.filter(sub_department=self.sub_department, is_pinned=True).count()
+        pinned_count = DepartmentBoard.objects.filter(sub_department=self.sub_department, is_fixed=True).count()
         self.assertEqual(pinned_count, 5)
 
     def test_pin_6th_fail(self):
@@ -92,13 +92,13 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 sub_department=self.sub_department,
                 title=f"고정글{i + 1}",
                 body="본문",
-                is_pinned=True,
+                is_fixed=True,
             )
 
         # 6번째 시도
-        response = self._create_board(self.user, self.sub_department, is_pinned=True, title="고정글6")
+        response = self._create_board(self.user, self.sub_department, is_fixed=True, title="고정글6")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("is_pinned", response.data)
+        self.assertIn("is_fixed", response.data)
 
     def test_pin_different_sub_department_independent(self):
         """다른 세부분과의 고정글은 별도로 카운트"""
@@ -110,11 +110,11 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 sub_department=self.sub_department,
                 title=f"고정글{i + 1}",
                 body="본문",
-                is_pinned=True,
+                is_fixed=True,
             )
 
         # sub_department_2에는 아직 고정글 가능
-        response = self._create_board(self.user, self.sub_department_2, is_pinned=True, title="다른분과고정글")
+        response = self._create_board(self.user, self.sub_department_2, is_fixed=True, title="다른분과고정글")
         self.assertEqual(
             response.status_code,
             status.HTTP_201_CREATED,
@@ -131,11 +131,11 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 sub_department=self.sub_department,
                 title=f"고정글{i + 1}",
                 body="본문",
-                is_pinned=True,
+                is_fixed=True,
             )
 
         # other_department에는 고정 가능
-        response = self._create_board(self.user, self.other_sub_department, is_pinned=True, title="타분과고정글")
+        response = self._create_board(self.user, self.other_sub_department, is_fixed=True, title="타분과고정글")
         self.assertEqual(
             response.status_code,
             status.HTTP_201_CREATED,
@@ -153,7 +153,7 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 sub_department=self.sub_department,
                 title=f"고정글{i + 1}",
                 body="본문",
-                is_pinned=True,
+                is_fixed=True,
             )
             boards.append(board)
 
@@ -165,14 +165,14 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 "sub_department": self.sub_department.id,
                 "title": boards[0].title,
                 "body": boards[0].body,
-                "is_pinned": False,
+                "is_fixed": False,
             },
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK, f"고정 해제 실패: {response.data}")
 
         # 새 고정글 등록
-        response = self._create_board(self.user, self.sub_department, is_pinned=True, title="새고정글")
+        response = self._create_board(self.user, self.sub_department, is_fixed=True, title="새고정글")
         self.assertEqual(
             response.status_code,
             status.HTTP_201_CREATED,
@@ -190,11 +190,11 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 sub_department=self.sub_department,
                 title=f"고정글{i + 1}",
                 body="본문",
-                is_pinned=True,
+                is_fixed=True,
             )
             boards.append(board)
 
-        # 기존 고정 게시글 제목만 수정 (is_pinned=True 유지)
+        # 기존 고정 게시글 제목만 수정 (is_fixed=True 유지)
         self.client.force_authenticate(self.user)
         response = self.client.put(
             f"{self.PATH}{boards[0].id}/",
@@ -202,7 +202,7 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 "sub_department": self.sub_department.id,
                 "title": "수정된 고정글",
                 "body": "수정된 본문",
-                "is_pinned": True,
+                "is_fixed": True,
             },
             format="json",
         )
@@ -222,11 +222,11 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
                 sub_department=self.sub_department,
                 title=f"고정글{i + 1}",
                 body="본문",
-                is_pinned=True,
+                is_fixed=True,
             )
 
         # 일반 게시글은 여전히 등록 가능
-        response = self._create_board(self.user, self.sub_department, is_pinned=False, title="일반글")
+        response = self._create_board(self.user, self.sub_department, is_fixed=False, title="일반글")
         self.assertEqual(
             response.status_code,
             status.HTTP_201_CREATED,
@@ -235,9 +235,9 @@ class DepartmentBoardPinLimitAPITest(APITestCase):
 
     def test_normal_user_cannot_pin(self):
         """권한 없는 유저(GRADE_06)는 고정글 등록 불가"""
-        response = self._create_board(self.normal_user, self.sub_department, is_pinned=True, title="무권한고정시도")
+        response = self._create_board(self.normal_user, self.sub_department, is_fixed=True, title="무권한고정시도")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("is_pinned", response.data)
+        self.assertIn("is_fixed", response.data)
 
 
 class DepartmentBoardListAPITest(APITestCase):

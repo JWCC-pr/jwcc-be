@@ -18,7 +18,7 @@ class DepartmentBoardPermission(permissions.BasePermission):
                 return False
             return True
 
-        if obj.is_pinned and request.user.grade == UserGradeChoices.GRADE_01:
+        if obj.is_fixed and request.user.grade == UserGradeChoices.GRADE_01:
             return True
 
         return obj.user == request.user

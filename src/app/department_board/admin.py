@@ -15,14 +15,14 @@ class DepartmentBoardAdminForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        is_pinned = cleaned_data.get("is_pinned")
+        is_fixed = cleaned_data.get("is_fixed")
         sub_department = cleaned_data.get("sub_department")
 
-        if is_pinned and sub_department:
+        if is_fixed and sub_department:
             pinned_count = (
                 DepartmentBoard.objects.filter(
                     sub_department=sub_department,
-                    is_pinned=True,
+                    is_fixed=True,
                 )
                 .exclude(id=self.instance.id)
                 .count()
@@ -55,14 +55,14 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
         "user",
         "department",
         "sub_department",
-        "is_pinned",
+        "is_fixed",
         "is_secret",
         "created_at",
         "hit_count",
         "comment_count",
         "like_count",
     ]
-    list_filter = ["department", "sub_department", "is_pinned", "is_secret"]
+    list_filter = ["department", "sub_department", "is_fixed", "is_secret"]
     search_fields = ["user__name", "title"]
     search_help_text = "유저 이름, 제목으로 검색하세요."
     raw_id_fields = ["user"]
@@ -84,15 +84,15 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
                 UserGradeChoices.GRADE_03,
                 UserGradeChoices.GRADE_04,
             }
-            if obj.is_pinned and user_grade not in allowed_grades:
+            if obj.is_fixed and user_grade not in allowed_grades:
                 raise ValidationError("공지글 작성 권한이 없습니다.")
 
             if change and obj.pk:
-                original = DepartmentBoard.objects.filter(pk=obj.pk).only("user_id", "is_pinned").first()
-                if original and original.is_pinned and not obj.is_pinned:
+                original = DepartmentBoard.objects.filter(pk=obj.pk).only("user_id", "is_fixed").first()
+                if original and original.is_fixed and not obj.is_fixed:
                     if user_grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
                         raise ValidationError("자신이 등록한 공지만 해제할 수 있습니다.")
-                if original and obj.is_pinned:
+                if original and obj.is_fixed:
                     if user_grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
                         raise ValidationError("자신이 등록한 공지만 수정할 수 있습니다.")
 
