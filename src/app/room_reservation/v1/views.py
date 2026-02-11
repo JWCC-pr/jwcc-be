@@ -132,3 +132,21 @@ class CatechismRoomViewSet(
     permission_classes = [CatechismRoomPermission]
     filterset_class = CatechismRoomFilter
     filter_backends = [DjangoFilterBackend]
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        grouped = {}
+        for room in queryset:
+            if room.building not in grouped:
+                grouped[room.building] = {
+                    "building": room.building,
+                    "rooms": [],
+                }
+            grouped[room.building]["rooms"].append(
+                {
+                    "id": room.id,
+                    "name": room.name,
+                    "location": room.location,
+                }
+            )
+        return Response(list(grouped.values()))

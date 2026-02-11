@@ -57,7 +57,7 @@ class CatechismRoomSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "location",
-            "description",
+            "building",
             "created_at",
             "updated_at",
         ]

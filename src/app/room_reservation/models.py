@@ -18,7 +18,7 @@ def _validate_half_hour_interval(start_at, end_at):
 class CatechismRoom(BaseModel):
     name = models.CharField("교리실명", max_length=50)
     location = models.TextField("위치", blank=True, default="")
-    description = models.TextField("설명", blank=True, default="")
+    building = models.CharField("건물명", max_length=50, blank=True, default="")
 
     class Meta:
         db_table = "catechism_room"
