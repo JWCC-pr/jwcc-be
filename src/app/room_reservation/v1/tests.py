@@ -137,6 +137,66 @@ class RoomReservationCreateAPITest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_failure_time_conflict(self):
+        """같은 교리실·같은 날짜에 시간이 겹치면 400."""
+        self.client.force_authenticate(self.success_user)
+        RoomReservation.objects.create(
+            room=self.room,
+            title="기존 예약",
+            user_name="이몽룡",
+            date=date(2026, 1, 2),
+            start_at=time(9, 0),
+            end_at=time(10, 0),
+            created_by=self.success_user,
+        )
+        response = self.client.post(
+            self.PATH,
+            data={
+                "room_id": self.room.id,
+                "title": "겹치는 예약",
+                "user_name": "홍길동",
+                "date": "2026-01-02",
+                "start_at": "09:30:00",
+                "end_at": "10:30:00",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_failure_not_half_hour_interval(self):
+        """30분 단위가 아닌 시간 → 400."""
+        self.client.force_authenticate(self.success_user)
+        response = self.client.post(
+            self.PATH,
+            data={
+                "room_id": self.room.id,
+                "title": "30분단위 아님",
+                "user_name": "홍길동",
+                "date": "2026-01-02",
+                "start_at": "09:15:00",
+                "end_at": "10:00:00",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_failure_start_at_after_end_at(self):
+        """시작 시간 >= 종료 시간 → 400."""
+        self.client.force_authenticate(self.success_user)
+        response = self.client.post(
+            self.PATH,
+            data={
+                "room_id": self.room.id,
+                "title": "시간 역전",
+                "user_name": "홍길동",
+                "date": "2026-01-02",
+                "start_at": "11:00:00",
+                "end_at": "10:00:00",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
 class RoomReservationRetrieveAPITest(APITestCase):
     MODEL = RoomReservation
@@ -207,6 +267,97 @@ class RoomReservationUpdateAPITest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_success_admin_updates_others_reservation(self):
+        """GRADE_01 관리자는 타인의 예약도 수정 가능."""
+        admin = create_user("admin@test.com", UserGradeChoices.GRADE_01)
+        self.client.force_authenticate(admin)
+        response = self.client.put(
+            self.PATH.format(id=self.instance.id),
+            data={
+                "title": "관리자 수정",
+                "user_name": "관리자",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.instance.refresh_from_db()
+        self.assertEqual(self.instance.title, "관리자 수정")
+
+    def test_failure_update_time_conflict(self):
+        """수정 시 다른 예약과 시간이 겹치면 400."""
+        self.client.force_authenticate(self.success_user)
+        RoomReservation.objects.create(
+            room=self.room,
+            title="다른 예약",
+            user_name="이몽룡",
+            date=date(2026, 1, 1),
+            start_at=time(10, 0),
+            end_at=time(11, 0),
+            created_by=self.success_user,
+        )
+        response = self.client.put(
+            self.PATH.format(id=self.instance.id),
+            data={
+                "start_at": "10:00:00",
+                "end_at": "11:00:00",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class RoomReservationUpdateScopeAllAPITest(APITestCase):
+    """PUT /v1/room_reservation/{id}/?scope=all 테스트."""
+
+    PATH = "/v1/room_reservation/{id}/?scope=all"
+
+    def setUp(self):
+        self.user = create_user("admin@test.com", UserGradeChoices.GRADE_01)
+        self.room = create_room()
+        self.client.force_authenticate(self.user)
+
+        # 반복 예약으로 개별 예약 3건 생성
+        response = self.client.post(
+            "/v1/repeat_room_reservation/",
+            data={
+                "room_id": self.room.id,
+                "title": "원본",
+                "user_name": "홍길동",
+                "repeat_type": "monthly_date",
+                "start_date": "2026-03-01",
+                "end_date": "2026-05-31",
+                "start_at": "09:00:00",
+                "end_at": "10:00:00",
+                "weekdays": [],
+                "month_day": 15,
+            },
+            format="json",
+        )
+        self.repeat_id = response.data["id"]
+        self.reservations = list(RoomReservation.objects.filter(repeat_id=self.repeat_id).order_by("date"))
+
+    def test_scope_all_updates_future_reservations(self):
+        """scope=all 시 해당 예약일 이후의 모든 반복 예약이 일괄 수정된다."""
+        # 두 번째 예약(4/15)부터 수정 → 4/15, 5/15 수정, 3/15는 유지
+        target = self.reservations[1]
+        response = self.client.put(
+            self.PATH.format(id=target.id),
+            data={
+                "title": "일괄 수정",
+                "user_name": "이몽룡",
+            },
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.reservations[0].refresh_from_db()
+        self.assertEqual(self.reservations[0].title, "원본")
+
+        self.reservations[1].refresh_from_db()
+        self.assertEqual(self.reservations[1].title, "일괄 수정")
+
+        self.reservations[2].refresh_from_db()
+        self.assertEqual(self.reservations[2].title, "일괄 수정")
+
 
 class RoomReservationDestroyAPITest(APITestCase):
     MODEL = RoomReservation
@@ -238,6 +389,56 @@ class RoomReservationDestroyAPITest(APITestCase):
         response = self.client.delete(self.PATH.format(id=self.instance.id))
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class RoomReservationDestroyScopeAllAPITest(APITestCase):
+    """DELETE /v1/room_reservation/{id}/?scope=all 테스트."""
+
+    PATH = "/v1/room_reservation/{id}/?scope=all"
+
+    def setUp(self):
+        self.user = create_user("admin@test.com", UserGradeChoices.GRADE_01)
+        self.room = create_room()
+        self.client.force_authenticate(self.user)
+
+        response = self.client.post(
+            "/v1/repeat_room_reservation/",
+            data={
+                "room_id": self.room.id,
+                "title": "반복 예약",
+                "user_name": "홍길동",
+                "repeat_type": "monthly_date",
+                "start_date": "2026-03-01",
+                "end_date": "2026-05-31",
+                "start_at": "09:00:00",
+                "end_at": "10:00:00",
+                "weekdays": [],
+                "month_day": 15,
+            },
+            format="json",
+        )
+        self.repeat_id = response.data["id"]
+        self.reservations = list(RoomReservation.objects.filter(repeat_id=self.repeat_id).order_by("date"))
+
+    def test_scope_all_deletes_future_and_keeps_past(self):
+        """scope=all 시 해당 예약일 이후만 삭제, 이전은 유지."""
+        # 두 번째(4/15)에서 삭제 → 3/15는 유지, 4/15·5/15 삭제
+        target = self.reservations[1]
+        response = self.client.delete(self.PATH.format(id=target.id))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        remaining = RoomReservation.objects.filter(repeat_id=self.repeat_id)
+        self.assertEqual(remaining.count(), 1)
+        self.assertEqual(remaining.first().date, date(2026, 3, 15))
+
+    def test_scope_all_deletes_repeat_when_no_reservations_left(self):
+        """scope=all 로 첫 번째부터 전체 삭제 시 RepeatRoomReservation도 함께 삭제된다."""
+        target = self.reservations[0]
+        response = self.client.delete(self.PATH.format(id=target.id))
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertFalse(RoomReservation.objects.filter(repeat_id=self.repeat_id).exists())
+        self.assertFalse(RepeatRoomReservation.objects.filter(id=self.repeat_id).exists())
 
 
 class RepeatRoomReservationCreateAPITest(APITestCase):
