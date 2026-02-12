@@ -174,6 +174,7 @@ class RoomReservationViewSet(
 class RepeatRoomReservationViewSet(
     mixins.CreateModelMixin,
     mixins.UpdateModelMixin,
+    mixins.RetrieveModelMixin,
     mixins.DestroyModelMixin,
     GenericViewSet,
 ):
