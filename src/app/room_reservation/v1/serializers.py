@@ -24,14 +24,13 @@ def generate_repeat_dates(repeat):
         if repeat.week_of_month:
             for month_start in iter_month_starts(repeat.start_date, repeat.end_date):
                 month_calendar = calendar.monthcalendar(month_start.year, month_start.month)
-                week_index = repeat.week_of_month - 1
                 for weekday in repeat.weekdays:
-                    if week_index < len(month_calendar):
-                        day = month_calendar[week_index][weekday]
-                        if day:
-                            candidate = date(month_start.year, month_start.month, day)
-                            if repeat.start_date <= candidate <= repeat.end_date:
-                                dates.append(candidate)
+                    occurrences = [week[weekday] for week in month_calendar if week[weekday] != 0]
+                    if repeat.week_of_month <= len(occurrences):
+                        day = occurrences[repeat.week_of_month - 1]
+                        candidate = date(month_start.year, month_start.month, day)
+                        if repeat.start_date <= candidate <= repeat.end_date:
+                            dates.append(candidate)
         else:
             current = repeat.start_date
             while current <= repeat.end_date:
@@ -99,7 +98,7 @@ class RoomReservationSerializer(serializers.ModelSerializer):
         try:
             instance.clean()
         except ValidationError as e:
-            raise serializers.ValidationError(e.message_dict if hasattr(e, "message_dict") else e.messages)
+            raise serializers.ValidationError(e.detail)
 
         return attrs
 
@@ -196,7 +195,7 @@ class RepeatRoomReservationSerializer(serializers.ModelSerializer):
         try:
             instance.clean()
         except ValidationError as e:
-            raise serializers.ValidationError(e.message_dict or e.messages)
+            raise serializers.ValidationError(e.detail)
 
         return attrs
 
