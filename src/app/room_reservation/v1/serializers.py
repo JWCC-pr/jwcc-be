@@ -181,7 +181,7 @@ class RepeatRoomReservationSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         instance = self.instance or RepeatRoomReservation()
 
-        instance.room = attrs.get("room", instance.room)
+        instance.room = attrs.get("room", getattr(instance, "room", None))
         instance.title = attrs.get("title", instance.title)
         instance.user_name = attrs.get("user_name", instance.user_name)
         instance.repeat_type = attrs.get("repeat_type", instance.repeat_type)
