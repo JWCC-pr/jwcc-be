@@ -90,11 +90,6 @@ class RoomReservationSerializer(serializers.ModelSerializer):
         read_only_fields = ["repeat", "created_by", "created_by_name"]
 
     def validate(self, attrs):
-        if self.instance:
-            forbidden = {"room", "date", "start_at", "end_at", "repeat"}
-            if forbidden & set(attrs):
-                raise serializers.ValidationError("날짜 및 시간 변경은 삭제 후 재등록해야 합니다.")
-
         instance = self.instance or RoomReservation()
         instance.room = attrs.get("room", getattr(instance, "room", None))
         instance.date = attrs.get("date", getattr(instance, "date", None))
@@ -115,10 +110,25 @@ class RoomReservationSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
     def update(self, instance, validated_data):
+        instance.room = validated_data.get("room", instance.room)
         instance.title = validated_data.get("title", instance.title)
         instance.user_name = validated_data.get("user_name", instance.user_name)
         instance.organization_name = validated_data.get("organization_name", instance.organization_name)
-        instance.save(update_fields=["title", "user_name", "organization_name", "updated_at"])
+        instance.date = validated_data.get("date", instance.date)
+        instance.start_at = validated_data.get("start_at", instance.start_at)
+        instance.end_at = validated_data.get("end_at", instance.end_at)
+        instance.save(
+            update_fields=[
+                "room",
+                "title",
+                "user_name",
+                "organization_name",
+                "date",
+                "start_at",
+                "end_at",
+                "updated_at",
+            ]
+        )
         return instance
 
 
