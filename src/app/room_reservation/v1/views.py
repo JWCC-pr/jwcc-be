@@ -1,6 +1,6 @@
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from drf_spectacular.utils import OpenApiExample, extend_schema, extend_schema_view, inline_serializer
+from drf_spectacular.utils import OpenApiExample, OpenApiParameter, extend_schema, extend_schema_view, inline_serializer
 from rest_framework import mixins, status
 from rest_framework.decorators import action
 from rest_framework.exceptions import MethodNotAllowed
@@ -24,9 +24,31 @@ from app.room_reservation.v1.serializers import (
     list=extend_schema(summary="교리실 예약 목록 조회"),
     create=extend_schema(summary="교리실 예약 등록"),
     retrieve=extend_schema(summary="교리실 예약 상세 조회"),
-    update=extend_schema(summary="교리실 예약 수정"),
+    update=extend_schema(
+        summary="교리실 예약 수정",
+        parameters=[
+            OpenApiParameter(
+                name="scope",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="all: 해당 날짜 이후 반복 예약 전체 수정",
+                required=False,
+            ),
+        ],
+    ),
     partial_update=extend_schema(exclude=True),
-    destroy=extend_schema(summary="교리실 예약 삭제"),
+    destroy=extend_schema(
+        summary="교리실 예약 삭제",
+        parameters=[
+            OpenApiParameter(
+                name="scope",
+                type=str,
+                location=OpenApiParameter.QUERY,
+                description="all: 해당 날짜 이후 반복 예약 전체 삭제",
+                required=False,
+            ),
+        ],
+    ),
 )
 class RoomReservationViewSet(
     mixins.ListModelMixin,

@@ -68,13 +68,15 @@ class RoomReservationSerializer(serializers.ModelSerializer):
     created_by = serializers.PrimaryKeyRelatedField(read_only=True)
     created_by_name = serializers.CharField(source="created_by.name", read_only=True)
 
+    repeat_id = serializers.PrimaryKeyRelatedField(source="repeat", read_only=True)
+
     class Meta:
         model = RoomReservation
         fields = [
             "id",
             "room_id",
             "room_name",
-            "repeat",
+            "repeat_id",
             "title",
             "user_name",
             "organization_name",
@@ -86,7 +88,7 @@ class RoomReservationSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["repeat", "created_by", "created_by_name"]
+        read_only_fields = ["repeat_id", "created_by", "created_by_name"]
 
     def validate(self, attrs):
         instance = self.instance or RoomReservation()
