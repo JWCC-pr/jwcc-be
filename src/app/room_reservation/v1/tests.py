@@ -55,11 +55,12 @@ class RoomReservationListAPITest(APITestCase):
 
         result_keys = [
             "id",
-            "room",
+            "room_id",
             "room_name",
             "repeat",
             "title",
             "user_name",
+            "organization_name",
             "date",
             "start_at",
             "end_at",
@@ -90,7 +91,7 @@ class RoomReservationCreateAPITest(APITestCase):
         response = self.client.post(
             self.PATH,
             data={
-                "room": self.room.id,
+                "room_id": self.room.id,
                 "title": "테스트 예약",
                 "user_name": "홍길동",
                 "date": "2026-01-02",
@@ -108,7 +109,7 @@ class RoomReservationCreateAPITest(APITestCase):
         response = self.client.post(
             self.PATH,
             data={
-                "room": self.room.id,
+                "room_id": self.room.id,
                 "title": "",
                 "user_name": "홍길동",
                 "date": "2026-01-02",
@@ -125,7 +126,7 @@ class RoomReservationCreateAPITest(APITestCase):
         response = self.client.post(
             self.PATH,
             data={
-                "room": self.room.id,
+                "room_id": self.room.id,
                 "title": "테스트 예약",
                 "user_name": "홍길동",
                 "date": "2026-01-02",

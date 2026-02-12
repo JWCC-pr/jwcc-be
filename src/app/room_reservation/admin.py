@@ -50,14 +50,14 @@ class RepeatRoomReservationAdmin(admin.ModelAdmin):
         return obj.reservation_set.count()
 
     def save_model(self, request, obj, form, change):
-        if change:
-            obj.reservation_set.all().delete()
-
         # Admin form에서는 ForeignKey가 객체로 전달되므로 pk로 변환
         data = form.cleaned_data.copy()
         data["room"] = data["room"].pk
 
-        serializer = RepeatRoomReservationSerializer(data=data)
+        if change:
+            serializer = RepeatRoomReservationSerializer(instance=obj, data=data)
+        else:
+            serializer = RepeatRoomReservationSerializer(data=data)
 
         try:
             serializer.is_valid(raise_exception=True)

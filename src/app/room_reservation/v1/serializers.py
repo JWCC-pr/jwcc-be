@@ -227,3 +227,45 @@ class RepeatRoomReservationSerializer(serializers.ModelSerializer):
 
         RoomReservation.objects.bulk_create(reservations)
         return repeat
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        # 1. 기존 개별 예약 삭제
+        instance.reservation_set.all().delete()
+
+        # 2. RepeatRoomReservation 필드 업데이트
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        # 3. 새 날짜 생성
+        dates = generate_repeat_dates(instance)
+        if not dates:
+            raise serializers.ValidationError({"detail": "반복 일정이 생성되지 않았습니다."})
+
+        # 4. 충돌 검사 (기존 예약은 이미 삭제했지만 안전장치로 exclude_repeat_id 사용)
+        find_conflicts(
+            room=instance.room,
+            start_at=instance.start_at,
+            end_at=instance.end_at,
+            dates=dates,
+            exclude_repeat_id=instance.pk,
+        )
+
+        # 5. 저장 및 개별 예약 재생성
+        instance.save()
+        reservations = [
+            RoomReservation(
+                room=instance.room,
+                title=instance.title,
+                user_name=instance.user_name,
+                organization_name=instance.organization_name,
+                date=reservation_date,
+                start_at=instance.start_at,
+                end_at=instance.end_at,
+                repeat=instance,
+                created_by=instance.created_by,
+            )
+            for reservation_date in dates
+        ]
+        RoomReservation.objects.bulk_create(reservations)
+        return instance

@@ -3,7 +3,7 @@ from rest_framework.exceptions import ValidationError
 from app.room_reservation.models import RoomReservation
 
 
-def find_conflicts(*, room, start_at, end_at, dates, exclude_pk=None):
+def find_conflicts(*, room, start_at, end_at, dates, exclude_pk=None, exclude_repeat_id=None):
     qs = RoomReservation.objects.filter(
         room=room,
         date__in=dates,
@@ -13,6 +13,8 @@ def find_conflicts(*, room, start_at, end_at, dates, exclude_pk=None):
 
     if exclude_pk:
         qs = qs.exclude(pk=exclude_pk)
+    if exclude_repeat_id:
+        qs = qs.exclude(repeat_id=exclude_repeat_id)
 
     conflicts = [
         {

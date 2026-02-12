@@ -145,10 +145,13 @@ class RoomReservationViewSet(
             ),
         ],
     ),
+    update=extend_schema(summary="교리실 반복 예약 수정"),
+    partial_update=extend_schema(exclude=True),
     destroy=extend_schema(summary="교리실 반복 예약 삭제"),
 )
 class RepeatRoomReservationViewSet(
     mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     GenericViewSet,
 ):
@@ -158,6 +161,9 @@ class RepeatRoomReservationViewSet(
 
     def get_queryset(self):
         return super().get_queryset().select_related("room", "created_by")
+
+    def partial_update(self, request, *args, **kwargs):
+        raise MethodNotAllowed("patch")
 
 
 @extend_schema_view(
