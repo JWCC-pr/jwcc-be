@@ -29,7 +29,7 @@ class PassingNoticeComment(BaseModel):
         db_table = "passing_notice_comment"
         verbose_name = "선종 안내 댓글"
         verbose_name_plural = verbose_name
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     def __str__(self):
         return self.body

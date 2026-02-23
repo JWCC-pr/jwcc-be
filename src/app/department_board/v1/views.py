@@ -4,7 +4,7 @@ from django.db.models import Case, When, BooleanField, Exists, OuterRef, F, Q
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
@@ -45,11 +45,6 @@ class DepartmentBoardViewSet(
         queryset = super().get_queryset()
         department_id = self.request.query_params.get("department")
         if department_id:
-            if (
-                self.request.user.grade != UserGradeChoices.GRADE_01
-                and not self.request.user.sub_department_set.filter(department_id=department_id).exists()
-            ):
-                raise PermissionDenied("선택한 분과에 소속된 사용자만 조회할 수 있습니다.")
             queryset = queryset.filter(department_id=department_id)
             if self.request.user.grade != UserGradeChoices.GRADE_01:
                 allowed_sub_departments = self.request.user.sub_department_set.values_list("id", flat=True)

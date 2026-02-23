@@ -35,7 +35,7 @@ class LiturgyFlowerComment(BaseModel):
         db_table = "liturgy_flower_comment"
         verbose_name = "전례꽃 댓글"
         verbose_name_plural = verbose_name
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     def __str__(self):
         return self.body

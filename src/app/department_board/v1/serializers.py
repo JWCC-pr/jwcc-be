@@ -67,59 +67,6 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["department"]
 
-    def _validate_pin_limit(self, instance, sub_department, is_fixed):
-        if not is_fixed:
-            return
-
-        department_id = None
-        if sub_department:
-            department_id = sub_department.department_id
-        elif instance:
-            department_id = instance.department_id
-
-        if not department_id:
-            return
-
-        qs = DepartmentBoard.objects.filter(department_id=department_id, is_fixed=True)
-        if instance and instance.pk:
-            qs = qs.exclude(pk=instance.pk)
-
-        if qs.count() >= 5:
-            raise serializers.ValidationError({"is_fixed": "분과별 고정 게시글은 최대 5개까지 등록할 수 있습니다."})
-
-    def _validate_pin_permission(self, instance, sub_department, is_fixed):
-        request = self.context.get("request")
-        user = getattr(request, "user", None)
-        if not user or not user.is_authenticated:
-            return
-
-        allowed_grades = {
-            UserGradeChoices.GRADE_01,
-            UserGradeChoices.GRADE_02,
-            UserGradeChoices.GRADE_03,
-            UserGradeChoices.GRADE_04,
-        }
-
-        if instance and instance.is_fixed and not is_fixed:
-            if user.grade != UserGradeChoices.GRADE_01 and instance.user_id != user.id:
-                raise serializers.ValidationError({"is_fixed": "자신이 등록한 공지만 해제할 수 있습니다."})
-            return
-
-        if is_fixed:
-            if user.grade not in allowed_grades:
-                raise serializers.ValidationError({"is_fixed": "공지글 작성 권한이 없습니다."})
-
-            if instance and instance.pk and user.grade != UserGradeChoices.GRADE_01 and instance.user_id != user.id:
-                raise serializers.ValidationError({"is_fixed": "자신이 등록한 공지만 수정할 수 있습니다."})
-
-    def validate(self, attrs):
-        instance = getattr(self, "instance", None)
-        sub_department = attrs.get("sub_department", getattr(instance, "sub_department", None))
-        is_fixed = attrs.get("is_fixed", getattr(instance, "is_fixed", False))
-        self._validate_pin_permission(instance, sub_department, is_fixed)
-        self._validate_pin_limit(instance, sub_department, is_fixed)
-        return attrs
-
     def validate_sub_department(self, value):
         user = self.context["request"].user
         if user.grade == UserGradeChoices.GRADE_01:
@@ -142,12 +89,12 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             if user.grade > UserGradeChoices.GRADE_04:
                 raise serializers.ValidationError({"is_fixed": "고정글 설정 권한이 없습니다."})
 
-            # sub_department별 최대 5개 제한
+            # 분과별 최대 5개 제한
             sub_department = attrs.get("sub_department") or (self.instance.sub_department if self.instance else None)
             if sub_department:
                 pinned_count = (
                     DepartmentBoard.objects.filter(
-                        sub_department=sub_department,
+                        department_id=sub_department.department_id,
                         is_fixed=True,
                     )
                     .exclude(id=self.instance.id if self.instance else None)
@@ -155,7 +102,9 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
                 )
 
                 if pinned_count >= 5:
-                    raise serializers.ValidationError({"is_fixed": "고정글은 최대 5개까지만 등록할 수 있습니다."})
+                    raise serializers.ValidationError(
+                        {"is_fixed": "분과별 고정글은 최대 5개까지만 등록할 수 있습니다."}
+                    )
 
         return attrs
 
