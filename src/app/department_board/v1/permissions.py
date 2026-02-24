@@ -12,6 +12,8 @@ class DepartmentBoardPermission(permissions.BasePermission):
             return True
 
         if request.method in permissions.SAFE_METHODS:
+            if request.user.grade <= UserGradeChoices.GRADE_04:
+                return True
             if obj.is_secret and not request.user.sub_department_set.filter(id=obj.sub_department_id).exists():
                 return False
             return True

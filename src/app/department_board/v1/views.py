@@ -46,7 +46,7 @@ class DepartmentBoardViewSet(
         department_id = self.request.query_params.get("department")
         if department_id:
             queryset = queryset.filter(department_id=department_id)
-            if self.request.user.grade != UserGradeChoices.GRADE_01:
+            if self.request.user.grade > UserGradeChoices.GRADE_04:
                 allowed_sub_departments = self.request.user.sub_department_set.values_list("id", flat=True)
                 queryset = queryset.filter(
                     Q(is_secret=False) | Q(is_secret=True, sub_department_id__in=allowed_sub_departments)
