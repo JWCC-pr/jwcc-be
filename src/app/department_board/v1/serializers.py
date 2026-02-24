@@ -89,22 +89,22 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             if user.grade > UserGradeChoices.GRADE_04:
                 raise serializers.ValidationError({"is_fixed": "고정글 설정 권한이 없습니다."})
 
-            # 분과별 최대 5개 제한
-            sub_department = attrs.get("sub_department") or (self.instance.sub_department if self.instance else None)
-            if sub_department:
-                pinned_count = (
-                    DepartmentBoard.objects.filter(
+            # 기존에 고정글이 아닌 경우에만 5개 제한 체크 (이미 고정글인 게시글 수정 시 제외)
+            instance_already_fixed = self.instance is not None and self.instance.is_fixed
+            if not instance_already_fixed:
+                sub_department = attrs.get("sub_department") or (
+                    self.instance.sub_department if self.instance else None
+                )
+                if sub_department:
+                    pinned_count = DepartmentBoard.objects.filter(
                         department_id=sub_department.department_id,
                         is_fixed=True,
-                    )
-                    .exclude(id=self.instance.id if self.instance else None)
-                    .count()
-                )
+                    ).count()
 
-                if pinned_count >= 5:
-                    raise serializers.ValidationError(
-                        {"is_fixed": "분과별 고정글은 최대 5개까지만 등록할 수 있습니다."}
-                    )
+                    if pinned_count >= 5:
+                        raise serializers.ValidationError(
+                            {"is_fixed": "분과별 고정글은 최대 5개까지만 등록할 수 있습니다."}
+                        )
 
         return attrs
 
