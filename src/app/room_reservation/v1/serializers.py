@@ -24,14 +24,17 @@ def generate_repeat_dates(repeat):
         if repeat.week_of_month:
             for month_start in iter_month_starts(repeat.start_date, repeat.end_date):
                 month_calendar = calendar.monthcalendar(month_start.year, month_start.month)
+                # row 0이 불완전한 주이면 1주차=row 1, 아니면 1주차=row 0
+                offset = 0 if month_calendar[0][0] != 0 else 1
                 for weekday in repeat.weekdays:
-                    occurrences = [week[weekday] for week in month_calendar if week[weekday] != 0]
                     for wom in repeat.week_of_month:
-                        if wom <= len(occurrences):
-                            day = occurrences[wom - 1]
-                            candidate = date(month_start.year, month_start.month, day)
-                            if repeat.start_date <= candidate <= repeat.end_date:
-                                dates.append(candidate)
+                        row_idx = wom - 1 + offset
+                        if row_idx < len(month_calendar):
+                            day = month_calendar[row_idx][weekday]
+                            if day != 0:
+                                candidate = date(month_start.year, month_start.month, day)
+                                if repeat.start_date <= candidate <= repeat.end_date:
+                                    dates.append(candidate)
         else:
             current = repeat.start_date
             while current <= repeat.end_date:
