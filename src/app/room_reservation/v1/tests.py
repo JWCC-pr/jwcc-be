@@ -483,10 +483,10 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
         self.assertEqual(len(reservation_dates), 2)
 
     def test_weekly_week_of_month_2(self):
-        """2주차 수요일 반복 → 각 월의 두 번째 수요일이 생성되어야 한다."""
+        """2주차 수요일 반복 → 각 월의 2주차 수요일이 생성되어야 한다."""
         self.client.force_authenticate(self.user)
-        # 2026-03: 두 번째 수요일 = 3/11
-        # 2026-04: 두 번째 수요일 = 4/8
+        # 2026-03: 2주차 수요일 = 3/11
+        # 2026-04: 2주차 수요일 = 4/15
         response = self.client.post(
             self.PATH,
             data={
@@ -508,14 +508,14 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
         reservations = RoomReservation.objects.filter(repeat_id=response.data["id"])
         reservation_dates = sorted(reservations.values_list("date", flat=True))
         self.assertIn(date(2026, 3, 11), reservation_dates)
-        self.assertIn(date(2026, 4, 8), reservation_dates)
+        self.assertIn(date(2026, 4, 15), reservation_dates)
         self.assertEqual(len(reservation_dates), 2)
 
     def test_weekly_week_of_month_3(self):
-        """3주차 금요일 반복 → 각 월의 세 번째 금요일이 생성되어야 한다."""
+        """3주차 금요일 반복 → 각 월의 3주차 금요일이 생성되어야 한다."""
         self.client.force_authenticate(self.user)
-        # 2026-03: 세 번째 금요일 = 3/20
-        # 2026-04: 세 번째 금요일 = 4/17
+        # 2026-03: 3주차 금요일 = 3/20
+        # 2026-04: 3주차 금요일 = 4/24
         response = self.client.post(
             self.PATH,
             data={
@@ -537,7 +537,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
         reservations = RoomReservation.objects.filter(repeat_id=response.data["id"])
         reservation_dates = sorted(reservations.values_list("date", flat=True))
         self.assertIn(date(2026, 3, 20), reservation_dates)
-        self.assertIn(date(2026, 4, 17), reservation_dates)
+        self.assertIn(date(2026, 4, 24), reservation_dates)
         self.assertEqual(len(reservation_dates), 2)
 
     def test_weekly_week_of_month_multiple_weeks(self):
@@ -628,10 +628,10 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
     # ── week_of_month 추가 케이스 ─────────────────────────────
 
     def test_weekly_week_of_month_4(self):
-        """4주차 토요일 반복 → 각 월의 네 번째 토요일이 생성되어야 한다."""
+        """4주차 토요일 반복 → 각 월의 4주차 토요일이 생성되어야 한다."""
         self.client.force_authenticate(self.user)
-        # 2026-03: 네 번째 토요일 = 3/28
-        # 2026-04: 네 번째 토요일 = 4/25
+        # 2026-03: 4주차 토요일 = 3/28
+        # 2026-04: 4주차에 토요일 없음 (4주차는 27~30일, 목요일까지만)
         response = self.client.post(
             self.PATH,
             data={
@@ -653,14 +653,13 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
         reservations = RoomReservation.objects.filter(repeat_id=response.data["id"])
         reservation_dates = sorted(reservations.values_list("date", flat=True))
         self.assertIn(date(2026, 3, 28), reservation_dates)
-        self.assertIn(date(2026, 4, 25), reservation_dates)
-        self.assertEqual(len(reservation_dates), 2)
+        self.assertEqual(len(reservation_dates), 1)
 
     def test_weekly_week_of_month_multiple_weekdays(self):
-        """2주차 월/수 반복 → 각 월의 두 번째 월요일, 두 번째 수요일이 생성되어야 한다."""
+        """2주차 월/수 반복 → 각 월의 2주차 월요일, 2주차 수요일이 생성되어야 한다."""
         self.client.force_authenticate(self.user)
-        # 2026-03: 두 번째 월요일 = 3/9, 두 번째 수요일 = 3/11
-        # 2026-04: 두 번째 월요일 = 4/13, 두 번째 수요일 = 4/8
+        # 2026-03: 2주차 월요일 = 3/9, 2주차 수요일 = 3/11
+        # 2026-04: 2주차 월요일 = 4/13, 2주차 수요일 = 4/15
         response = self.client.post(
             self.PATH,
             data={
@@ -685,7 +684,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
         self.assertIn(date(2026, 3, 9), reservation_dates)
         self.assertIn(date(2026, 3, 11), reservation_dates)
         self.assertIn(date(2026, 4, 13), reservation_dates)
-        self.assertIn(date(2026, 4, 8), reservation_dates)
+        self.assertIn(date(2026, 4, 15), reservation_dates)
 
     # ── 권한 ──────────────────────────────────────────────────
 
