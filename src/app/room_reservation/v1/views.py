@@ -125,7 +125,7 @@ class RoomReservationViewSet(
         summary="교리실 반복 예약 등록",
         description=(
             "`repeatType=weekly` 사용 시 `weekdays`는 0(월)~6(일) 숫자 배열입니다. "
-            "`weekOfMonth`는 1~4주차 지정값이며, 매주 반복이면 `null` 또는 생략합니다. "
+            "`weekOfMonth`는 1~4주차 지정값 배열이며 복수 선택 가능합니다(예: [1, 3]). 매주 반복이면 `[]` 또는 생략합니다. "
             "`repeatType=monthlyDate` 사용 시 `monthDay`를 1~31로 전달합니다."
         ),
         examples=[
@@ -142,7 +142,7 @@ class RoomReservationViewSet(
                     "startAt": "19:00:00",
                     "endAt": "20:00:00",
                     "weekdays": [0, 2],
-                    "weekOfMonth": None,
+                    "weekOfMonth": [],
                     "monthDay": None,
                 },
                 request_only=True,
@@ -160,7 +160,7 @@ class RoomReservationViewSet(
                     "startAt": "10:00:00",
                     "endAt": "11:00:00",
                     "weekdays": [],
-                    "weekOfMonth": None,
+                    "weekOfMonth": [],
                     "monthDay": 10,
                 },
                 request_only=True,

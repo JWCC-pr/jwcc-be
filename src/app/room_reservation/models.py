@@ -62,7 +62,7 @@ class RepeatRoomReservation(BaseModel):
     start_at = models.TimeField(verbose_name="시작 시간")
     end_at = models.TimeField(verbose_name="종료 시간")
     weekdays = models.JSONField(verbose_name="반복 요일", default=list, blank=True)
-    week_of_month = models.PositiveSmallIntegerField(verbose_name="반복 주차", null=True, blank=True)
+    week_of_month = models.JSONField(verbose_name="반복 주차", default=list, blank=True)
     month_day = models.PositiveSmallIntegerField(verbose_name="반복 일자", null=True, blank=True)
 
     class Meta:
@@ -79,8 +79,11 @@ class RepeatRoomReservation(BaseModel):
         if self.repeat_type == self.RepeatType.WEEKLY:
             if not self.weekdays:
                 raise ValidationError("요일 반복 시 요일을 선택해야 합니다.")
-            if self.week_of_month and self.week_of_month not in {1, 2, 3, 4}:
-                raise ValidationError("반복 주차는 1~4주차만 가능합니다.")
+            if self.week_of_month:
+                if not isinstance(self.week_of_month, list):
+                    raise ValidationError("반복 주차는 리스트 형식이어야 합니다.")
+                if not all(w in {1, 2, 3, 4} for w in self.week_of_month):
+                    raise ValidationError("반복 주차는 1~4주차만 가능합니다.")
             if self.month_day:
                 raise ValidationError("요일 반복과 날짜 반복을 동시에 사용할 수 없습니다.")
 

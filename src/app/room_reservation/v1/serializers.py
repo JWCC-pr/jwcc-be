@@ -26,11 +26,12 @@ def generate_repeat_dates(repeat):
                 month_calendar = calendar.monthcalendar(month_start.year, month_start.month)
                 for weekday in repeat.weekdays:
                     occurrences = [week[weekday] for week in month_calendar if week[weekday] != 0]
-                    if repeat.week_of_month <= len(occurrences):
-                        day = occurrences[repeat.week_of_month - 1]
-                        candidate = date(month_start.year, month_start.month, day)
-                        if repeat.start_date <= candidate <= repeat.end_date:
-                            dates.append(candidate)
+                    for wom in repeat.week_of_month:
+                        if wom <= len(occurrences):
+                            day = occurrences[wom - 1]
+                            candidate = date(month_start.year, month_start.month, day)
+                            if repeat.start_date <= candidate <= repeat.end_date:
+                                dates.append(candidate)
         else:
             current = repeat.start_date
             while current <= repeat.end_date:
@@ -143,12 +144,11 @@ class RepeatRoomReservationSerializer(serializers.ModelSerializer):
         allow_empty=True,
         help_text="요일 반복 값. 0=월, 1=화, 2=수, 3=목, 4=금, 5=토, 6=일",
     )
-    week_of_month = serializers.IntegerField(
+    week_of_month = serializers.ListField(
+        child=serializers.IntegerField(min_value=1, max_value=4),
         required=False,
-        allow_null=True,
-        min_value=1,
-        max_value=4,
-        help_text="월별 n주차 반복에서만 사용합니다. 매주 반복이면 null 또는 생략하세요.",
+        allow_empty=True,
+        help_text="월별 n주차 반복에서만 사용합니다. 복수 선택 가능(예: [1, 3]). 매주 반복이면 [] 또는 생략하세요.",
     )
     month_day = serializers.IntegerField(
         required=False,

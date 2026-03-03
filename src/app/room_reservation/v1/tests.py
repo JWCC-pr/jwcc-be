@@ -470,7 +470,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [0],
-                "week_of_month": 1,
+                "week_of_month": [1],
             },
             format="json",
         )
@@ -499,7 +499,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [2],
-                "week_of_month": 2,
+                "week_of_month": [2],
             },
             format="json",
         )
@@ -528,7 +528,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [4],
-                "week_of_month": 3,
+                "week_of_month": [3],
             },
             format="json",
         )
@@ -539,6 +539,37 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
         self.assertIn(date(2026, 3, 20), reservation_dates)
         self.assertIn(date(2026, 4, 17), reservation_dates)
         self.assertEqual(len(reservation_dates), 2)
+
+    def test_weekly_week_of_month_multiple_weeks(self):
+        """1,3주차 월요일 반복 → 각 월의 첫 번째, 세 번째 월요일이 생성되어야 한다."""
+        self.client.force_authenticate(self.user)
+        # 2026-03: 1주차 월요일 = 3/2, 3주차 월요일 = 3/16
+        # 2026-04: 1주차 월요일 = 4/6, 3주차 월요일 = 4/20
+        response = self.client.post(
+            self.PATH,
+            data={
+                "room_id": self.room.id,
+                "title": "1,3주차 월요일 테스트",
+                "user_name": "홍길동",
+                "repeat_type": "weekly",
+                "start_date": "2026-03-01",
+                "end_date": "2026-04-30",
+                "start_at": "09:00:00",
+                "end_at": "10:00:00",
+                "weekdays": [0],
+                "week_of_month": [1, 3],
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        reservations = RoomReservation.objects.filter(repeat_id=response.data["id"])
+        reservation_dates = sorted(reservations.values_list("date", flat=True))
+        self.assertEqual(len(reservation_dates), 4)
+        self.assertIn(date(2026, 3, 2), reservation_dates)
+        self.assertIn(date(2026, 3, 16), reservation_dates)
+        self.assertIn(date(2026, 4, 6), reservation_dates)
+        self.assertIn(date(2026, 4, 20), reservation_dates)
 
     # ── 요일 반복 (매주, week_of_month 없음) ─────────────────
 
@@ -557,7 +588,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [1],
-                "week_of_month": None,
+                "week_of_month": [],
             },
             format="json",
         )
@@ -613,7 +644,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [5],
-                "week_of_month": 4,
+                "week_of_month": [4],
             },
             format="json",
         )
@@ -642,7 +673,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [0, 2],
-                "week_of_month": 2,
+                "week_of_month": [2],
             },
             format="json",
         )
@@ -674,7 +705,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [0],
-                "week_of_month": 1,
+                "week_of_month": [1],
             },
             format="json",
         )
@@ -793,7 +824,7 @@ class RepeatRoomReservationCreateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [0],
-                "week_of_month": 1,
+                "week_of_month": [1],
             },
             format="json",
         )
@@ -824,7 +855,7 @@ class RepeatRoomReservationUpdateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [0],
-                "week_of_month": 1,
+                "week_of_month": [1],
             },
             format="json",
         )
@@ -847,7 +878,7 @@ class RepeatRoomReservationUpdateAPITest(APITestCase):
                 "start_at": "10:00:00",
                 "end_at": "11:00:00",
                 "weekdays": [2],
-                "week_of_month": 1,
+                "week_of_month": [1],
             },
             format="json",
         )
@@ -881,7 +912,7 @@ class RepeatRoomReservationUpdateAPITest(APITestCase):
                 "start_at": "09:00:00",
                 "end_at": "10:00:00",
                 "weekdays": [0],
-                "week_of_month": 1,
+                "week_of_month": [1],
             },
             format="json",
         )
