@@ -132,15 +132,35 @@ class RoomReservation(BaseModel):
     def clean(self):
         _validate_half_hour_interval(self.start_at, self.end_at)
 
-        qs = RoomReservation.objects.filter(
-            room=self.room,
-            date=self.date,
-            start_at__lt=self.end_at,
-            end_at__gt=self.start_at,
-        ).exclude(pk=self.pk)
+        qs = (
+            RoomReservation.objects.filter(
+                room=self.room,
+                date=self.date,
+                start_at__lt=self.end_at,
+                end_at__gt=self.start_at,
+            )
+            .select_related("room")
+            .exclude(pk=self.pk)
+        )
 
         if qs.exists():
-            raise ValidationError(f"{self.date} 에 이미 예약된 시간과 겹칩니다.")
+            conflict = qs.first()
+            raise ValidationError(
+                {
+                    "detail": f"{self.date} 에 이미 예약된 시간과 겹칩니다.",
+                    "conflicts": [
+                        {
+                            "room_id": conflict.room_id,
+                            "room_name": conflict.room.name,
+                            "building_name": conflict.room.building,
+                            "location": conflict.room.location,
+                            "date": conflict.date,
+                            "start_at": conflict.start_at,
+                            "end_at": conflict.end_at,
+                        }
+                    ],
+                }
+            )
 
     class Meta:
         db_table = "room_reservation"

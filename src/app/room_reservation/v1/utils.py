@@ -19,9 +19,9 @@ def find_conflicts(*, room, start_at, end_at, dates, exclude_pk=None, exclude_re
     conflicts = [
         {
             "room_id": reservation.room_id,
-            "building": reservation.room.building,
+            "room_name": reservation.room.name,
+            "building_name": reservation.room.building,
             "location": reservation.room.location,
-            "name": reservation.room.name,
             "date": reservation.date,
             "start_at": reservation.start_at,
             "end_at": reservation.end_at,
