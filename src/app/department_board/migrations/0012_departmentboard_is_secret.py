@@ -1,0 +1,16 @@
+from django.db import migrations, models
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        ("department_board", "0011_departmentboard_is_pinned"),
+    ]
+
+    operations = [
+        migrations.AddField(
+            model_name="departmentboard",
+            name="is_secret",
+            field=models.BooleanField(default=False, verbose_name="비공개 여부"),
+        ),
+    ]

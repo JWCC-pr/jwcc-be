@@ -30,7 +30,7 @@ class LiturgyFlowerCommentViewSet(
     permission_classes = [LiturgyFlowerCommentPermission]
     pagination_class = CursorPagination
     filterset_class = LiturgyFlowerCommentFilter
-    ordering = "-created_at"
+    ordering = "created_at"
 
     def get_queryset(self):
         queryset = super().get_queryset()

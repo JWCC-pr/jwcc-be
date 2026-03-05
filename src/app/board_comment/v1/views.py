@@ -30,7 +30,7 @@ class BoardCommentViewSet(
     permission_classes = [BoardCommentPermission]
     pagination_class = CursorPagination
     filterset_class = BoardCommentFilter
-    ordering = "-created_at"
+    ordering = "created_at"
 
     def get_queryset(self):
         queryset = super().get_queryset()

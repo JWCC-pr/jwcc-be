@@ -50,6 +50,8 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "sub_department_info",
             "title",
             "body",
+            "is_fixed",
+            "is_secret",
             "image_set",
             "file_set",
             "is_owned",
@@ -58,6 +60,8 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
             "comment_count",
             "like_count",
             "is_modified",
+            "is_fixed",
+            "is_secret",
             "created_at",
             "updated_at",
         ]
@@ -74,6 +78,35 @@ class DepartmentBoardSerializer(serializers.ModelSerializer):
         if not user.sub_department_set.filter(id=value.id).exists():
             raise serializers.ValidationError("소속된 세부분과만 선택할 수 있습니다.")
         return value
+
+    def validate(self, attrs):
+        attrs = super().validate(attrs)
+        is_fixed = attrs.get("is_fixed", self.instance.is_fixed if self.instance else False)
+
+        if is_fixed:
+            user = self.context["request"].user
+            # 단체장(GRADE_04) 이하만 고정글 설정 가능
+            if user.grade > UserGradeChoices.GRADE_04:
+                raise serializers.ValidationError({"is_fixed": "고정글 설정 권한이 없습니다."})
+
+            # 기존에 고정글이 아닌 경우에만 5개 제한 체크 (이미 고정글인 게시글 수정 시 제외)
+            instance_already_fixed = self.instance is not None and self.instance.is_fixed
+            if not instance_already_fixed:
+                sub_department = attrs.get("sub_department") or (
+                    self.instance.sub_department if self.instance else None
+                )
+                if sub_department:
+                    pinned_count = DepartmentBoard.objects.filter(
+                        department_id=sub_department.department_id,
+                        is_fixed=True,
+                    ).count()
+
+                    if pinned_count >= 5:
+                        raise serializers.ValidationError(
+                            {"is_fixed": "분과별 고정글은 최대 5개까지만 등록할 수 있습니다."}
+                        )
+
+        return attrs
 
     def create(self, validated_data):
         with transaction.atomic():

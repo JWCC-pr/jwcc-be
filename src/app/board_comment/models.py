@@ -36,7 +36,7 @@ class BoardComment(BaseModel):
         db_table = "board_comment"
         verbose_name = "자유 게시글 댓글"
         verbose_name_plural = verbose_name
-        ordering = ["-created_at"]
+        ordering = ["created_at"]
 
     def __str__(self):
         return self.body
