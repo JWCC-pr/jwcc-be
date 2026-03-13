@@ -6,7 +6,7 @@ from app.common.models import BaseModel
 class PassingNotice(BaseModel):
     portrait = models.ImageField(verbose_name="고인 사진", max_length=1000, upload_to="passing_notice/portrait/")
     name = models.CharField(verbose_name="고인 성함", max_length=20)
-    baptismal_name = models.CharField(verbose_name="고인 세례명", max_length=40)
+    district = models.CharField(verbose_name="소속 구역", max_length=40)
     age = models.PositiveIntegerField(verbose_name="고인 나이")
     passing_at = models.DateTimeField(verbose_name="선종일시")
     funeral_mass_at = models.DateTimeField(verbose_name="장례미사 일정")

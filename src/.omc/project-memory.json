@@ -1,0 +1,137 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1773368368726,
+  "projectRoot": "/Users/jhyang/jamwoncc-django/src",
+  "techStack": {
+    "languages": [
+      {
+        "name": "Python",
+        "version": null,
+        "confidence": "high",
+        "markers": [
+          "pyproject.toml",
+          "requirements.txt"
+        ]
+      }
+    ],
+    "frameworks": [
+      {
+        "name": "django",
+        "version": null,
+        "category": "backend"
+      },
+      {
+        "name": "pytest",
+        "version": null,
+        "category": "testing"
+      }
+    ],
+    "packageManager": "pip",
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": "pytest",
+    "lintCommand": "ruff check",
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "app"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "_media": {
+      "path": "_media",
+      "purpose": null,
+      "fileCount": 2,
+      "lastAccessed": 1773368368716,
+      "keyFiles": [
+        "IMG_3176.jpeg",
+        "스크린샷 2025-12-22 오후 3.18.20.png"
+      ]
+    },
+    "app": {
+      "path": "app",
+      "purpose": "Application code",
+      "fileCount": 1,
+      "lastAccessed": 1773368368717,
+      "keyFiles": [
+        "__init__.py"
+      ]
+    },
+    "config": {
+      "path": "config",
+      "purpose": "Configuration files",
+      "fileCount": 10,
+      "lastAccessed": 1773368368717,
+      "keyFiles": [
+        "__init__.py",
+        "asgi.py",
+        "exception_handler.py",
+        "filters.py",
+        "hosts.py"
+      ]
+    },
+    "templates": {
+      "path": "templates",
+      "purpose": null,
+      "fileCount": 0,
+      "lastAccessed": 1773368368717,
+      "keyFiles": []
+    }
+  },
+  "hotPaths": [
+    {
+      "path": "app/passing_notice/models.py",
+      "accessCount": 2,
+      "lastAccessed": 1773369427726,
+      "type": "file"
+    },
+    {
+      "path": "app/passing_notice/v1/serializers.py",
+      "accessCount": 2,
+      "lastAccessed": 1773369429443,
+      "type": "file"
+    },
+    {
+      "path": "app/passing_notice/admin.py",
+      "accessCount": 2,
+      "lastAccessed": 1773369429575,
+      "type": "file"
+    },
+    {
+      "path": "app/passing_notice",
+      "accessCount": 1,
+      "lastAccessed": 1773369433937,
+      "type": "directory"
+    },
+    {
+      "path": "app/passing_notice/v1/tests.py",
+      "accessCount": 1,
+      "lastAccessed": 1773369438111,
+      "type": "directory"
+    },
+    {
+      "path": "app/passing_notice/v1/filters.py",
+      "accessCount": 1,
+      "lastAccessed": 1773369438584,
+      "type": "directory"
+    }
+  ],
+  "userDirectives": []
+}

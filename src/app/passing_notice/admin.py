@@ -8,7 +8,7 @@ class PassingNoticeAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "name",
-        "baptismal_name",
+        "district",
         "age",
         "funeral_mass_at",
         "funeral_mass_location",
@@ -17,5 +17,5 @@ class PassingNoticeAdmin(admin.ModelAdmin):
         "departure_at",
         "created_at",
     ]
-    search_fields = ["name", "baptismal_name"]
-    search_help_text = "고인 성함, 세례명으로 검색하세요."
+    search_fields = ["name", "district"]
+    search_help_text = "고인 성함, 소속 구역으로 검색하세요."

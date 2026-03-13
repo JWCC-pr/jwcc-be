@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"python manage.py makemigrations passing_notice\",\"description\":\"Generate migration for passing_notice field rename\"}",
+  "error": "Exit code 1\n(0.015) \n            SELECT\n                c.relname,\n                CASE\n                    WHEN c.relispartition THEN 'p'\n                    WHEN c.relkind IN ('m', 'v') THEN 'v'\n                    ELSE 't'\n                END,\n                obj_description(c.oid, 'pg_class')\n            FROM pg_catalog.pg_class c\n            LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace\n            WHERE c.relkind IN ('f', 'm', 'p', 'r', 'v')\n                AND n.nspname NO...",
+  "timestamp": "2026-03-13T02:37:25.991Z",
+  "retry_count": 1
+}

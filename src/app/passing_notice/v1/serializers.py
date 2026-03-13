@@ -10,7 +10,7 @@ class PassingNoticeSerializer(serializers.ModelSerializer):
             "id",
             "portrait",
             "name",
-            "baptismal_name",
+            "district",
             "age",
             "passing_at",
             "funeral_mass_at",
