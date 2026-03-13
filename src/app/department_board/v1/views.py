@@ -1,5 +1,6 @@
 from django.db import transaction
-from django.db.models import BooleanField, Case, Exists, F, OuterRef, When
+from django.db.models import Case, When, BooleanField, Exists, OuterRef, F, Q
+
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
@@ -13,6 +14,7 @@ from app.department_board.v1.permissions import DepartmentBoardPermission
 from app.department_board.v1.serializers import DepartmentBoardSerializer
 from app.department_board_hit.models import DepartmentBoardHit
 from app.department_board_like.models import DepartmentBoardLike
+from app.user.models import UserGradeChoices
 
 
 @extend_schema_view(
@@ -41,6 +43,14 @@ class DepartmentBoardViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        department_id = self.request.query_params.get("department")
+        if department_id:
+            queryset = queryset.filter(department_id=department_id)
+            if self.request.user.grade > UserGradeChoices.GRADE_04:
+                allowed_sub_departments = self.request.user.sub_department_set.values_list("id", flat=True)
+                queryset = queryset.filter(
+                    Q(is_secret=False) | Q(is_secret=True, sub_department_id__in=allowed_sub_departments)
+                )
         queryset = queryset.annotate(
             is_owned=Case(
                 When(user_id=self.request.user.id, then=True),

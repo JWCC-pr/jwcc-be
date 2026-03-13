@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from app.user.models import Device, User
+from app.user.models import User
 
 
 class UserLoginAPITest(APITestCase):
@@ -61,7 +61,6 @@ class UserLogoutAPITest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         user = User.objects.create_user(email="test@test.com", password="test123!")
-        Device.objects.create(user=user, uid="uid", token="token")
 
     def setUp(self):
         self.user = User.objects.get(email="test@test.com")

@@ -1,12 +1,24 @@
 from rest_framework import permissions
 
+from app.user.models import UserGradeChoices
+
 
 class DepartmentBoardPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated
+        return request.user.is_authenticated and request.user.grade <= UserGradeChoices.GRADE_06
 
     def has_object_permission(self, request, view, obj):
+        if request.user.grade == UserGradeChoices.GRADE_01:
+            return True
+
         if request.method in permissions.SAFE_METHODS:
+            if request.user.grade <= UserGradeChoices.GRADE_04:
+                return True
+            if obj.is_secret and not request.user.sub_department_set.filter(id=obj.sub_department_id).exists():
+                return False
+            return True
+
+        if obj.is_fixed and request.user.grade == UserGradeChoices.GRADE_01:
             return True
 
         return obj.user == request.user

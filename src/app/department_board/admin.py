@@ -1,8 +1,37 @@
+from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 
 from app.department_board.models import DepartmentBoard
 from app.department_board_file.models import DepartmentBoardFile
 from app.department_board_image.models import DepartmentBoardImage
+from app.user.models import UserGradeChoices
+
+
+class DepartmentBoardAdminForm(forms.ModelForm):
+    class Meta:
+        model = DepartmentBoard
+        fields = "__all__"
+
+    def clean(self):
+        cleaned_data = super().clean()
+        is_fixed = cleaned_data.get("is_fixed")
+        sub_department = cleaned_data.get("sub_department")
+
+        if is_fixed and sub_department:
+            pinned_count = (
+                DepartmentBoard.objects.filter(
+                    sub_department=sub_department,
+                    is_fixed=True,
+                )
+                .exclude(id=self.instance.id)
+                .count()
+            )
+
+            if pinned_count >= 5:
+                raise forms.ValidationError("고정글은 최대 5개까지만 등록할 수 있습니다.")
+
+        return cleaned_data
 
 
 class DepartmentBoardImageInline(admin.StackedInline):
@@ -19,17 +48,21 @@ class DepartmentBoardFileInline(admin.StackedInline):
 
 @admin.register(DepartmentBoard)
 class DepartmentBoardAdmin(admin.ModelAdmin):
+    form = DepartmentBoardAdminForm
     inlines = [DepartmentBoardImageInline, DepartmentBoardFileInline]
     list_display = [
         "title",
         "user",
         "department",
         "sub_department",
+        "is_fixed",
+        "is_secret",
         "created_at",
         "hit_count",
         "comment_count",
         "like_count",
     ]
+    list_filter = ["department", "sub_department", "is_fixed", "is_secret"]
     search_fields = ["user__name", "title"]
     search_help_text = "유저 이름, 제목으로 검색하세요."
     raw_id_fields = ["user"]
@@ -41,5 +74,28 @@ class DepartmentBoardAdmin(admin.ModelAdmin):
         return queryset
 
     def save_model(self, request, obj, form, change):
+        # AdminUser(관리자)는 grade 속성이 없으므로 권한 체크 스킵
+        user_grade = getattr(request.user, "grade", None)
+
+        if user_grade is not None:
+            allowed_grades = {
+                UserGradeChoices.GRADE_01,
+                UserGradeChoices.GRADE_02,
+                UserGradeChoices.GRADE_03,
+                UserGradeChoices.GRADE_04,
+            }
+            if obj.is_fixed and user_grade not in allowed_grades:
+                raise ValidationError("공지글 작성 권한이 없습니다.")
+
+            if change and obj.pk:
+                original = DepartmentBoard.objects.filter(pk=obj.pk).only("user_id", "is_fixed").first()
+                if original and original.is_fixed and not obj.is_fixed:
+                    if user_grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
+                        raise ValidationError("자신이 등록한 공지만 해제할 수 있습니다.")
+                if original and obj.is_fixed:
+                    if user_grade != UserGradeChoices.GRADE_01 and original.user_id != request.user.id:
+                        raise ValidationError("자신이 등록한 공지만 수정할 수 있습니다.")
+
         obj.department = obj.sub_department.department
+        obj.full_clean()
         super().save_model(request, obj, form, change)

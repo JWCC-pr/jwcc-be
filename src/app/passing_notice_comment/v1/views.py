@@ -30,7 +30,7 @@ class PassingNoticeCommentViewSet(
     permission_classes = [PassingNoticeCommentPermission]
     pagination_class = CursorPagination
     filterset_class = PassingNoticeCommentFilter
-    ordering = "-created_at"
+    ordering = "created_at"
 
     def get_queryset(self):
         queryset = super().get_queryset()

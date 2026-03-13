@@ -30,6 +30,8 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "requests>=2.32.5",
     "watchtower>=3.4.0",
+    "pytest>=8.0.0",
+    "pytest-django>=4.8.0",
 ]
 
 [tool.isort]
@@ -40,3 +42,8 @@ line_length = 120
 
 [tool.black]
 line_length = 120
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "config.settings.local"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+addopts = "-v --tb=short"
