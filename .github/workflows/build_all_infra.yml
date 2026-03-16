@@ -35,7 +35,7 @@ jobs:
       - id: set_environment
         name: Set Environment
         run: |
-          echo "project_name=$(echo "${{ github.repository }}" | sed "s|${{ github.repository_owner }}\/||g" | sed "s|-django||g")" >> $GITHUB_OUTPUT
+          echo "project_name=jamwoncc" >> $GITHUB_OUTPUT
 
   create_repository:
     runs-on: ubuntu-latest

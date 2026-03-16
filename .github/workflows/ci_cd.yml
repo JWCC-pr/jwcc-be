@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Set Environments
         run: |
-          echo PROJECT_NAME=$(echo "${{ github.repository }}" | sed "s|${{ github.repository_owner }}\/||g" | sed "s|-django||g") >> $GITHUB_ENV
+          echo PROJECT_NAME=jamwoncc >> $GITHUB_ENV
           echo PROJECT_ENV=$(test ${GITHUB_REF##*/} = main && echo prod || echo dev) >> $GITHUB_ENV
 
       - name: Checkout
@@ -54,7 +54,7 @@ jobs:
     steps:
       - name: Set Environments
         run: |
-          echo PROJECT_NAME=$(echo "${{ github.repository }}" | sed "s|${{ github.repository_owner }}\/||g" | sed "s|-django||g") >> $GITHUB_ENV
+          echo PROJECT_NAME=jamwoncc >> $GITHUB_ENV
           echo PROJECT_ENV=$(test ${GITHUB_REF##*/} = main && echo prod || echo dev) >> $GITHUB_ENV
 
       - name: Checkout
