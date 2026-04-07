@@ -22,7 +22,7 @@ class Response(wsgi.Response):
 
 wsgi.Response = Response
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 50
+DATA_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024 * 100
 
 LOCAL_APPS = [
     "app.staticfile",

@@ -29,8 +29,8 @@ class DefaultMediaStorage(S3Boto3Storage):
         }
         conditions = [
             {"Content-Type": content_type},
-            ["content-length-range", 0, 20 * 1024 * 1024],
-        ]  # 20MB  # 지정한 값과 같아야만 허용
+            ["content-length-range", 0, 100 * 1024 * 1024],
+        ]  # 100MB
 
         if is_download:
             fields.update(

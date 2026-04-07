@@ -36,8 +36,8 @@ class PresignedSerializer(serializers.Serializer):
             settings.AWS_STORAGE_BUCKET_NAME,
             object_key,
             Conditions=[
-                ["content-length-range", 0, 20971520],  # 20MB
-                ["starts-with", "$Content-Type", f"image/"],
+                ["content-length-range", 0, 104857600],  # 100MB
+                ["starts-with", "$Content-Type", ""],
             ],
             ExpiresIn=360,
         )
