@@ -1,6 +1,5 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import mixins
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework.viewsets import GenericViewSet
 
 from app.common.pagination import LimitOffsetPagination
@@ -14,6 +13,7 @@ class BaseEditorialViewSet(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
     GenericViewSet,
 ):
@@ -40,15 +40,12 @@ class BaseEditorialViewSet(
     def get_filterset_class(self):
         return getattr(self, "filterset_class", None)
 
-    def partial_update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("patch")
-
 
 @extend_schema_view(
     list=extend_schema(summary="편집본 목록 조회"),
     create=extend_schema(summary="편집본 등록"),
     retrieve=extend_schema(summary="편집본 상세 조회"),
-    partial_update=extend_schema(exclude=True),
+    partial_update=extend_schema(summary="편집본 수정"),
     destroy=extend_schema(summary="편집본 삭제"),
 )
 class DraftViewSet(BaseEditorialViewSet):
@@ -59,7 +56,7 @@ class DraftViewSet(BaseEditorialViewSet):
     list=extend_schema(summary="명도회 자료 목록 조회"),
     create=extend_schema(summary="명도회 자료 등록"),
     retrieve=extend_schema(summary="명도회 자료 상세 조회"),
-    partial_update=extend_schema(exclude=True),
+    partial_update=extend_schema(summary="명도회 자료 수정"),
     destroy=extend_schema(summary="명도회 자료 삭제"),
 )
 class MyeongdoViewSet(BaseEditorialViewSet):
@@ -70,7 +67,7 @@ class MyeongdoViewSet(BaseEditorialViewSet):
     list=extend_schema(summary="최종본 목록 조회"),
     create=extend_schema(summary="최종본 등록"),
     retrieve=extend_schema(summary="최종본 상세 조회"),
-    partial_update=extend_schema(exclude=True),
+    partial_update=extend_schema(summary="최종본 수정"),
     destroy=extend_schema(summary="최종본 삭제"),
 )
 class FinalViewSet(BaseEditorialViewSet):
@@ -81,7 +78,7 @@ class FinalViewSet(BaseEditorialViewSet):
     list=extend_schema(summary="양식 목록 조회"),
     create=extend_schema(summary="양식 등록"),
     retrieve=extend_schema(summary="양식 상세 조회"),
-    partial_update=extend_schema(exclude=True),
+    partial_update=extend_schema(summary="양식 수정"),
     destroy=extend_schema(summary="양식 삭제"),
 )
 class TemplateViewSet(BaseEditorialViewSet):
