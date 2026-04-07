@@ -1,4 +1,5 @@
 import mimetypes
+import time
 from urllib.parse import quote, unquote
 
 from django.utils.text import get_valid_filename
@@ -18,7 +19,13 @@ class DefaultMediaStorage(S3Boto3Storage):
         file_name = get_valid_filename(raw_file_name)
         name = f"{parts[0]}/{file_name}" if len(parts) > 1 else file_name
 
-        object_key = self.get_available_name(name)
+        # 경로에 타임스탬프 디렉토리를 추가하여 파일명 충돌 방지 (랜덤 suffix 대신)
+        ts = str(int(time.time() * 1000))
+        parts_path = name.rsplit("/", 1)
+        if len(parts_path) > 1:
+            object_key = f"{parts_path[0]}/{ts}/{parts_path[1]}"
+        else:
+            object_key = f"{ts}/{name}"
         encoded_filename = quote(file_name)
 
         content_type, _ = mimetypes.guess_type(object_key)
